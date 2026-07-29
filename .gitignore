@@ -23,3 +23,12 @@
 # Local reference / design source — NOT part of the deployable page.
 _reference/
 _archive/
+
+# Exception: the home-screen / favicon app icons ARE part of the deployable
+# site (referenced from index.html and site.webmanifest). Keep them tracked.
+!apple-touch-icon.png
+!favicon-16.png
+!favicon-32.png
+!icon-192.png
+!icon-512.png
+!icon-512-maskable.png

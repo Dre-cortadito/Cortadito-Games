@@ -4,6 +4,40 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cortadito Games · Los juegos de Cortadito.News</title>
+
+<!-- ===== Home-screen app icon (Añadir a pantalla de inicio) =====
+     The cup mark on Cortadito cream. Icon files live next to index.html.
+     Display is intentionally "browser" in site.webmanifest: the games are
+     served from separate origins, so fullscreen/standalone would bounce
+     every game into a Safari sheet. Flip to "standalone" only after the
+     games move onto one domain. -->
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="apple-mobile-web-app-title" content="Cortadito Games" />
+<meta name="application-name" content="Cortadito Games" />
+<meta id="theme-color-meta" name="theme-color" content="#ffffff" />
+<script>
+  /* Keep the iOS/Android browser chrome in step with the site's own
+     light/dark toggle (html[data-theme]). Purely additive — it observes
+     the attribute rather than hooking into the theme code. */
+  (function(){
+    var m = document.getElementById('theme-color-meta');
+    if (!m) return;
+    function sync(){
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      m.setAttribute('content', dark ? '#000000' : '#ffffff');
+    }
+    try {
+      new MutationObserver(sync).observe(document.documentElement, {
+        attributes: true, attributeFilter: ['data-theme']
+      });
+    } catch (e) {}
+    sync();
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500;1,9..144,600&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
