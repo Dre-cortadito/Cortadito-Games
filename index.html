@@ -21,6 +21,12 @@
 <meta name="application-name" content="Cortadito Games" />
 <meta id="theme-color-meta" name="theme-color" content="#ffffff" />
 <script>
+  /* Retired home: bounce the old workers.dev URL to the new domain. */
+  if (location.hostname.endsWith('.workers.dev')) {
+    location.replace('https://cortadito.games' + location.pathname + location.search + location.hash);
+  }
+</script>
+<script>
   /* Keep the iOS/Android browser chrome in step with the site's own
      light/dark toggle (html[data-theme]). Purely additive — it observes
      the attribute rather than hooking into the theme code. */
