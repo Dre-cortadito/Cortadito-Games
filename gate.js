@@ -51,16 +51,13 @@
     + ".cgk-chip.today{background:#e35336;color:#fff}"
     + ".cgk-chip.prem{background:#171210;color:#F7EFE0}"
     + ".cgk-dia{color:#c47a3d;font-size:.72em;vertical-align:.12em;margin-left:4px}"
-    + ".cgk-status{display:block;font:800 13px/1.3 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin:auto 0 0;padding-top:12px}"
-    + ".cgk-status.prem{color:#9C3B8E}"
-    + ".cgk-status.hoy{color:#2670B8}"
-    + ".cgk-status.free{color:#4E8C4C}"
-    + "a.card.cgk-edge-prem,a.feature.cgk-edge-prem{border-top:5px solid #9C3B8E}"
-    + "a.card.cgk-edge-hoy,a.feature.cgk-edge-hoy{border-top:5px solid #2670B8}"
-    + "a.card.cgk-edge-free,a.feature.cgk-edge-free{border-top:5px solid #4E8C4C}"
-    + ".cbody:has(.cgk-status) .go{margin-top:10px}"
-    + ".cbody:not(:has(.cgk-status)) .go{margin-top:auto}"
-    + ".cbody:has(.cgk-status.prem) .go{padding:9px 14px;font-size:13.5px}"
+    + ".cgk-band{display:block;width:100%;box-sizing:border-box;flex:none;font:800 11px/1 system-ui,sans-serif;"
+    + "letter-spacing:.14em;text-transform:uppercase;color:#fff;text-align:center;padding:7px 10px 6px}"
+    + ".cgk-band.free{background:#427C40}"
+    + ".cgk-band.hoy{background:#2670B8}"
+    + ".cgk-band.prem{background:#9C3B8E}"
+    + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
+    + "a.card.cgk-edge-prem .go{padding:9px 14px;font-size:13.5px}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
     + ".cgk-strip a{color:inherit;text-decoration:underline;text-underline-offset:2px}"
     + ".cgk-ov{position:fixed;inset:0;z-index:99990;background:rgba(23,18,16,.55);display:flex;align-items:center;justify-content:center;padding:20px}"
@@ -147,13 +144,13 @@
       var anchor = game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico");
       var st = anchor ? "free" : (isFree(game, mode) ? "hoy" : "prem");
       a.classList.add("cgk-edge-" + st);
-      var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: edge only */
+      var band = document.createElement("div");
+      band.className = "cgk-band " + st;
+      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
+      a.insertBefore(band, a.firstChild);
+      var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: band only */
       var go = body.querySelector(".go");
-      var status = document.createElement("span");
-      status.className = "cgk-status " + st;
-      status.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
       if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
-      if (go) body.insertBefore(status, go); else body.appendChild(status);
     });
 
     /* filter bar: Todos · Gratis · Premium */
