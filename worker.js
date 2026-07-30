@@ -125,7 +125,7 @@ export default {
 // ============ queries ============
 
 function sinceDay(url) {
-  const days = Math.min(365, Math.max(1, Number(new URL(url).searchParams.get("days")) || 14));
+  const days = Math.min(3650, Math.max(1, Number(new URL(url).searchParams.get("days")) || 14));
   const since = etDay(Date.now() - (days - 1) * 86400000);
   return { days, since };
 }
@@ -296,7 +296,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const fmtMin = s => { const m = Math.round(s/60); return m >= 60 ? (m/60).toFixed(1)+' h' : m+' min'; };
 
 document.getElementById('filters').innerHTML =
-  [7,14,30,90].map(d => '<a href="?days='+d+'" class="'+(d===days?'on':'')+'">'+d+' días</a>').join('') +
+  [[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año'],[3650,'Todo']].map(x => '<a href="?days='+x[0]+'" class="'+(x[0]===days?'on':'')+'">'+x[1]+'</a>').join('') +
   '<a class="plain" href="/admin/api/export.csv?days='+days+'">Exportar CSV</a><a class="plain" href="/admin/logout">Salir</a>';
 
 const tip = document.getElementById('tip');
@@ -327,11 +327,11 @@ fetch('/admin/api/summary?days='+days).then(r => r.json()).then(d => {
     let path = daily.map((r, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(r.players).toFixed(1)).join(' ');
     if (daily.length === 1) path = '';
     const pts = daily.map((r, i) =>
-      '<circle cx="'+x(i)+'" cy="'+y(r.players)+'" r="'+(daily.length < 40 ? 4 : 2.5)+'" fill="#B02E2E" stroke="#fff" stroke-width="1.5" data-d="'+r.day+'" data-p="'+r.players+'" data-s="'+r.sessions+'"/>').join('');
+      '<circle cx="'+x(i)+'" cy="'+y(r.players)+'" r="'+(daily.length < 40 ? 4 : (daily.length < 150 ? 2.5 : 1.6))+'" fill="#B02E2E" stroke="#fff" stroke-width="1.5" data-d="'+r.day+'" data-p="'+r.players+'" data-s="'+r.sessions+'"/>').join('');
     const grid = [0, Math.ceil(max/2), max].map(v =>
       '<g><line x1="'+P+'" x2="'+(W-P)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#f0e8db"/><text x="'+(P-6)+'" y="'+(y(v)+4)+'" font-size="10" fill="#8d8580" text-anchor="end">'+v+'</text></g>').join('');
-    const labs = daily.length <= 31 ? daily.map((r, i) => (i % Math.ceil(daily.length/10) === 0) ?
-      '<text x="'+x(i)+'" y="'+(H-6)+'" font-size="10" fill="#8d8580" text-anchor="middle">'+r.day.slice(5)+'</text>' : '').join('') : '';
+    const labs = daily.map((r, i) => (i % Math.ceil(daily.length/10) === 0) ?
+      '<text x="'+x(i)+'" y="'+(H-6)+'" font-size="10" fill="#8d8580" text-anchor="middle">'+(daily.length > 90 ? r.day.slice(0,7) : r.day.slice(5))+'</text>' : '').join('');
     document.getElementById('daily').innerHTML =
       '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+grid+
       '<path d="'+path+'" fill="none" stroke="#B02E2E" stroke-width="2"/>'+pts+labs+'</svg>';
