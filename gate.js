@@ -51,7 +51,7 @@
     + ".cgk-chip.today{background:#e35336;color:#fff}"
     + ".cgk-chip.prem{background:#171210;color:#F7EFE0}"
     + ".cgk-dia{color:#c47a3d;font-size:.72em;vertical-align:.12em;margin-left:4px}"
-    + ".cgk-status{display:block;font:600 11px/1.4 system-ui,sans-serif;letter-spacing:.03em;margin:7px 0 0}"
+    + ".cgk-status{display:block;font:700 11px/1.4 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 12px}"
     + ".cgk-status.prem{color:#6b5442}"
     + ".cgk-status.hoy{color:#e35336}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
@@ -139,30 +139,14 @@
       var go = body.querySelector(".go");
       var status = document.createElement("span");
       if (isFree(game, mode)){
-        status.className = "cgk-status hoy"; status.textContent = "Hoy abierto para todos";
+        status.className = "cgk-status hoy"; status.textContent = "Gratis hoy";
       } else {
-        status.className = "cgk-status prem"; status.textContent = "Incluido con Premium";
-        var title = body.querySelector(".title");
-        if (title && !title.querySelector(".cgk-dia")){
-          var dia = document.createElement("span"); dia.className = "cgk-dia"; dia.textContent = "\u25C6";
-          title.appendChild(dia);
-        }
-        if (go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Descubrir");
+        status.className = "cgk-status prem"; status.textContent = "Premium";
+        if (go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
       }
       if (go) body.insertBefore(status, go); else body.appendChild(status);
     });
-    // free-today strip under the hero
-    var intro = document.querySelector(".intro");
-    if (intro){
-      var picks = ["sudoku","flechas","palabreo"].map(function(f){
-        var m = freeMode(f);
-        return '<a href="' + modeUrl(f, m) + '">' + NAME[f] + " " + NAME[m] + "</a>";
-      });
-      var div = document.createElement("div");
-      div.className = "cgk-strip";
-      div.innerHTML = "Hoy abiertos para todos: " + picks.join(" · ");
-      intro.appendChild(div);
-    }
+
   }
 
   /* ---------- Anteriores chips + gate ---------- */
