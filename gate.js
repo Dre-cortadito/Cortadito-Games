@@ -59,6 +59,14 @@
     + ".cgk-band.prem{background:#9C3B8E}"
     + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
     + "a.card.cgk-edge-prem .go{padding:9px 14px;font-size:13.5px}"
+    + ".cgk-prem-pill{display:inline-flex;align-items:center;gap:5px;font:600 11px/1 system-ui,sans-serif;"
+    + "letter-spacing:.04em;color:var(--muted,#8d8580);border:1.5px solid var(--line,#eee2d6);border-radius:999px;"
+    + "padding:6px 10px;margin-right:10px;white-space:nowrap}"
+    + ".cgk-prem-pill .ck{color:#4E8C4C;font-weight:800}"
+    + ".menu-wrap{display:flex;align-items:center}"
+    + ".cgk-hi{max-width:952px;margin:16px auto -8px;padding:11px 16px;background:#EAF1EA;color:#2C4A28;"
+    + "border:1px solid #CFE0CD;border-radius:12px;font:600 14px/1.4 system-ui,sans-serif;text-align:center;"
+    + "transition:opacity .8s ease}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
     + ".cgk-strip a{color:inherit;text-decoration:underline;text-underline-offset:2px}"
     + ".cgk-ov{position:fixed;inset:0;z-index:99990;background:rgba(23,18,16,.55);display:flex;align-items:center;justify-content:center;padding:20px}"
@@ -134,7 +142,11 @@
 
   /* ---------- hub decoration ---------- */
   function decorateHub(){
-    var prem = isPremium();   /* subscriber view: bands show "Premium ✓", buttons stay "Jugar" */
+    /* Subscriber view: NO bands, no "Ver Premium", no filter — a clean game
+       library. Just a quiet "Premium activo" pill by the menu, plus a one-time
+       welcome banner. Access info (bands/filter) is for non-subscribers only. */
+    if (isPremium()){ premiumHub(); return; }
+
     var cards = document.querySelectorAll("a.card, a.feature");
     cards.forEach(function(a){
       var href = a.getAttribute("href") || "";
@@ -148,11 +160,11 @@
       a.classList.add("cgk-edge-" + st);
       var band = document.createElement("div");
       band.className = "cgk-band " + st;
-      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : (prem ? "Premium ✓" : "Premium"));
+      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
       a.insertBefore(band, a.firstChild);
       var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: band only */
       var go = body.querySelector(".go");
-      if (st === "prem" && go && !prem) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
+      if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
     });
 
     /* filter bar: Todos · Gratis · Premium */
@@ -188,6 +200,32 @@
       var b = e.target.closest("button"); if (!b) return;
       applyFilter(b.dataset.f);
     });
+  }
+
+  /* ---------- subscriber hub: quiet confirmation, clean cards ---------- */
+  function premiumHub(){
+    /* "Premium activo ✓" pill next to the menu button */
+    var wrap = document.querySelector(".menu-wrap");
+    if (wrap){
+      var pill = document.createElement("span");
+      pill.className = "cgk-prem-pill";
+      pill.innerHTML = '<span class="ck">✓</span>Premium activo';
+      wrap.insertBefore(pill, wrap.firstChild);
+    }
+    /* one-time welcome banner (always shown in ?cgpremium=1 demo) */
+    var seen = false;
+    try { seen = !!localStorage.getItem("cg-prem-hi"); } catch(e){}
+    if (!seen || PREMDEMO){
+      var app = document.getElementById("app");
+      if (app){
+        var hi = document.createElement("div");
+        hi.className = "cgk-hi";
+        hi.textContent = "✓ Premium activo — todos los juegos están abiertos";
+        app.insertBefore(hi, app.firstChild);
+        setTimeout(function(){ hi.style.opacity = "0"; setTimeout(function(){ hi.remove(); }, 900); }, 6000);
+      }
+      if (!PREMDEMO){ try { localStorage.setItem("cg-prem-hi", "1"); } catch(e){} }
+    }
   }
 
   /* ---------- Anteriores chips + gate ---------- */
