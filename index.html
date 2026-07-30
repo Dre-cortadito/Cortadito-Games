@@ -5,16 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Cortadito Games · Los juegos de Cortadito.News</title>
 
-<!-- ===== Home-screen app icon (Añadir a pantalla de inicio) =====
+<!-- ===== Home-screen app (Añadir a pantalla de inicio) =====
      The cup mark on Cortadito cream. Icon files live next to index.html.
-     Display is intentionally "browser" in site.webmanifest: the games are
-     served from separate origins, so fullscreen/standalone would bounce
-     every game into a Safari sheet. Flip to "standalone" only after the
-     games move onto one domain. -->
+     Standalone/fullscreen is ON: since the cortadito.games migration all
+     games live on this origin (/racimo, /palabreo, /sudoku, /flechas),
+     so the whole platform runs inside the installed app with no Safari
+     sheets. site.webmanifest carries display:"standalone" for Android. -->
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
 <link rel="manifest" href="/site.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Cortadito Games" />
 <meta name="application-name" content="Cortadito Games" />
 <meta id="theme-color-meta" name="theme-color" content="#ffffff" />
@@ -358,32 +360,32 @@ const RACIMO = {
   name:"Racimo",
   question:"¿Cuántas palabras esconde este racimo?",
   logo: RACIMO_LOGO,
-  url:"https://racimo.dre-c8f.workers.dev/#landing"
+  url:"/racimo/#landing"
 };
 
 const FAMILIES = [
   {
     family:"Palabreo", note:"Donde cada letra cuenta.",
     modes:[
-      { name:"Clásico",  desc:"¿Cuál es la palabra de hoy?",       bg:"#f4d8d2", logo: palClasico("#CF2A2A"),  url:"https://palabreo.dre-c8f.workers.dev/?modo=clasico#landing" },
-      { name:"Trenza",   desc:"Teje la trenza con intercambios.",  bg:"#f3e3c4", logo: palTrenza("#D99F3B"),   url:"https://palabreo.dre-c8f.workers.dev/?modo=trenza#landing" },
-      { name:"Cuarteto", desc:"Cuatro palabras a la vez.",         bg:"#f4e2d3", logo: palCuarteto("#d9633b"), url:"https://palabreo.dre-c8f.workers.dev/?modo=cuarteto#landing" }
+      { name:"Clásico",  desc:"¿Cuál es la palabra de hoy?",       bg:"#f4d8d2", logo: palClasico("#CF2A2A"),  url:"/palabreo/?modo=clasico#landing" },
+      { name:"Trenza",   desc:"Teje la trenza con intercambios.",  bg:"#f3e3c4", logo: palTrenza("#D99F3B"),   url:"/palabreo/?modo=trenza#landing" },
+      { name:"Cuarteto", desc:"Cuatro palabras a la vez.",         bg:"#f4e2d3", logo: palCuarteto("#d9633b"), url:"/palabreo/?modo=cuarteto#landing" }
     ]
   },
   {
     family:"Sudoku", note:"Cada número en su lugar.",
     modes:[
-      { name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"https://sudoku.dre-c8f.workers.dev/?modo=clasico#landing" },
-      { name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#cfe6d5", logo: sudokuMini("#548C4C","#2f3640"), url:"https://sudoku.dre-c8f.workers.dev/?modo=mini#landing" },
-      { name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"https://sudoku.dre-c8f.workers.dev/?modo=niebla#landing" }
+      { name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"/sudoku/?modo=clasico#landing" },
+      { name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#cfe6d5", logo: sudokuMini("#548C4C","#2f3640"), url:"/sudoku/?modo=mini#landing" },
+      { name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"/sudoku/?modo=niebla#landing" }
     ]
   },
   {
     family:"Flechas", note:"Encuentra el camino correcto.",
     modes:[
-      { name:"Clásico", desc:"Desenreda el tablero.",              bg:"#FFF1E8", logo: FLECHAS_CLASICO,                     url:"https://flechas.dre-c8f.workers.dev/?modo=clasico#landing" },
-      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"https://flechas.dre-c8f.workers.dev/?modo=cascada#landing" },
-      { name:"Borde",   desc:"Evita el borde, despeja el tablero.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"https://flechas.dre-c8f.workers.dev/?modo=borde#landing" }
+      { name:"Clásico", desc:"Desenreda el tablero.",              bg:"#FFF1E8", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
+      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" },
+      { name:"Borde",   desc:"Evita el borde, despeja el tablero.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"/flechas/?modo=borde#landing" }
     ]
   }
 ];
