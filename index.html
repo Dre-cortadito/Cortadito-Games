@@ -377,6 +377,12 @@ const RACIMO = {
 
 const FAMILIES = [
   {
+    family:"Silueta", note:"Palabras que toman forma.",
+    modes:[
+      { name:"Racimo", desc:"¿Cuántas palabras esconde este racimo?", bg:"#f4d8d2", logo: RACIMO_LOGO, url:"/racimo/#landing" }
+    ]
+  },
+  {
     family:"Palabreo", note:"Donde cada letra cuenta.",
     modes:[
       { name:"Clásico",  desc:"¿Cuál es la palabra de hoy?",       bg:"#f4d8d2", logo: palClasico("#CF2A2A"),  url:"/palabreo/?modo=clasico#landing" },
@@ -409,13 +415,33 @@ const ARROW=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const app=document.getElementById("app");
 const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el archivo"':`href="${u}"`;   /* same tab — Recreo → landing → game, Back walks home */
 
+/* Destacado rota a diario entre los juegos gratis de hoy (mismo hash que gate.js) */
+const _fnv=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
+const _day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["borde","cascada","clasico","desvio","rumbo","flujo"]};
+const _freeToday=(game,mode)=>{
+  if(game==="racimo") return true;
+  if(game==="palabreo"&&mode==="clasico") return true;
+  const p=_POOLS[game]; if(!p) return false;
+  return mode===p[_fnv(_day()+":"+game)%p.length];
+};
+const FEATURED_POOL=[];
+FAMILIES.forEach(fam=>fam.modes.forEach(m=>{
+  const mm=m.url.match(/^\/(\w+)\/(?:\?modo=(\w+))?/)||[];
+  if(!mm[1]) return;
+  if(_freeToday(mm[1],mm[2]||null)){
+    FEATURED_POOL.push({ title: mm[1]==="racimo" ? m.name : fam.family+" "+m.name, q:m.desc, logo:m.logo, url:m.url });
+  }
+}));
+const FEATURED = FEATURED_POOL.length ? FEATURED_POOL[_fnv("destacado:"+_day())%FEATURED_POOL.length]
+                                      : { title:RACIMO.name, q:RACIMO.question, logo:RACIMO.logo, url:RACIMO.url };
 app.insertAdjacentHTML("beforeend",`
-  <a class="feature" ${attrs(RACIMO.url)}>
-    <div class="flogo">${RACIMO.logo}</div>
+  <a class="feature" ${attrs(FEATURED.url)}>
+    <div class="flogo">${FEATURED.logo}</div>
     <div class="ftext">
       <span class="kick">Destacado</span>
-      <h2>${RACIMO.name}</h2>
-      <p class="q">${RACIMO.question}</p>
+      <h2>${FEATURED.title}</h2>
+      <p class="q">${FEATURED.q}</p>
     </div>
     <span class="btn">Jugar ${ARROW}</span>
   </a>
