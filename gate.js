@@ -133,6 +133,7 @@
 
   /* ---------- hub decoration ---------- */
   function decorateHub(){
+    var prem = isPremium();   /* subscriber view: bands show "Premium ✓", buttons stay "Jugar" */
     var cards = document.querySelectorAll("a.card, a.feature");
     cards.forEach(function(a){
       var href = a.getAttribute("href") || "";
@@ -146,11 +147,11 @@
       a.classList.add("cgk-edge-" + st);
       var band = document.createElement("div");
       band.className = "cgk-band " + st;
-      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
+      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : (prem ? "Premium ✓" : "Premium"));
       a.insertBefore(band, a.firstChild);
       var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: band only */
       var go = body.querySelector(".go");
-      if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
+      if (st === "prem" && go && !prem) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
     });
 
     /* filter bar: Todos · Gratis · Premium */
