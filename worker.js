@@ -126,6 +126,9 @@ export default {
         if (p === "/admin" || p === "/admin/") {
           return new Response(dashPage(), { headers: { "Content-Type": "text/html;charset=utf-8" } });
         }
+        if (p === "/admin/log") {
+          return new Response(logPage(), { headers: { "Content-Type": "text/html;charset=utf-8" } });
+        }
         if (p === "/admin/api/summary") return summary(env, url);
         if (p === "/admin/api/recent") return recent(env, url);
         if (p === "/admin/api/export.csv") return exportCsv(env, url);
@@ -142,14 +145,20 @@ export default {
 
 // ============ queries ============
 
-function sinceDay(url) {
-  const days = Math.min(3650, Math.max(1, Number(new URL(url).searchParams.get("days")) || 14));
-  const since = etDay(Date.now() - (days - 1) * 86400000);
-  return { days, since };
+function parseRange(url) {
+  const q = new URL(url).searchParams;
+  const re = /^\d{4}-\d{2}-\d{2}$/;
+  const from = q.get("from"), to = q.get("to");
+  if (from && to && re.test(from) && re.test(to) && from <= to) {
+    return { since: from, until: to, days: null, label: from + " \u2192 " + to };
+  }
+  const days = Math.min(3650, Math.max(1, Number(q.get("days")) || 14));
+  return { since: etDay(Date.now() - (days - 1) * 86400000), until: etDay(Date.now()),
+           days, label: "\u00faltimos " + days + " d\u00edas" };
 }
 
 async function summary(env, url) {
-  const { days, since } = sinceDay(url);
+  const { days, since, until, label } = parseRange(url);
   const today = etDay(Date.now());
 
   const [tiles, perGame, daily, snaps] = await Promise.all([
@@ -157,21 +166,21 @@ async function summary(env, url) {
         (SELECT COUNT(DISTINCT uid) FROM events WHERE day = ?1) AS players_today,
         (SELECT COUNT(*) FROM events WHERE day = ?1 AND ev = 'session') AS sessions_today,
         (SELECT COALESCE(SUM(dur),0) FROM events WHERE day = ?1 AND ev = 'session') AS seconds_today,
-        (SELECT COUNT(DISTINCT uid) FROM events WHERE day >= ?2) AS players_range,
-        (SELECT COUNT(*) FROM events WHERE day >= ?2 AND ev = 'session') AS sessions_range,
-        (SELECT COALESCE(SUM(dur),0) FROM events WHERE day >= ?2 AND ev = 'session') AS seconds_range
-      `).bind(today, since).first(),
+        (SELECT COUNT(DISTINCT uid) FROM events WHERE day BETWEEN ?2 AND ?3) AS players_range,
+        (SELECT COUNT(*) FROM events WHERE day BETWEEN ?2 AND ?3 AND ev = 'session') AS sessions_range,
+        (SELECT COALESCE(SUM(dur),0) FROM events WHERE day BETWEEN ?2 AND ?3 AND ev = 'session') AS seconds_range
+      `).bind(today, since, until).first(),
     env.DB.prepare(`SELECT game,
         COUNT(DISTINCT uid) AS players,
         SUM(CASE WHEN ev='view' THEN 1 ELSE 0 END) AS views,
         SUM(CASE WHEN ev='session' THEN 1 ELSE 0 END) AS sessions,
         COALESCE(SUM(CASE WHEN ev='session' THEN dur ELSE 0 END),0) AS seconds
-      FROM events WHERE day >= ? GROUP BY game ORDER BY sessions DESC`).bind(since).all(),
+      FROM events WHERE day BETWEEN ? AND ? GROUP BY game ORDER BY sessions DESC`).bind(since, until).all(),
     env.DB.prepare(`SELECT day,
         COUNT(DISTINCT uid) AS players,
         SUM(CASE WHEN ev='session' THEN 1 ELSE 0 END) AS sessions,
         COALESCE(SUM(CASE WHEN ev='session' THEN dur ELSE 0 END),0) AS seconds
-      FROM events WHERE day >= ? GROUP BY day ORDER BY day`).bind(since).all(),
+      FROM events WHERE day BETWEEN ? AND ? GROUP BY day ORDER BY day`).bind(since, until).all(),
     env.DB.prepare(`SELECT uid, data FROM events e WHERE ev='snapshot' AND id =
         (SELECT MAX(id) FROM events WHERE ev='snapshot' AND uid = e.uid) LIMIT 500`).all(),
   ]);
@@ -197,23 +206,25 @@ async function summary(env, url) {
     }
   }
 
-  return json({ days, since, today, tiles, perGame: perGame.results || [], daily: daily.results || [],
+  return json({ days, since, until, label, today, tiles, perGame: perGame.results || [], daily: daily.results || [],
                 rachas, snapshotUsers: (snaps.results || []).length });
 }
 
 async function recent(env, url) {
-  const limit = Math.min(300, Number(new URL(url).searchParams.get("limit")) || 60);
+  const { since, until } = parseRange(url);
+  const limit = Math.min(1000, Number(new URL(url).searchParams.get("limit")) || 200);
   const r = await env.DB.prepare(
-    `SELECT ts, day, substr(uid,1,8) AS uid, game, mode, ev, dur FROM events ORDER BY id DESC LIMIT ?`)
-    .bind(limit).all();
+    `SELECT ts, day, substr(uid,1,8) AS uid, game, mode, ev, dur FROM events
+     WHERE day BETWEEN ? AND ? ORDER BY id DESC LIMIT ?`)
+    .bind(since, until, limit).all();
   return json(r.results || []);
 }
 
 async function exportCsv(env, url) {
-  const { since } = sinceDay(url);
+  const { since, until } = parseRange(url);
   const r = await env.DB.prepare(
-    `SELECT ts, day, uid, game, mode, ev, dur, data FROM events WHERE day >= ? ORDER BY id`)
-    .bind(since).all();
+    `SELECT ts, day, uid, game, mode, ev, dur, data FROM events WHERE day BETWEEN ? AND ? ORDER BY id`)
+    .bind(since, until).all();
   const rows = [["ts", "day", "uid", "game", "mode", "ev", "dur_s", "data"]];
   for (const e of (r.results || [])) {
     rows.push([e.ts, e.day, e.uid, e.game, e.mode || "", e.ev, e.dur ?? "",
@@ -266,7 +277,7 @@ function dashPage() {
   .wrap{max-width:1020px;margin:0 auto}
   header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
   h1{font-size:20px;margin:0} h1 small{color:var(--muted);font-weight:400;font-size:13px}
-  .filters{display:flex;gap:6px;align-items:center;font-size:13px}
+  .filters{display:flex;gap:6px;align-items:center;font-size:13px;flex-wrap:wrap}
   .filters a{padding:5px 11px;border:1px solid var(--line);border-radius:999px;color:var(--ink2);text-decoration:none}
   .filters a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
   .filters a.plain{border:none;color:var(--muted)}
@@ -276,7 +287,12 @@ function dashPage() {
   .tile .l{font-size:12px;color:var(--muted);margin-top:3px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
   .card h2{font-size:14px;margin:0 0 12px;color:var(--ink2)}
+  .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .twrap table{min-width:560px}
   table{width:100%;border-collapse:collapse;font-size:13px}
+  .range{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13px}
+  .range input[type=date]{padding:5px 8px;border:1px solid var(--line);border-radius:8px;font:inherit;color:var(--ink);background:var(--card)}
+  .range button{padding:6px 12px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:inherit;cursor:pointer}
   th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
   td{padding:6px 8px;border-bottom:1px solid #f6efe4}
   td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
@@ -301,41 +317,51 @@ function dashPage() {
   <div class="card"><h2>Sesiones por juego</h2><div id="sessions"></div></div>
   <div class="card"><h2>Minutos jugados por juego</h2><div id="minutes"></div></div>
 </div>
-<div class="card"><h2>Por juego</h2><div id="pergame"></div></div>
-<div class="card"><h2>Rachas (de los datos guardados en cada navegador)</h2><div id="rachas"></div></div>
-<div class="card"><h2>Últimos eventos</h2><div id="recent"></div></div>
+<div class="card"><h2>Por juego</h2><div class="twrap" id="pergame"></div></div>
+<div class="card"><h2>Rachas (de los datos guardados en cada navegador)</h2><div class="twrap" id="rachas"></div></div>
 <div class="tip" id="tip"></div>
 </div>
 <script>
 const COLORS = { racimo:'#B02E2E', palabreo:'#4E8C4C', sudoku:'#2F6FBF', flechas:'#D89B3D', hub:'#9a9187' };
 const NAME = { racimo:'Racimo', palabreo:'Palabreo', sudoku:'Sudoku', flechas:'Flechas', hub:'Portada' };
-const days = Number(new URLSearchParams(location.search).get('days')) || 14;
+const params = new URLSearchParams(location.search);
+const days = Number(params.get('days')) || 14;
+const customFrom = params.get('from'), customTo = params.get('to');
+const isCustom = !!(customFrom && customTo);
+const qs = isCustom ? ('from='+customFrom+'&to='+customTo) : ('days='+days);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtMin = s => { const m = Math.round(s/60); return m >= 60 ? (m/60).toFixed(1)+' h' : m+' min'; };
 
 document.getElementById('filters').innerHTML =
-  [[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año'],[3650,'Todo']].map(x => '<a href="?days='+x[0]+'" class="'+(x[0]===days?'on':'')+'">'+x[1]+'</a>').join('') +
-  '<a class="plain" href="/admin/api/export.csv?days='+days+'">Exportar CSV</a><a class="plain" href="/admin/logout">Salir</a>';
+  [[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año'],[3650,'Todo']].map(x => '<a href="?days='+x[0]+'" class="'+(!isCustom && x[0]===days?'on':'')+'">'+x[1]+'</a>').join('') +
+  '<span class="range"><input type="date" id="rf" value="'+(customFrom||'')+'"><input type="date" id="rt" value="'+(customTo||'')+'"><button id="rgo">Ir</button></span>' +
+  '<a class="plain" href="/admin/api/export.csv?'+qs+'">Exportar CSV</a>' +
+  '<a class="plain" href="/admin/log">Registro</a>' +
+  '<a class="plain" href="/admin/logout">Salir</a>';
+document.getElementById('rgo').addEventListener('click', () => {
+  const f = document.getElementById('rf').value, t = document.getElementById('rt').value;
+  if (f && t && f <= t) location.search = '?from='+f+'&to='+t;
+});
 
 const tip = document.getElementById('tip');
 function showTip(e, html){ tip.innerHTML = html; tip.style.opacity = 1;
   tip.style.left = Math.min(e.clientX+12, innerWidth-170)+'px'; tip.style.top = (e.clientY-34)+'px'; }
 function hideTip(){ tip.style.opacity = 0; }
 
-fetch('/admin/api/summary?days='+days).then(r => r.json()).then(d => {
+fetch('/admin/api/summary?'+qs).then(r => r.json()).then(d => {
   const t = d.tiles || {};
   document.getElementById('tiles').innerHTML = [
     [t.players_today||0, 'jugadores hoy'],
     [t.sessions_today||0, 'sesiones hoy'],
     [fmtMin(t.seconds_today||0), 'tiempo jugado hoy'],
-    [t.players_range||0, 'jugadores · '+d.days+' días'],
-    [t.sessions_range||0, 'sesiones · '+d.days+' días'],
-    [fmtMin(t.seconds_range||0), 'tiempo · '+d.days+' días'],
+    [t.players_range||0, 'jugadores · '+d.label],
+    [t.sessions_range||0, 'sesiones · '+d.label],
+    [fmtMin(t.seconds_range||0), 'tiempo · '+d.label],
   ].map(x => '<div class="tile"><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>').join('');
 
   // daily players line (single series — no legend needed)
   const daily = d.daily || [];
-  document.getElementById('dailyTitle').textContent = 'Jugadores por día · últimos '+d.days;
+  document.getElementById('dailyTitle').textContent = 'Jugadores por día · '+d.label;
   if (!daily.length) { document.getElementById('daily').innerHTML = '<div class="empty">Sin datos todavía — los eventos empiezan a llegar en cuanto alguien juega.</div>'; }
   else {
     const W = 940, H = 180, P = 28, PB = 24;
@@ -392,13 +418,63 @@ fetch('/admin/api/summary?days='+days).then(r => r.json()).then(d => {
     : '<div class="empty">Aparecen cuando lleguen los primeros guardados diarios (una foto por jugador y día).</div>';
 });
 
-fetch('/admin/api/recent?limit=60').then(r => r.json()).then(rows => {
-  document.getElementById('recent').innerHTML = rows.length ?
+</script></body></html>`;
+}
+
+function logPage() {
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Registro · Cortadito Games Stats</title>
+<style>
+  :root{--bg:#fcfcfb;--card:#fff;--line:#eee2d6;--ink:#171210;--muted:#8d8580}
+  body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:20px 16px 60px}
+  .wrap{max-width:1020px;margin:0 auto}
+  header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  h1{font-size:18px;margin:0} h1 a{color:var(--muted);text-decoration:none;font-weight:400}
+  .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;margin-bottom:14px}
+  .bar input[type=date],.bar select{padding:6px 9px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--card)}
+  .bar button{padding:7px 14px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:inherit;cursor:pointer}
+  .bar a{color:var(--muted);font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .twrap table{min-width:640px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:6px 8px;border-bottom:1px solid #f6efe4}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .empty{color:var(--muted);font-size:13px;padding:12px 0}
+  .meta{color:var(--muted);font-size:12px;margin-top:10px}
+</style></head><body><div class="wrap">
+<header><h1><a href="/admin">← Panel</a> · Registro de eventos</h1></header>
+<div class="bar">
+  <input type="date" id="rf"><span>–</span><input type="date" id="rt">
+  <select id="lim"><option>200</option><option>500</option><option>1000</option></select>
+  <button id="go">Ver</button>
+  <a id="csv" href="#">Descargar CSV de este rango</a>
+</div>
+<div class="card"><div class="twrap" id="log"></div><div class="meta" id="meta"></div></div>
+</div>
+<script>
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NAME = { racimo:'Racimo', palabreo:'Palabreo', sudoku:'Sudoku', flechas:'Flechas', hub:'Portada' };
+const p = new URLSearchParams(location.search);
+const today = new Date(); const iso = d => d.toISOString().slice(0,10);
+const week = new Date(); week.setDate(week.getDate()-6);
+document.getElementById('rf').value = p.get('from') || iso(week);
+document.getElementById('rt').value = p.get('to') || iso(today);
+if (p.get('limit')) document.getElementById('lim').value = p.get('limit');
+function qs(){ return 'from='+document.getElementById('rf').value+'&to='+document.getElementById('rt').value+'&limit='+document.getElementById('lim').value; }
+document.getElementById('go').addEventListener('click', () => { location.search = '?'+qs(); });
+document.getElementById('csv').href = '/admin/api/export.csv?'+qs();
+fetch('/admin/api/recent?'+qs()).then(r => r.json()).then(rows => {
+  document.getElementById('log').innerHTML = rows.length ?
     '<table><tr><th>Cuándo (ET)</th><th>Jugador</th><th>Juego</th><th>Modo</th><th>Evento</th><th class="num">Duración</th></tr>' +
     rows.map(e => '<tr><td>'+new Date(e.ts).toLocaleString('es-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</td>'+
       '<td style="font-family:monospace">'+esc(e.uid)+'</td><td>'+esc(NAME[e.game]||e.game)+'</td><td>'+esc(e.mode||'—')+'</td><td>'+esc(e.ev)+'</td>'+
       '<td class="num">'+(e.dur != null ? e.dur+' s' : '—')+'</td></tr>').join('') + '</table>'
-    : '<div class="empty">Todavía no hay eventos.</div>';
+    : '<div class="empty">Sin eventos en este rango.</div>';
+  document.getElementById('meta').textContent = rows.length + ' eventos mostrados (máx. ' + document.getElementById('lim').value + '). El CSV incluye todos los del rango.';
 });
 </script></body></html>`;
 }
