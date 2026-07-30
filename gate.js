@@ -52,8 +52,12 @@
     + ".cgk-chip.prem{background:#171210;color:#F7EFE0}"
     + ".cgk-dia{color:#c47a3d;font-size:.72em;vertical-align:.12em;margin-left:4px}"
     + ".cgk-status{display:block;font:800 13px/1.3 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin:auto 0 0;padding-top:12px}"
-    + ".cgk-status.prem{color:#9a6b2f}"
-    + ".cgk-status.hoy{color:#e35336}"
+    + ".cgk-status.prem{color:#A8701F}"
+    + ".cgk-status.hoy{color:#2670B8}"
+    + ".cgk-status.free{color:#4E8C4C}"
+    + "a.card.cgk-edge-prem,a.feature.cgk-edge-prem{border-top:5px solid #A8701F}"
+    + "a.card.cgk-edge-hoy,a.feature.cgk-edge-hoy{border-top:5px solid #2670B8}"
+    + "a.card.cgk-edge-free,a.feature.cgk-edge-free{border-top:5px solid #4E8C4C}"
     + ".cbody:has(.cgk-status) .go{margin-top:10px}"
     + ".cbody:not(:has(.cgk-status)) .go{margin-top:auto}"
     + ".cbody:has(.cgk-status.prem) .go{padding:9px 14px;font-size:13.5px}"
@@ -137,16 +141,14 @@
       var mode = mm[4] || (mm[2] ? mm[2].replace(".html","") : null);
       if (game === "flechas") mode = (!mode || mode === "") ? "borde" : mode;
       var anchor = game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico");
-      if (anchor) return;                       /* free is the normal state — no label */
-      var body = a.querySelector(".cbody"); if (!body) return;
+      var st = anchor ? "free" : (isFree(game, mode) ? "hoy" : "prem");
+      a.classList.add("cgk-edge-" + st);
+      var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: edge only */
       var go = body.querySelector(".go");
       var status = document.createElement("span");
-      if (isFree(game, mode)){
-        status.className = "cgk-status hoy"; status.textContent = "Gratis hoy";
-      } else {
-        status.className = "cgk-status prem"; status.textContent = "Premium";
-        if (go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
-      }
+      status.className = "cgk-status " + st;
+      status.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
+      if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
       if (go) body.insertBefore(status, go); else body.appendChild(status);
     });
 
