@@ -50,7 +50,10 @@
     + ".cgk-chip.free{background:#548C4C;color:#fff}"
     + ".cgk-chip.today{background:#e35336;color:#fff}"
     + ".cgk-chip.prem{background:#171210;color:#F7EFE0}"
-    + ".cgk-card-chip{position:absolute;top:10px;left:10px;z-index:3}"
+    + ".cgk-dia{color:#c47a3d;font-size:.72em;vertical-align:.12em;margin-left:4px}"
+    + ".cgk-status{display:block;font:600 11px/1.4 system-ui,sans-serif;letter-spacing:.03em;margin:7px 0 0}"
+    + ".cgk-status.prem{color:#6b5442}"
+    + ".cgk-status.hoy{color:#e35336}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
     + ".cgk-strip a{color:inherit;text-decoration:underline;text-underline-offset:2px}"
     + ".cgk-ov{position:fixed;inset:0;z-index:99990;background:rgba(23,18,16,.55);display:flex;align-items:center;justify-content:center;padding:20px}"
@@ -130,17 +133,23 @@
       var game = mm[1];
       var mode = mm[4] || (mm[2] ? mm[2].replace(".html","") : null);
       if (game === "flechas") mode = (!mode || mode === "") ? "borde" : mode;
-      var chip = document.createElement("span");
-      if (game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico")){
-        chip.className = "cgk-chip free cgk-card-chip"; chip.textContent = "Gratis siempre";
-      } else if (isFree(game, mode)){
-        chip.className = "cgk-chip today cgk-card-chip"; chip.textContent = "Gratis hoy";
+      var anchor = game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico");
+      if (anchor) return;                       /* free is the normal state — no label */
+      var body = a.querySelector(".cbody"); if (!body) return;
+      var go = body.querySelector(".go");
+      var status = document.createElement("span");
+      if (isFree(game, mode)){
+        status.className = "cgk-status hoy"; status.textContent = "Hoy abierto para todos";
       } else {
-        chip.className = "cgk-chip prem cgk-card-chip"; chip.textContent = "Premium";
+        status.className = "cgk-status prem"; status.textContent = "Incluido con Premium";
+        var title = body.querySelector(".title");
+        if (title && !title.querySelector(".cgk-dia")){
+          var dia = document.createElement("span"); dia.className = "cgk-dia"; dia.textContent = "\u25C6";
+          title.appendChild(dia);
+        }
+        if (go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Descubrir");
       }
-      var panel = a.querySelector(".panel") || a;
-      if (getComputedStyle(panel).position === "static") panel.style.position = "relative";
-      panel.appendChild(chip);
+      if (go) body.insertBefore(status, go); else body.appendChild(status);
     });
     // free-today strip under the hero
     var intro = document.querySelector(".intro");
@@ -151,7 +160,7 @@
       });
       var div = document.createElement("div");
       div.className = "cgk-strip";
-      div.innerHTML = "Hoy gratis: <a href=\"/racimo/\">Racimo</a> · <a href=\"/palabreo/?modo=clasico#landing\">Palabreo Clásico</a> · " + picks.join(" · ");
+      div.innerHTML = "Hoy abiertos para todos: " + picks.join(" · ");
       intro.appendChild(div);
     }
   }
@@ -164,9 +173,9 @@
       var t = (el.textContent || "").trim();
       if (!/^Anteriores\b/i.test(t) || t.length > 24) return;
       el._cgkTagged = true;
-      var chip = document.createElement("span");
-      chip.className = "cgk-chip prem"; chip.textContent = "Premium"; chip.style.marginLeft = "6px";
-      el.appendChild(chip);
+      var dia = document.createElement("span");
+      dia.className = "cgk-dia"; dia.textContent = "\u25C6"; dia.title = "Premium";
+      el.appendChild(dia);
       if (ACTIVE){
         el.addEventListener("click", function(ev){
           if (isPremium()) return;
