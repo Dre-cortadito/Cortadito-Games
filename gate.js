@@ -6,6 +6,7 @@
 (function () {
   var ENFORCE = false;
   var PREVIEW = /[?&]cgpreview=1/.test(location.search);
+  var PREMDEMO = /[?&]cgpremium=1/.test(location.search);   /* demo the subscriber view */
   var ACTIVE = ENFORCE || PREVIEW;
 
   var POOLS = {
@@ -21,7 +22,7 @@
   function fnv(s){ var h=2166136261; for (var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
   function dayStr(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function freeMode(fam, d){ var p=POOLS[fam]; if(!p) return null; return p[fnv(dayStr(d)+":"+fam)%p.length]; }
-  function isPremium(){ try{ var p=JSON.parse(localStorage.getItem("cg-premium")||"null"); return !!(p && p.until>Date.now()); }catch(e){ return false; } }
+  function isPremium(){ if (PREMDEMO) return true; try{ var p=JSON.parse(localStorage.getItem("cg-premium")||"null"); return !!(p && p.until>Date.now()); }catch(e){ return false; } }
   function defMode(game){ return game==="flechas" ? "borde" : "clasico"; }
   function isFree(game, mode){
     if (!game || game==="hub" || game==="racimo") return true;
