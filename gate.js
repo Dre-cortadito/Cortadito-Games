@@ -77,7 +77,11 @@
     + ".cgk-cal div{flex:1;max-width:48px;background:#F7EFE0;border-radius:8px;padding:6px 2px;font-size:10px;color:#5f5852}"
     + ".cgk-cal div.on{background:#e35336;color:#fff}"
     + ".cgk-cal b{display:block;font-size:10px;margin-top:2px}"
-    + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}";
+    + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}"
+    + ".cgk-filter{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px auto 2px;padding:0 16px}"
+    + ".cgk-filter button{font:600 13px/1 system-ui,sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer;"
+    + "background:transparent;color:var(--ink,#171210);border:1.5px solid var(--line,#eee2d6);transition:background .15s}"
+    + ".cgk-filter button.on{background:var(--ink,#171210);color:var(--bg,#fff);border-color:var(--ink,#171210)}";
   var st = document.createElement("style"); st.textContent = css;
   (document.head || document.documentElement).appendChild(st);
 
@@ -152,6 +156,39 @@
       if (go) body.insertBefore(status, go); else body.appendChild(status);
     });
 
+    /* filter bar: Todos · Gratis · Premium */
+    var app = document.getElementById("app");
+    var firstFam = app && app.querySelector(".fam");
+    if (!app || !firstFam) return;
+    var bar = document.createElement("div");
+    bar.className = "cgk-filter";
+    bar.innerHTML = '<button data-f="all" class="on">Todos</button>'
+      + '<button data-f="free">Gratis</button>'
+      + '<button data-f="prem">Premium</button>';
+    app.insertBefore(bar, firstFam);
+    function cardSt(a){
+      if (a.classList.contains("soon")) return "soon";
+      if (a.classList.contains("cgk-edge-free") || a.classList.contains("cgk-edge-hoy")) return "free";
+      if (a.classList.contains("cgk-edge-prem")) return "prem";
+      return "all";
+    }
+    function applyFilter(f){
+      bar.querySelectorAll("button").forEach(function(b){ b.classList.toggle("on", b.dataset.f === f); });
+      app.querySelectorAll(".fam").forEach(function(fam){
+        var visible = 0;
+        fam.querySelectorAll("a.card").forEach(function(a){
+          var st = cardSt(a);
+          var show = f === "all" || st === f;
+          a.style.display = show ? "" : "none";
+          if (show) visible++;
+        });
+        fam.style.display = visible ? "" : "none";
+      });
+    }
+    bar.addEventListener("click", function(e){
+      var b = e.target.closest("button"); if (!b) return;
+      applyFilter(b.dataset.f);
+    });
   }
 
   /* ---------- Anteriores chips + gate ---------- */
