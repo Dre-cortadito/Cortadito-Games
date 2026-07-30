@@ -56,7 +56,6 @@
     + ".cgk-status.hoy{color:#2670B8}"
     + ".cgk-status.free{color:#4E8C4C}"
     + "a.card.cgk-edge-prem,a.feature.cgk-edge-prem{border-top:5px solid #9C3B8E}"
-    + "a.card.cgk-edge-prem .panel{background:#F2E6F5 !important}"
     + "a.card.cgk-edge-hoy,a.feature.cgk-edge-hoy{border-top:5px solid #2670B8}"
     + "a.card.cgk-edge-free,a.feature.cgk-edge-free{border-top:5px solid #4E8C4C}"
     + ".cbody:has(.cgk-status) .go{margin-top:10px}"
