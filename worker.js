@@ -82,6 +82,24 @@ export default {
         return new Response("ok", { status: 202 });
       }
 
+      // ---------- premium check (BeeHiiv) ----------
+      if (p === "/a/premium" && request.method === "GET") {
+        const email = (url.searchParams.get("email") || "").trim().toLowerCase();
+        if (!email || !email.includes("@")) return json({ ok: false, error: "bad-email" });
+        if (!env.BEEHIIV_API_KEY || !env.BEEHIIV_PUB_ID) return json({ ok: false, configured: false });
+        try {
+          const r = await fetch(
+            `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions/by_email/${encodeURIComponent(email)}`,
+            { headers: { "Authorization": `Bearer ${env.BEEHIIV_API_KEY}` } });
+          if (r.status === 404) return json({ ok: true, premium: false });
+          const d = await r.json();
+          const sub = d && d.data;
+          const premium = !!(sub && sub.status === "active" &&
+            (sub.subscription_tier ? sub.subscription_tier !== "free" : false));
+          return json({ ok: true, premium });
+        } catch (e) { return json({ ok: false, error: "upstream" }); }
+      }
+
       // ---------- admin auth ----------
       if (p === "/admin/login" && request.method === "POST") {
         const form = await request.formData();
