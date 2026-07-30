@@ -473,5 +473,54 @@ document.getElementById("howClose").addEventListener("click",()=>{ howOverlay.cl
 howOverlay.addEventListener("click",e=>{ if(e.target===howOverlay){ howOverlay.classList.remove("open"); document.body.style.overflow=""; } });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); closeAbout(); howOverlay.classList.remove("open"); document.body.style.overflow=""; } });
 </script>
+
+<!-- Cortadito Games stats: anonymous beacons to /a/e (same origin). No cookies,
+     no personal data — a random id in this browser plus game/session events. -->
+<script>
+(function(){
+  var uid;
+  try{
+    uid=localStorage.getItem('cg-uid');
+    if(!uid){
+      uid=Array.from(crypto.getRandomValues(new Uint8Array(16)),function(b){return b.toString(16).padStart(2,'0')}).join('');
+      localStorage.setItem('cg-uid',uid);
+    }
+  }catch(e){ uid='no-ls'; }
+  var parts=location.pathname.split('/');
+  var game=(parts[1]||'').replace(/\.html$/,'')||'hub';
+  var mode=(parts[2]||'').replace(/\.html$/,'')||null;
+  var t0=Date.now(), sent=false;
+  function send(evts){
+    try{ navigator.sendBeacon('/a/e', new Blob([JSON.stringify({uid:uid,evts:evts})],{type:'application/json'})); }catch(e){}
+  }
+  send([{ev:'view',game:game,mode:mode,ts:Date.now()}]);
+  function close(){
+    if(sent) return; sent=true;
+    var evts=[{ev:'session',game:game,mode:mode,dur:Math.min(14400,Math.round((Date.now()-t0)/1000)),ts:Date.now()}];
+    try{
+      var day=new Date().toISOString().slice(0,10);
+      if(localStorage.getItem('cg-snap')!==day){
+        localStorage.setItem('cg-snap',day);
+        var snap={}, total=0;
+        for(var i=0;i<localStorage.length;i++){
+          var k=localStorage.key(i);
+          if(k.indexOf('cg-')===0) continue;
+          var v=localStorage.getItem(k);
+          if(v==null || v.length>4000) continue;
+          total+=v.length; if(total>40000) break;
+          snap[k]=v;
+        }
+        evts.push({ev:'snapshot',game:game,ts:Date.now(),data:JSON.stringify(snap)});
+      }
+    }catch(e){}
+    send(evts);
+  }
+  addEventListener('pagehide',close);
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='hidden'){ close(); }
+    else if(sent){ sent=false; t0=Date.now(); }
+  });
+})();
+</script>
 </body>
 </html>

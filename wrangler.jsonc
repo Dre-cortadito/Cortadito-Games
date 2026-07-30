@@ -5,11 +5,19 @@
   "observability": {
     "enabled": true
   },
+  "main": "worker.js",
   "assets": {
     "directory": ".",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/a/*", "/admin", "/admin/*"]
   },
-  "compatibility_flags": [
-    "nodejs_compat"
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cortadito-stats",
+      "database_id": "687dd451-2157-429c-b41e-4f8fb2906afb"
+    }
   ]
 }
