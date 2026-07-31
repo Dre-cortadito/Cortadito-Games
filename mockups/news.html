@@ -119,7 +119,11 @@
   /* ============ 5 · EDICIÓN ============ */
   .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
-  .rsays.under{margin:22px 2px 0; max-width:none;}
+  .rsays.under{margin:24px 2px 0; max-width:none; gap:16px; align-items:center;}
+  .rsays.under img{width:112px; height:112px; border-width:4px;}
+  .rsays.under .bub{padding:18px 22px;}
+  .rsays.under .bub .q{font-size:19px;}
+  .rsays.under .bub .who{font-size:11.5px; margin-top:7px;}
   .latest-card{display:block; background:var(--blanco); border:1px solid var(--linea); border-radius:18px; overflow:hidden; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
   .latest-card:hover{transform:translateY(-3px);}
   .lc-img{aspect-ratio:16/10; overflow:hidden;}
@@ -377,7 +381,7 @@
           </div>
         </a>
         <div class="rsays under">
-          <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
+          <img src="./ristre-reporter.jpg" alt="Ristretto, reportero de Cortadito">
           <div class="bub">
             <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
             <div class="who">Ristretto · el que lee todo por ti</div>
