@@ -63,18 +63,19 @@
   .meta b{color:var(--tostado);}
 
   /* ============ 1 · HERO — banda naranja (estructura Morning Brew, identidad Cortadito) ============ */
-  .hero-band{background:var(--naranja); color:#fff; padding:58px 0 62px;}
-  .hb-grid{display:grid; grid-template-columns:1.08fr .92fr; gap:48px; align-items:center;}
+  .hero-band{background:var(--naranja); color:#fff; padding:38px 0 42px;}
+  .hb-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center;}
   @media(max-width:880px){.hb-grid{grid-template-columns:1fr;}}
-  .hero-band .kick{color:#FFE4D7;}
-  .hero-band h1{font-family:var(--marca); font-weight:900; font-size:clamp(36px,4.6vw,54px); line-height:1.05; margin:14px 0 16px;}
-  .hero-band .sub{font-size:18px; color:#FFE4D7; max-width:34em; margin-bottom:24px;}
-  .hero-band form{display:flex; gap:10px; max-width:480px; margin-bottom:12px;}
+  .hero-band h1{font-family:var(--marca); font-weight:900; font-size:clamp(36px,4.6vw,54px); line-height:1.05; margin:0 0 12px;}
+  .hero-band .sub{font-size:18px; color:#FFE4D7; max-width:34em; margin-bottom:22px;}
+  .hero-band form{display:flex; gap:10px; max-width:500px; margin-bottom:12px;}
+  .hero-band form .btn-ink{white-space:nowrap;}
   .hero-band form input{flex:1; border:none; border-radius:999px; padding:14px 20px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
   .hero-band form input:focus{outline:3px solid rgba(28,17,8,.55);}
   .hb-fine{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#FFD9C7;}
+  .hb-art{max-width:390px; justify-self:end;}
   .hb-art img{width:100%; border:6px solid #fff; border-radius:20px; box-shadow:0 34px 64px -38px rgba(28,17,8,.65); display:block;}
-  @media(max-width:880px){.hb-art{max-width:440px; margin:6px auto 0;}}
+  @media(max-width:880px){.hb-art{max-width:400px; justify-self:center; margin-top:6px;}}
 
   /* proof strip — datos rápidos bajo el hero */
   .proof{background:var(--crema); border-bottom:1px solid var(--linea);}
@@ -298,9 +299,8 @@
   <section class="hero-band">
     <div class="wrap hb-grid">
       <div>
-        <span class="kick">Noticias + juegos · en español</span>
-        <h1>Lo esencial del día. La pausa que necesitas.</h1>
-        <p class="sub">Noticias claras y retos diarios en español, listos en pocos minutos para que sigas con tu día.</p>
+        <h1>Lo esencial en un sorbo</h1>
+        <p class="sub">Las noticias más relevantes en 5 minutos.</p>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
