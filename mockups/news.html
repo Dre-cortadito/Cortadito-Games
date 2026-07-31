@@ -117,8 +117,9 @@
   .step p{color:var(--suave); font-size:14.5px;}
 
   /* ============ 5 · EDICIÓN ============ */
-  .ed-grid{display:grid; grid-template-columns:1.65fr 1fr; gap:26px; align-items:stretch;}
+  .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
+  .rsays.under{margin:22px 2px 0; max-width:none;}
   .main-story{background:var(--blanco); border:1px solid var(--linea); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
   .main-story:hover{transform:translateY(-3px);}
   .main-story .imgbox{aspect-ratio:16/8.6; overflow:hidden;}
@@ -128,14 +129,15 @@
   .main-story p{color:var(--suave); font-size:16px; max-width:56ch;}
   .main-story .meta{margin-top:12px;}
   .side{display:flex; flex-direction:column;}
-  .side-head{font-size:11px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--cafe); padding:2px 2px 10px; display:flex; align-items:center; gap:8px;}
-  .side-head::after{content:""; flex:1; height:1px; background:var(--linea);}
-  .side-item{padding:13px 2px; border-bottom:1px solid var(--linea); display:block;}
-  .side-item:last-of-type{border-bottom:none;}
-  .side-item .c{font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin-bottom:3px; display:block;}
-  .side-item h3{font-family:var(--serif); font-weight:600; font-size:17px; line-height:1.25;}
+  .latest-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding-bottom:12px; border-bottom:2px solid var(--tinta);}
+  .latest-head h3{font-family:var(--marca); font-weight:900; font-size:26px;}
+  .latest-head a{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--tostado); white-space:nowrap;}
+  .latest-head a:hover{text-decoration:underline; text-underline-offset:3px;}
+  .side-item{padding:16px 2px; border-bottom:1px solid var(--linea); display:block;}
+  .side-item .c{font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin-bottom:4px; display:block;}
+  .side-item h3{font-family:var(--serif); font-weight:600; font-size:18px; line-height:1.28;}
   .side-item:hover h3{text-decoration:underline; text-decoration-color:var(--naranja); text-underline-offset:3px;}
-  .side-item .d{font-size:12px; color:var(--suave); margin-top:3px;}
+  .side-item .d{font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--suave); margin-top:5px;}
   .ed-note{text-align:center; margin-top:22px; font-size:13.5px; color:var(--suave);}
   .ed-note b{color:var(--cafe);}
 
@@ -350,14 +352,8 @@
         <h2>Así llega tu Cortadito</h2>
         <p>Un correo real, con historias reales de esta semana.</p>
       </div>
-      <div class="rsays center">
-        <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
-        <div class="bub">
-          <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
-          <div class="who">Ristretto · el que lee todo por ti</div>
-        </div>
-      </div>
       <div class="ed-grid">
+        <div>
         <div class="mail">
           <div class="mail-top">
             <div class="from">
@@ -392,8 +388,19 @@
             <div class="mail-cta"><a href="./games.html">Jugar el reto de hoy →</a></div>
           </div>
         </div>
+        <div class="rsays under">
+          <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
+          <div class="bub">
+            <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
+            <div class="who">Ristretto · el que lee todo por ti</div>
+          </div>
+        </div>
+        </div>
         <aside class="side">
-          <div class="side-head">Y en el sitio, lo último</div>
+          <div class="latest-head">
+            <h3>Lo último</h3>
+            <a href="#">Todas las historias →</a>
+          </div>
           <a class="side-item" href="#">
             <span class="c" style="color:var(--verde)">Salud</span>
             <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
