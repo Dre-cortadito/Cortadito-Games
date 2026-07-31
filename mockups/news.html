@@ -120,6 +120,17 @@
   .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
   .rsays.under{margin:22px 2px 0; max-width:none;}
+  .latest-card{display:block; background:var(--blanco); border:1px solid var(--linea); border-radius:18px; overflow:hidden; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
+  .latest-card:hover{transform:translateY(-3px);}
+  .lc-img{aspect-ratio:16/10; overflow:hidden;}
+  .lc-img img{width:100%; height:100%; object-fit:cover;}
+  .lc-tx{padding:20px 24px 24px;}
+  .lc-meta{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;}
+  .lc-pill{font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--tostado); border:1.5px solid currentColor; border-radius:999px; padding:4px 12px;}
+  .lc-date{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
+  .lc-tx h3{font-family:var(--serif); font-weight:700; font-size:clamp(22px,2.6vw,27px); line-height:1.18; margin-bottom:7px;}
+  .latest-card:hover h3{text-decoration:underline; text-decoration-color:var(--naranja); text-underline-offset:3px;}
+  .lc-tx p{font-size:15px; color:var(--suave);}
   .main-story{background:var(--blanco); border:1px solid var(--linea); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
   .main-story:hover{transform:translateY(-3px);}
   .main-story .imgbox{aspect-ratio:16/8.6; overflow:hidden;}
@@ -354,40 +365,17 @@
       </div>
       <div class="ed-grid">
         <div>
-        <div class="mail">
-          <div class="mail-top">
-            <div class="from">
-              <img src="https://cortadito.games/apple-touch-icon.png" alt="">
-              <span><b>Cortadito</b> &lt;hola@cortadito.news&gt;</span>
-              <span class="hr">7:55 a.m.</span>
+        <a class="latest-card" href="#">
+          <div class="lc-img"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt="Portada de la edición de hoy"></div>
+          <div class="lc-tx">
+            <div class="lc-meta">
+              <span class="lc-pill">Edición de hoy</span>
+              <span class="lc-date">Jul 31, 2026</span>
             </div>
-            <div class="subj">☕ Tu Cortadito: FIFA, vegetales y el precio de los chips</div>
+            <h3>FIFA, vegetales y el precio de los chips</h3>
+            <p>FIFA propone una empresa de capital privado de $20,000 millones…</p>
           </div>
-          <div class="mail-body">
-            <div class="hola">¡Buenos días! Esto es lo esencial de hoy — te toma 5 minutos:</div>
-            <div class="mimg"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt=""></div>
-            <span class="chip" style="background:var(--azul)">Mundo</span><span class="rtime">⏱ 1 min</span>
-            <h3 style="margin-top:8px">FIFA propone empresa de capital privado de $20,000 millones</h3>
-            <div class="sorbo">
-              <div class="sorbo-k">En un sorbo</div>
-              <ul>
-                <li>Infantino propuso crear una empresa de capital privado, valuada en unos $20,000 millones, para operar los torneos.</li>
-                <li>El plan todavía necesita el visto bueno del consejo y de las federaciones.</li>
-                <li>Sería el mayor cambio al negocio del fútbol mundial en décadas.</li>
-              </ul>
-              <div class="importa"><b>💡 Por qué te importa:</b> si el fútbol pasa a manos privadas, cambian los precios, los horarios y hasta las sedes de los próximos mundiales.</div>
-            </div>
-            <div class="mail-row" style="margin-top:16px">
-              <span class="c2" style="color:var(--verde)">Salud</span>
-              <span><b>Miedo en el pasillo de vegetales</b> — los casos de infección siguen subiendo en EE. UU.</span>
-            </div>
-            <div class="mail-row">
-              <span class="c2" style="color:var(--ciruela)">Tecnología</span>
-              <span><b>Precios de chips se elevan</b> — TSMC planea subir tarifas desde 2027.</span>
-            </div>
-            <div class="mail-cta"><a href="./games.html">Jugar el reto de hoy →</a></div>
-          </div>
-        </div>
+        </a>
         <div class="rsays under">
           <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
           <div class="bub">
