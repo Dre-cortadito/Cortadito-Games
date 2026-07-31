@@ -192,32 +192,32 @@
   /* master brand */
   .word-sec{font-size:12px; letter-spacing:.22em; color:var(--tostado); font-weight:800; text-transform:uppercase; border-left:1.5px solid var(--linea); padding-left:14px; margin-left:2px;}
 
-  /* hero v2 — collage */
+  /* hero v3 — one story: illustration + newsletter proof */
   .hero{padding:44px 0 70px;}
-  .hero form{display:flex; gap:10px; max-width:480px; margin-bottom:10px;}
+  .hero form{display:flex; gap:10px; max-width:480px; margin-bottom:14px;}
   .hero form input{flex:1; border:2px solid var(--linea); border-radius:999px; padding:13px 19px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
   .hero form input:focus{outline:2px solid var(--naranja); border-color:transparent;}
-  .hero .alt-cta{font-size:14.5px; font-weight:800; color:var(--tostado); border-bottom:2px solid currentColor; padding-bottom:1px;}
-  .hero .noise{font-family:var(--marca); font-style:italic; font-weight:600; color:var(--tostado); font-size:16px; margin-top:14px;}
-  .collage{position:relative; min-height:470px;}
-  .arch{position:absolute; right:0; top:0; width:86%; height:88%; background:var(--naranja); border-radius:190px 190px 26px 26px; box-shadow:0 30px 60px -42px rgba(233,83,30,.8);}
-  .arch::after{content:""; position:absolute; inset:0; border-radius:inherit; background-image:var(--newsprint); background-size:520px auto; opacity:.5; filter:invert(1); mix-blend-mode:soft-light;}
-  .ph{position:absolute; right:7%; top:7%; width:64%; border:6px solid #fff; border-radius:18px; overflow:hidden; transform:rotate(2.5deg); box-shadow:0 26px 50px -30px rgba(28,17,8,.55);}
+  .collage{position:relative; min-height:480px;}
+  .circle{position:absolute; right:2%; top:2%; width:min(430px,94%); aspect-ratio:1; background:var(--naranja); border-radius:50%; box-shadow:0 30px 60px -42px rgba(233,83,30,.8);}
+  .circle::after{content:""; position:absolute; inset:0; border-radius:inherit; background-image:var(--newsprint); background-size:520px auto; opacity:.5; filter:invert(1); mix-blend-mode:soft-light;}
+  .ph{position:absolute; right:9%; top:11%; width:66%; border:6px solid #fff; border-radius:18px; overflow:hidden; box-shadow:0 26px 50px -30px rgba(28,17,8,.55);}
   .ph img{width:100%; display:block;}
-  .mini-mail{position:absolute; left:0; bottom:9%; width:56%; background:#fff; border:1px solid var(--linea); border-radius:14px; padding:16px 18px; transform:rotate(-2deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5);}
+  .mini-mail{position:absolute; left:4%; bottom:4%; width:58%; background:#fff; border:1px solid var(--linea); border-radius:14px; padding:16px 18px; transform:rotate(-1.5deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5);}
   .mini-mail .k3{font-size:9.5px; font-weight:800; letter-spacing:.2em; color:var(--tostado); text-transform:uppercase; display:flex; justify-content:space-between;}
   .mini-mail .k3 span{color:var(--suave); letter-spacing:.05em;}
   .mini-mail h4{font-family:var(--serif); font-weight:700; font-size:16.5px; line-height:1.25; margin:7px 0 5px;}
   .mini-mail .m2{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
   .mini-mail .m2 b{color:var(--tostado);}
-  .mini-game{position:absolute; right:1%; bottom:0; width:33%; background:#fff; border:1px solid var(--linea); border-radius:14px; overflow:hidden; transform:rotate(2deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5); text-align:center;}
-  .mini-game .gb{background:var(--verde); color:#fff; font-size:9px; font-weight:800; letter-spacing:.2em; padding:4px 0;}
-  .mini-game .in{padding:12px 10px 14px;}
-  .mini-game .rt{font-size:9.5px; font-weight:800; letter-spacing:.18em; color:var(--suave); text-transform:uppercase;}
-  .mini-game h4{font-family:var(--marca); font-weight:900; font-size:19px; margin:3px 0 2px;}
-  .mini-game .tm{font-size:11.5px; color:var(--suave); margin-bottom:9px;}
-  .mini-game .jg{display:inline-block; background:var(--tinta); color:#fff; border-radius:999px; padding:6px 16px; font-size:11.5px; font-weight:800;}
   @media(max-width:880px){ .collage{min-height:430px; margin-top:10px;} }
+
+  /* reto strip (games teased below the hero, not inside it) */
+  .reto-strip{background:var(--crema); border-bottom:1px solid var(--linea);}
+  .rs-in{display:flex; align-items:center; justify-content:center; gap:16px; padding:13px 22px; flex-wrap:wrap;}
+  .rs-q{font-family:var(--marca); font-style:italic; font-weight:600; font-size:16px; color:var(--tostado);}
+  .rs-t{font-size:14.5px; color:var(--suave);}
+  .rs-t b{color:var(--tinta);}
+  .rs-go{background:var(--tinta); color:#fff; border-radius:999px; padding:7px 18px; font-size:13px; font-weight:800; transition:.15s;}
+  .rs-go:hover{background:#000;}
 
   /* ticker */
   .ticker{background:var(--tinta); overflow:hidden; border-top:1px solid #000;}
@@ -296,7 +296,7 @@
 </head>
 <body>
 
-<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + formato sorbo (v4) &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
+<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + formato sorbo (v4.1 — hero simplificado) &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
 
 <header class="masthead">
   <div class="bar">
@@ -320,38 +320,21 @@
     <div class="wrap hero-grid">
       <div>
         <span class="kick">Noticias + juegos · en español</span>
-        <h1>Lo esencial del día. La pausa que tu mente necesita.</h1>
-        <p class="sub">Noticias claras y retos diarios en español, listos en pocos minutos para que sigas con tu día.</p>
+        <h1>Lo esencial del día. La pausa que necesitas.</h1>
+        <p class="sub">Noticias claras en español, listas en pocos minutos para que sigas con tu día.</p>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
         </form>
-        <a class="alt-cta" href="#edicion">o ver el Cortadito de hoy →</a>
         <div class="trust">Lunes a viernes · antes de las 8 a.m. · <b>5 min de lectura</b> · gratis</div>
-        <div class="rsays">
-          <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
-          <div class="bub">
-            <div class="q">«Hola, soy Ristretto, tu barista de noticias. Yo leo todo el ruido para que tú no tengas que hacerlo.»</div>
-            <div class="who">Tu anfitrión en Cortadito</div>
-          </div>
-        </div>
       </div>
       <div class="collage">
-        <div class="arch"></div>
+        <div class="circle"></div>
         <div class="ph"><img src="./ristre-hero.jpg" alt="Ristretto leyendo su Cortadito.news en la mañana"></div>
         <div class="mini-mail">
           <div class="k3">Cortadito de hoy <span>Jueves, 31 de julio</span></div>
           <h4>FIFA propone empresa de capital privado de $20,000 millones</h4>
           <div class="m2">Lo que pasó y por qué importa · <b>3 min</b></div>
-        </div>
-        <div class="mini-game">
-          <div class="gb">GRATIS</div>
-          <div class="in">
-            <div class="rt">Reto de hoy</div>
-            <h4>Racimo</h4>
-            <div class="tm">Palabras · 5–8 min</div>
-            <span class="jg">Jugar</span>
-          </div>
         </div>
       </div>
     </div>
@@ -372,6 +355,15 @@
       <span><b style="background:var(--ciruela)">TECNOLOGÍA</b>La IA encontró cómo escapar</span>
       <span><b style="background:var(--oro)">DINERO</b>Apple vuelve a la cima</span>
       <span><b style="background:var(--verde)">SALUD</b>Café filtrado, corazón protegido</span>
+    </div>
+  </div>
+
+  <!-- reto strip -->
+  <div class="reto-strip">
+    <div class="rs-in">
+      <span class="rs-q">¿Ya estás al día?</span>
+      <span class="rs-t">Juega el reto de hoy: <b>Racimo</b> · palabras · 5–8 min</span>
+      <a class="rs-go" href="./games.html">Jugar →</a>
     </div>
   </div>
 
