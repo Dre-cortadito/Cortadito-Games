@@ -44,10 +44,17 @@
   nav .lnk:hover{color:var(--tinta);}
   .cta{background:var(--tinta); color:#fff; border-radius:999px; padding:12px 24px; font-size:14.5px; font-weight:800; transition:.15s;}
   .cta:hover{background:#000;}
-  @media(max-width:760px){ nav .lnk{display:none;} }
+  @media(max-width:900px){ nav .lnk{display:none;} }
+  @media(max-width:440px){
+    .bar{padding:0 16px; height:70px; gap:10px;}
+    .brand img{width:34px; height:34px;}
+    .word{font-size:22px;}
+    .word-sec{display:none;}
+    .cta{padding:10px 16px; font-size:13px;}
+  }
 
   /* ============ shared bits ============ */
-  .kick{font-size:11px; font-weight:800; letter-spacing:.24em; text-transform:uppercase; color:var(--tostado);}
+  .kick{font-size:14px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--tostado);}
   .btn-ink{display:inline-flex; align-items:center; gap:8px; background:var(--tinta); color:#fff; border:none; border-radius:999px; padding:14px 28px; font-size:15.5px; font-weight:800; font-family:inherit; cursor:pointer; transition:.15s;}
   .btn-ink:hover{background:#000;}
   .btn-out{display:inline-flex; align-items:center; gap:8px; border:2px solid var(--tinta); color:var(--tinta); border-radius:999px; padding:12px 26px; font-size:15.5px; font-weight:800; transition:.15s;}
@@ -65,12 +72,20 @@
   /* ============ 1 · HERO — banda naranja (estructura Morning Brew, identidad Cortadito) ============ */
   .hero-band{background:var(--naranja); color:#fff; padding:38px 0 42px;}
   .hb-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center;}
+  .hb-grid > *{min-width:0;}
   @media(max-width:880px){.hb-grid{grid-template-columns:1fr;}}
-  .hero-band h1{font-family:var(--marca); font-weight:900; font-size:clamp(36px,4.6vw,54px); line-height:1.05; margin:0 0 12px;}
-  .hero-band .sub{font-size:18px; color:#FFE4D7; max-width:34em; margin-bottom:22px;}
+  @media(max-width:620px){
+    .hero-band h1{white-space:normal;}
+    .hero-band form{flex-direction:column;}
+    .hero-band form .btn-ink{justify-content:center;}
+  }
+  .hero-band .over{font-size:clamp(16px,2vw,19px); color:#FFE4D7; margin-bottom:10px;}
+  .hero-band h1{font-family:var(--marca); font-weight:900; font-size:clamp(27px,4.1vw,50px); line-height:1.05; margin:0 0 16px; white-space:nowrap;}
+  .hero-band .sub{font-size:17px; color:#FFE4D7; max-width:34em; margin-bottom:16px;}
+  .hero-band .sub b{color:#fff; font-weight:800;}
   .hero-band form{display:flex; gap:10px; max-width:500px; margin-bottom:12px;}
   .hero-band form .btn-ink{white-space:nowrap;}
-  .hero-band form input{flex:1; border:none; border-radius:999px; padding:14px 20px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
+  .hero-band form input{flex:1; min-width:0; border:none; border-radius:999px; padding:14px 20px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
   .hero-band form input:focus{outline:3px solid rgba(28,17,8,.55);}
   .hb-fine{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#FFD9C7;}
   .hb-art{max-width:390px; justify-self:end;}
@@ -207,7 +222,7 @@
   .foot .word{font-size:19px;}
   .foot p{font-size:13.5px; color:var(--suave);}
   .foot .tagline{font-family:var(--marca); font-style:italic; color:var(--tostado); font-weight:500; font-size:15px;}
-  .foot .cols{display:flex; gap:48px;}
+  .foot .cols{display:flex; gap:48px; flex-wrap:wrap;}
   .foot .col h4{font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--cafe); margin-bottom:10px;}
   .foot .col a{display:block; font-size:14px; font-weight:600; color:var(--suave); padding:3px 0;}
   .foot .col a:hover{color:var(--tinta);}
@@ -317,8 +332,9 @@
   <section class="hero-band">
     <div class="wrap hb-grid">
       <div>
-        <h1>Lo esencial en un sorbo</h1>
-        <p class="sub">Las noticias más relevantes en 5 minutos.</p>
+        <p class="over">Las noticias más relevantes en 5 minutos.</p>
+        <h1>¡Lo esencial en un sorbo!</h1>
+        <p class="sub"><b>Suscríbete</b> para recibirlo cada mañana en tu correo.</p>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
