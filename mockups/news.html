@@ -269,11 +269,34 @@
   .gcard .tm{font-size:13px; color:var(--suave); margin-bottom:12px;}
   .gcard .jg{display:inline-block; border:1.5px solid var(--tinta); color:var(--tinta); border-radius:999px; padding:8px 22px; font-size:13px; font-weight:800; transition:.15s;}
   .gcard:hover .jg{background:var(--tinta); color:#fff;}
+
+  /* ============ RISTRETTO HABLA (SB7: el guía acompaña) ============ */
+  .rsays{display:flex; align-items:flex-start; gap:12px; margin-top:22px; max-width:480px;}
+  .rsays img{width:50px; height:50px; border-radius:50%; object-fit:cover; flex:none; border:3px solid #fff; box-shadow:0 10px 24px -14px rgba(28,17,8,.5);}
+  .rsays .bub{background:var(--blanco); border:1px solid var(--linea); border-radius:16px 16px 16px 4px; padding:12px 16px; box-shadow:0 14px 30px -26px rgba(28,17,8,.45);}
+  .rsays .bub .q{font-family:var(--marca); font-style:italic; font-weight:600; font-size:16px; line-height:1.35;}
+  .rsays .bub .who{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--tostado); margin-top:5px;}
+  .rsays.center{margin:-14px auto 34px; justify-content:center; max-width:560px;}
+  .rsays.center .bub{background:var(--crema);}
+
+  /* ============ FORMATO "SORBO" ============ */
+  .rtime{margin-left:10px; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
+  .sorbo{margin-top:12px;}
+  .sorbo-k{font-size:10px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--tostado); margin-bottom:6px;}
+  .sorbo ul{list-style:none;}
+  .sorbo li{font-size:14px; padding:3px 0 3px 18px; position:relative;}
+  .sorbo li::before{content:"—"; position:absolute; left:0; color:var(--naranja); font-weight:700;}
+  .importa{margin-top:12px; background:var(--crema); border-left:3px solid var(--naranja); border-radius:0 10px 10px 0; padding:10px 14px; font-size:13.5px; color:var(--cafe);}
+  .importa b{color:var(--tostado);}
+
+  .reto .rq{font-family:var(--marca); font-style:italic; font-weight:600; font-size:17px; color:#FFF3EC; max-width:52ch;}
+  .reto .rwho{font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#FFD9C7; margin-top:6px;}
+  .fin .fwho{font-size:12px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--tostado); margin-bottom:14px;}
 </style>
 </head>
 <body>
 
-<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + energía editorial &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
+<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + formato sorbo (v4) &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
 
 <header class="masthead">
   <div class="bar">
@@ -304,8 +327,14 @@
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
         </form>
         <a class="alt-cta" href="#edicion">o ver el Cortadito de hoy →</a>
-        <div class="noise">Sin ruido. Sin scroll infinito.</div>
         <div class="trust">Lunes a viernes · antes de las 8 a.m. · <b>5 min de lectura</b> · gratis</div>
+        <div class="rsays">
+          <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
+          <div class="bub">
+            <div class="q">«Hola, soy Ristretto, tu barista de noticias. Yo leo todo el ruido para que tú no tengas que hacerlo.»</div>
+            <div class="who">Tu anfitrión en Cortadito</div>
+          </div>
+        </div>
       </div>
       <div class="collage">
         <div class="arch"></div>
@@ -382,7 +411,7 @@
       </div>
       <div class="quote">
         <div class="q">«Yo filtro el ruido. Tú quédate con lo esencial.»</div>
-        <div class="who">— Ristretto · tu anfitrión en Cortadito</div>
+        <div class="who">— Ristretto</div>
       </div>
       <div class="sol-duo">
         <div class="sol">
@@ -405,9 +434,16 @@
   <section class="alt" id="edicion">
     <div class="wrap">
       <div class="sec-head">
-        <span class="kick">La prueba</span>
+        <span class="kick">El sorbo del día</span>
         <h2>Así llega tu Cortadito</h2>
         <p>Un correo real, con historias reales de esta semana.</p>
+      </div>
+      <div class="rsays center">
+        <img src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
+        <div class="bub">
+          <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
+          <div class="who">Ristretto · el que lee todo por ti</div>
+        </div>
       </div>
       <div class="ed-grid">
         <div class="mail">
@@ -422,10 +458,18 @@
           <div class="mail-body">
             <div class="hola">¡Buenos días! Esto es lo esencial de hoy — te toma 5 minutos:</div>
             <div class="mimg"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt=""></div>
-            <span class="chip" style="background:var(--azul)">Mundo</span>
+            <span class="chip" style="background:var(--azul)">Mundo</span><span class="rtime">⏱ 1 min</span>
             <h3 style="margin-top:8px">FIFA propone empresa de capital privado de $20,000 millones</h3>
-            <p class="sum">Infantino propuso crear una empresa para operar torneos. Lo que pasó y por qué importa, en un sorbo.</p>
-            <div class="mail-row" style="margin-top:14px">
+            <div class="sorbo">
+              <div class="sorbo-k">En un sorbo</div>
+              <ul>
+                <li>Infantino propuso crear una empresa de capital privado, valuada en unos $20,000 millones, para operar los torneos.</li>
+                <li>El plan todavía necesita el visto bueno del consejo y de las federaciones.</li>
+                <li>Sería el mayor cambio al negocio del fútbol mundial en décadas.</li>
+              </ul>
+              <div class="importa"><b>💡 Por qué te importa:</b> si el fútbol pasa a manos privadas, cambian los precios, los horarios y hasta las sedes de los próximos mundiales.</div>
+            </div>
+            <div class="mail-row" style="margin-top:16px">
               <span class="c2" style="color:var(--verde)">Salud</span>
               <span><b>Miedo en el pasillo de vegetales</b> — los casos de infección siguen subiendo en EE. UU.</span>
             </div>
@@ -537,7 +581,8 @@
         <div class="t">
           <span class="k">Listo: ya estás al día</span>
           <h2>Ahora date un respiro.</h2>
-          <p>Tu descanso no tiene que convertirse en otra hora perdida en el teléfono. Un reto breve, en español, y sigues con tu día.</p>
+          <p class="rq">«¿Ya estás al día? Ahora regálate dos minutos para despertar la mente — sin scroll y sin culpa.»</p>
+          <div class="rwho">— Ristretto</div>
         </div>
         <a class="go" href="./games.html">Jugar el reto de hoy →</a>
       </div>
@@ -577,7 +622,8 @@
   <section class="fin">
     <div class="wrap">
       <img class="face" src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
-      <h2>Mañana habrá más ruido. Tu Cortadito estará listo.</h2>
+      <h2>«Mañana habrá más ruido. Tu Cortadito estará listo.»</h2>
+      <div class="fwho">— Ristretto</div>
       <p>En pocos minutos sabrás qué está pasando, pondrás tu mente en marcha y podrás seguir con tu día.</p>
       <a class="btn-ink" href="#suscribete">Quiero mi Cortadito</a>
     </div>
