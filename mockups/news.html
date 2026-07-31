@@ -198,6 +198,7 @@
   .hero form input{flex:1; border:2px solid var(--linea); border-radius:999px; padding:13px 19px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
   .hero form input:focus{outline:2px solid var(--naranja); border-color:transparent;}
   .hero .alt-cta{font-size:14.5px; font-weight:800; color:var(--tostado); border-bottom:2px solid currentColor; padding-bottom:1px;}
+  .hero .noise{font-family:var(--marca); font-style:italic; font-weight:600; color:var(--tostado); font-size:16px; margin-top:14px;}
   .collage{position:relative; min-height:470px;}
   .arch{position:absolute; right:0; top:0; width:86%; height:88%; background:var(--naranja); border-radius:190px 190px 26px 26px; box-shadow:0 30px 60px -42px rgba(233,83,30,.8);}
   .arch::after{content:""; position:absolute; inset:0; border-radius:inherit; background-image:var(--newsprint); background-size:520px auto; opacity:.5; filter:invert(1); mix-blend-mode:soft-light;}
@@ -297,17 +298,18 @@
       <div>
         <span class="kick">Noticias + juegos · en español</span>
         <h1>Lo esencial del día. La pausa que tu mente necesita.</h1>
-        <p class="sub">Las noticias que importan, explicadas con claridad, y retos diarios para despejar la mente — sin que el ruido te quite el día.</p>
+        <p class="sub">Noticias claras y retos diarios en español, listos en pocos minutos para que sigas con tu día.</p>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
         </form>
         <a class="alt-cta" href="#edicion">o ver el Cortadito de hoy →</a>
+        <div class="noise">Sin ruido. Sin scroll infinito.</div>
         <div class="trust">Lunes a viernes · antes de las 8 a.m. · <b>5 min de lectura</b> · gratis</div>
       </div>
       <div class="collage">
         <div class="arch"></div>
-        <div class="ph"><img src="./ristre-close.jpg" alt="Ristretto, tu anfitrión en Cortadito"></div>
+        <div class="ph"><img src="./ristre-hero.jpg" alt="Ristretto leyendo su Cortadito.news en la mañana"></div>
         <div class="mini-mail">
           <div class="k3">Cortadito de hoy <span>Jueves, 31 de julio</span></div>
           <h4>FIFA propone empresa de capital privado de $20,000 millones</h4>
@@ -531,7 +533,7 @@
   <section class="tight">
     <div class="wrap">
       <div class="reto">
-        <img class="art" src="https://cortadito.games/apple-touch-icon.png" alt="">
+        <img class="art" src="./ristre-close.jpg" alt="Ristretto en su descanso" style="object-fit:cover; object-position:50% 14%; border:3px solid rgba(255,255,255,.55);">
         <div class="t">
           <span class="k">Listo: ya estás al día</span>
           <h2>Ahora date un respiro.</h2>
@@ -574,7 +576,7 @@
   <!-- 9 · CIERRE -->
   <section class="fin">
     <div class="wrap">
-      <img class="face" src="./ristre-close.jpg" alt="Ristretto">
+      <img class="face" src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
       <h2>Mañana habrá más ruido. Tu Cortadito estará listo.</h2>
       <p>En pocos minutos sabrás qué está pasando, pondrás tu mente en marcha y podrás seguir con tu día.</p>
       <a class="btn-ink" href="#suscribete">Quiero mi Cortadito</a>
