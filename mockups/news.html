@@ -136,6 +136,11 @@
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
   /* ============ TIRA DE JUEGOS (estilo NYT Games) ============ */
   .games-strip{text-align:center;}
+  .gs-all{display:inline-flex; align-items:center; gap:10px; margin-top:30px;
+    background:var(--tinta); color:#fff; border-radius:999px; padding:14px 30px;
+    font-size:15.5px; font-weight:800; transition:.15s;}
+  .gs-all:hover{background:#000;}
+  .gs-all svg{width:15px; height:15px;}
   .games-strip h2{font-family:var(--marca); font-weight:900; font-size:clamp(26px,3.6vw,38px); margin-bottom:26px;}
   .gs-row{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
   @media(max-width:820px){.gs-row{grid-template-columns:repeat(2,1fr);}}
@@ -149,10 +154,10 @@
   .gs-card .panel{display:flex; align-items:center; justify-content:center; padding:34px 20px 32px;}
   .gs-card .panel .icon{width:126px; height:126px;}
   .gs-card .panel .icon svg, .gs-card .panel .icon img{width:100%; height:100%; display:block;}
-  .gs-card .cbody{padding:18px 20px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; flex:1;}
+  .gs-card .cbody{padding:18px 20px 22px; text-align:center; display:flex; flex-direction:column; align-items:center; flex:1;}
   .gs-card .cat{font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:800; color:#9c9186; margin-bottom:6px;}
   .gs-card .title{font-family:var(--marca); font-weight:900; font-size:29px; color:var(--tinta); line-height:1; margin-bottom:7px;}
-  .gs-card .desc{color:#7c7269; font-size:15px; line-height:1.38; margin:0 0 16px; max-width:24ch; flex:1;}
+  .gs-card .desc{color:#7c7269; font-size:15px; line-height:1.38; margin:0; max-width:24ch;}
   .gs-card .go{
     display:inline-flex; align-items:center; gap:9px; font-weight:800; font-size:15px;
     background:#fff; color:#141210; border:1.5px solid #141210; padding:11px 26px; border-radius:999px; transition:.18s;
@@ -164,7 +169,7 @@
     .gs-card .panel .icon{width:96px; height:96px}
     .gs-card .cbody{padding:14px 16px 16px}
     .gs-card .title{font-size:25px; margin-bottom:5px}
-    .gs-card .desc{font-size:14px; margin:0 0 13px}
+    .gs-card .desc{font-size:14px; margin:0}
     .gs-card .go{padding:9px 20px; font-size:14px}
   }
 
@@ -576,7 +581,6 @@
             <div class="cat">Silueta</div>
             <div class="title">Racimo</div>
             <div class="desc">Un racimo, muchas palabras.</div>
-            <span class="go">Jugar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
           </div>
         </a>
         <a class="gs-card" href="./games.html">
@@ -585,7 +589,6 @@
             <div class="cat">Sudoku</div>
             <div class="title">Mini</div>
             <div class="desc">Un sorbo. Tres minutos.</div>
-            <span class="go">Jugar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
           </div>
         </a>
         <a class="gs-card" href="./games.html">
@@ -594,7 +597,6 @@
             <div class="cat">Palabreo</div>
             <div class="title">Clásico</div>
             <div class="desc">¿Cuál es la palabra de hoy?</div>
-            <span class="go">Jugar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
           </div>
         </a>
         <a class="gs-card" href="./games.html">
@@ -603,11 +605,11 @@
             <div class="cat">Flechas</div>
             <div class="title">Clásico</div>
             <div class="desc">Desenreda el tablero.</div>
-            <span class="go">Jugar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
           </div>
         </a>
       </div>
-    </div>
+      <a class="gs-all" href="./games.html">Ver todos nuestros juegos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+        </div>
   </section>
 
 </main>
