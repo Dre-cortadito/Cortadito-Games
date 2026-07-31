@@ -188,17 +188,97 @@
   .foot .col a{display:block; font-size:14px; font-weight:600; color:var(--suave); padding:3px 0;}
   .foot .col a:hover{color:var(--tinta);}
   .legal{border-top:1px solid var(--linea); padding:14px 22px 18px; text-align:center; font-size:12px; color:var(--suave);}
+
+  /* master brand */
+  .word-sec{font-size:12px; letter-spacing:.22em; color:var(--tostado); font-weight:800; text-transform:uppercase; border-left:1.5px solid var(--linea); padding-left:14px; margin-left:2px;}
+
+  /* hero v2 — collage */
+  .hero{padding:44px 0 70px;}
+  .hero form{display:flex; gap:10px; max-width:480px; margin-bottom:10px;}
+  .hero form input{flex:1; border:2px solid var(--linea); border-radius:999px; padding:13px 19px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
+  .hero form input:focus{outline:2px solid var(--naranja); border-color:transparent;}
+  .hero .alt-cta{font-size:14.5px; font-weight:800; color:var(--tostado); border-bottom:2px solid currentColor; padding-bottom:1px;}
+  .collage{position:relative; min-height:470px;}
+  .arch{position:absolute; right:0; top:0; width:86%; height:88%; background:var(--naranja); border-radius:190px 190px 26px 26px; box-shadow:0 30px 60px -42px rgba(233,83,30,.8);}
+  .arch::after{content:""; position:absolute; inset:0; border-radius:inherit; background-image:var(--newsprint); background-size:520px auto; opacity:.5; filter:invert(1); mix-blend-mode:soft-light;}
+  .ph{position:absolute; right:7%; top:7%; width:64%; border:6px solid #fff; border-radius:18px; overflow:hidden; transform:rotate(2.5deg); box-shadow:0 26px 50px -30px rgba(28,17,8,.55);}
+  .ph img{width:100%; display:block;}
+  .mini-mail{position:absolute; left:0; bottom:9%; width:56%; background:#fff; border:1px solid var(--linea); border-radius:14px; padding:16px 18px; transform:rotate(-2deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5);}
+  .mini-mail .k3{font-size:9.5px; font-weight:800; letter-spacing:.2em; color:var(--tostado); text-transform:uppercase; display:flex; justify-content:space-between;}
+  .mini-mail .k3 span{color:var(--suave); letter-spacing:.05em;}
+  .mini-mail h4{font-family:var(--serif); font-weight:700; font-size:16.5px; line-height:1.25; margin:7px 0 5px;}
+  .mini-mail .m2{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
+  .mini-mail .m2 b{color:var(--tostado);}
+  .mini-game{position:absolute; right:1%; bottom:0; width:33%; background:#fff; border:1px solid var(--linea); border-radius:14px; overflow:hidden; transform:rotate(2deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5); text-align:center;}
+  .mini-game .gb{background:var(--verde); color:#fff; font-size:9px; font-weight:800; letter-spacing:.2em; padding:4px 0;}
+  .mini-game .in{padding:12px 10px 14px;}
+  .mini-game .rt{font-size:9.5px; font-weight:800; letter-spacing:.18em; color:var(--suave); text-transform:uppercase;}
+  .mini-game h4{font-family:var(--marca); font-weight:900; font-size:19px; margin:3px 0 2px;}
+  .mini-game .tm{font-size:11.5px; color:var(--suave); margin-bottom:9px;}
+  .mini-game .jg{display:inline-block; background:var(--tinta); color:#fff; border-radius:999px; padding:6px 16px; font-size:11.5px; font-weight:800;}
+  @media(max-width:880px){ .collage{min-height:430px; margin-top:10px;} }
+
+  /* ticker */
+  .ticker{background:var(--tinta); overflow:hidden; border-top:1px solid #000;}
+  .ticker-in{display:flex; gap:52px; padding:12px 0; white-space:nowrap; width:max-content; animation:tick 30s linear infinite;}
+  .ticker-in span{font-size:13.5px; font-weight:600; color:#EFE6D8;}
+  .ticker-in b{font-size:10px; font-weight:800; letter-spacing:.16em; padding:3px 9px; border-radius:5px; color:#fff; margin-right:9px; vertical-align:1px;}
+  .ticker .lead{color:#FFB899; font-weight:800; letter-spacing:.14em; font-size:11px;}
+  @keyframes tick{to{transform:translateX(-50%);}}
+
+  /* problem card art */
+  .p-art{height:72px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;}
+  .p-art svg{height:100%;}
+
+  /* email preview */
+  .mail{background:#fff; border:1px solid var(--linea); border-radius:18px; overflow:hidden; box-shadow:0 24px 50px -42px rgba(28,17,8,.4);}
+  .mail-top{background:var(--crema); border-bottom:1px solid var(--linea); padding:14px 22px;}
+  .mail-top .from{display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--suave);}
+  .mail-top .from img{width:26px; height:26px; border-radius:6px;}
+  .mail-top .from b{color:var(--tinta);}
+  .mail-top .from .hr{margin-left:auto; font-size:12px;}
+  .mail-top .subj{font-size:15.5px; font-weight:700; margin-top:6px;}
+  .mail-body{padding:22px 24px 24px;}
+  .mail-body .hola{font-family:var(--serif); font-style:italic; font-size:15.5px; color:var(--suave); margin-bottom:14px;}
+  .mail-body .mimg{border-radius:12px; overflow:hidden; margin-bottom:12px; aspect-ratio:16/7.5;}
+  .mail-body .mimg img{width:100%; height:100%; object-fit:cover;}
+  .mail-body h3{font-family:var(--serif); font-weight:700; font-size:21px; line-height:1.2; margin-bottom:5px;}
+  .mail-body .sum{font-size:14.5px; color:var(--suave);}
+  .mail-row{display:flex; gap:10px; padding:11px 0; border-top:1px solid var(--crema); font-size:14px;}
+  .mail-row b{font-family:var(--serif); font-weight:600;}
+  .mail-row .c2{font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; padding-top:3px;}
+  .mail-cta{margin-top:14px; text-align:center;}
+  .mail-cta a{display:inline-block; background:var(--naranja); color:#fff; border-radius:999px; padding:10px 22px; font-size:13.5px; font-weight:800;}
+
+  /* facts */
+  .facts{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media(max-width:760px){.facts{grid-template-columns:repeat(2,1fr);}}
+  .fact{background:var(--blanco); border:1px solid var(--linea); border-radius:16px; padding:24px 18px; text-align:center;}
+  .fact .big{font-family:var(--marca); font-weight:900; font-size:24px; color:var(--tostado); line-height:1.1;}
+  .fact p{font-size:13px; color:var(--suave); margin-top:5px;}
+
+  /* game mini cards */
+  .gcards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:20px;}
+  @media(max-width:760px){.gcards{grid-template-columns:1fr;}}
+  .gcard{background:#fff; border:1px solid var(--linea); border-radius:16px; overflow:hidden; text-align:center;}
+  .gcard .gb{color:#fff; font-size:10px; font-weight:800; letter-spacing:.2em; padding:5px 0;}
+  .gcard .in{padding:16px 14px 18px;}
+  .gcard .rt{font-size:10px; font-weight:800; letter-spacing:.18em; color:var(--suave); text-transform:uppercase;}
+  .gcard h4{font-family:var(--marca); font-weight:900; font-size:23px; margin:4px 0 2px;}
+  .gcard .tm{font-size:13px; color:var(--suave); margin-bottom:12px;}
+  .gcard .jg{display:inline-block; border:1.5px solid var(--tinta); color:var(--tinta); border-radius:999px; padding:8px 22px; font-size:13px; font-weight:800; transition:.15s;}
+  .gcard:hover .jg{background:var(--tinta); color:#fff;}
 </style>
 </head>
 <body>
 
-<div class="mock">PROPUESTA DE DISEÑO — cortadito.news con narrativa SB7 y Ristretto &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
+<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + energía editorial &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
 
 <header class="masthead">
   <div class="bar">
     <a class="brand" href="#">
       <img src="https://cortadito.games/apple-touch-icon.png" alt="">
-      <span class="word">Cortadito<span>.news</span></span>
+      <span class="word">Cortadito</span><span class="word-sec">Noticias</span>
     </a>
     <nav>
       <a class="lnk on" href="#">Noticias</a>
@@ -211,25 +291,58 @@
 
 <main>
 
-  <!-- 1 · HERO — Ristretto recibe al visitante -->
+  <!-- 1 · HERO — collage editorial -->
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
         <span class="kick">Noticias + juegos · en español</span>
         <h1>Lo esencial del día. La pausa que tu mente necesita.</h1>
         <p class="sub">Las noticias que importan, explicadas con claridad, y retos diarios para despejar la mente — sin que el ruido te quite el día.</p>
-        <div class="ctas">
-          <a class="btn-ink" href="#suscribete">Recibir mi Cortadito gratis</a>
-          <a class="btn-out" href="#edicion">Ver la edición de hoy</a>
-        </div>
+        <form onsubmit="return false">
+          <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
+          <button class="btn-ink">Recibir mi Cortadito gratis</button>
+        </form>
+        <a class="alt-cta" href="#edicion">o ver el Cortadito de hoy →</a>
         <div class="trust">Lunes a viernes · antes de las 8 a.m. · <b>5 min de lectura</b> · gratis</div>
       </div>
-      <div class="hero-art">
-        <img src="./ristre-scene.jpg" alt="Ristretto, el anfitrión de Cortadito, tomando un descanso">
-        <span class="tag">Él es <em>Ristretto</em> — tu anfitrión en Cortadito</span>
+      <div class="collage">
+        <div class="arch"></div>
+        <div class="ph"><img src="./ristre-close.jpg" alt="Ristretto, tu anfitrión en Cortadito"></div>
+        <div class="mini-mail">
+          <div class="k3">Cortadito de hoy <span>Jueves, 31 de julio</span></div>
+          <h4>FIFA propone empresa de capital privado de $20,000 millones</h4>
+          <div class="m2">Lo que pasó y por qué importa · <b>3 min</b></div>
+        </div>
+        <div class="mini-game">
+          <div class="gb">GRATIS</div>
+          <div class="in">
+            <div class="rt">Reto de hoy</div>
+            <h4>Racimo</h4>
+            <div class="tm">Palabras · 5–8 min</div>
+            <span class="jg">Jugar</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
+
+  <!-- ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-in">
+      <span class="lead">HOY EN CORTADITO</span>
+      <span><b style="background:var(--azul)">MUNDO</b>FIFA propone empresa de capital privado</span>
+      <span><b style="background:var(--verde)">SALUD</b>Miedo en el pasillo de vegetales</span>
+      <span><b style="background:var(--ciruela)">TECNOLOGÍA</b>La IA encontró cómo escapar</span>
+      <span><b style="background:var(--oro)">DINERO</b>Apple vuelve a la cima</span>
+      <span><b style="background:var(--verde)">SALUD</b>Café filtrado, corazón protegido</span>
+      <span class="lead">HOY EN CORTADITO</span>
+      <span><b style="background:var(--azul)">MUNDO</b>FIFA propone empresa de capital privado</span>
+      <span><b style="background:var(--verde)">SALUD</b>Miedo en el pasillo de vegetales</span>
+      <span><b style="background:var(--ciruela)">TECNOLOGÍA</b>La IA encontró cómo escapar</span>
+      <span><b style="background:var(--oro)">DINERO</b>Apple vuelve a la cima</span>
+      <span><b style="background:var(--verde)">SALUD</b>Café filtrado, corazón protegido</span>
+    </div>
+  </div>
 
   <!-- 2 · EL PROBLEMA -->
   <section class="alt tight">
@@ -240,17 +353,17 @@
       </div>
       <div class="probs">
         <div class="prob">
-          <div class="ico">¶</div>
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><g stroke="#E9531E" stroke-width="5" stroke-linecap="round"><line x1="14" y1="16" x2="98" y2="12" transform="rotate(-4 60 14)"/><line x1="10" y1="30" x2="106" y2="30" transform="rotate(3 60 30)"/><line x1="18" y1="44" x2="94" y2="44" transform="rotate(-2 60 44)"/><line x1="12" y1="58" x2="102" y2="60" transform="rotate(5 60 59)"/></g><circle cx="104" cy="14" r="9" fill="#CF2A2A"/><text x="104" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">9+</text></svg></div>
           <h3>Demasiadas noticias</h3>
           <p>Cientos de titulares al día — y muy pocos que de verdad te sirven.</p>
         </div>
         <div class="prob">
-          <div class="ico">⌚</div>
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><circle cx="34" cy="36" r="24" stroke="#1C1108" stroke-width="5"/><line x1="34" y1="36" x2="34" y2="20" stroke="#E9531E" stroke-width="5" stroke-linecap="round"/><line x1="34" y1="36" x2="46" y2="42" stroke="#1C1108" stroke-width="5" stroke-linecap="round"/><g stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"><line x1="70" y1="20" x2="112" y2="20"/><line x1="70" y1="32" x2="106" y2="32"/><line x1="70" y1="44" x2="112" y2="44"/><line x1="70" y1="56" x2="88" y2="56"/></g></svg></div>
           <h3>Muy poco tiempo</h3>
           <p>Nadie tiene media mañana para separar lo importante del ruido.</p>
         </div>
         <div class="prob">
-          <div class="ico">∞</div>
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><rect x="44" y="4" width="32" height="64" rx="7" stroke="#1C1108" stroke-width="5"/><g stroke="#E9531E" stroke-width="4" stroke-linecap="round"><line x1="52" y1="18" x2="68" y2="18"/><line x1="52" y1="28" x2="68" y2="28"/><line x1="52" y1="38" x2="68" y2="38"/><line x1="52" y1="48" x2="68" y2="48" opacity=".6"/><line x1="52" y1="58" x2="68" y2="58" opacity=".3"/></g><path d="M88 22c8 6 8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/><path d="M30 22c-8 6-8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/></svg></div>
           <h3>Pausas que no descansan</h3>
           <p>El descanso se convierte en una hora perdida de scroll.</p>
         </div>
@@ -258,8 +371,8 @@
     </div>
   </section>
 
-  <!-- 3 · LA SOLUCIÓN — Ristretto como guía -->
-  <section>
+  <!-- 3 · LA SOLUCIÓN -->
+  <section class="tight">
     <div class="wrap">
       <div class="sec-head">
         <span class="kick">La solución</span>
@@ -271,28 +384,85 @@
       </div>
       <div class="sol-duo">
         <div class="sol">
-          <span class="k2">Cortadito.news</span>
+          <span class="k2">Cortadito · Noticias</span>
           <h3>Infórmate</h3>
           <p>Las historias que realmente merecen tu atención, explicadas de forma clara, breve y natural en español.</p>
           <a class="go" href="#edicion">Ver la edición de hoy →</a>
         </div>
         <div class="sol">
-          <span class="k2">Cortadito.games</span>
+          <span class="k2">Cortadito · Juegos</span>
           <h3>Despierta la mente</h3>
           <p>Retos diarios de palabras, números y lógica — una pausa breve que sí se siente bien, sin anuncios ni niveles infinitos.</p>
           <a class="go" href="./games.html">Jugar el reto de hoy →</a>
         </div>
       </div>
-      <div class="trio">
-        <div class="mini-b"><h4>Seleccionado</h4><p>No tienes que buscar entre cientos de historias.</p></div>
-        <div class="mini-b"><h4>Explicado</h4><p>Entiendes qué ocurrió y por qué importa.</p></div>
-        <div class="mini-b"><h4>Breve</h4><p>Terminas en menos de cinco minutos.</p></div>
+    </div>
+  </section>
+
+  <!-- 4 · LA EDICIÓN — como llega al correo -->
+  <section class="alt" id="edicion">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kick">La prueba</span>
+        <h2>Así llega tu Cortadito</h2>
+        <p>Un correo real, con historias reales de esta semana.</p>
+      </div>
+      <div class="ed-grid">
+        <div class="mail">
+          <div class="mail-top">
+            <div class="from">
+              <img src="https://cortadito.games/apple-touch-icon.png" alt="">
+              <span><b>Cortadito</b> &lt;hola@cortadito.news&gt;</span>
+              <span class="hr">7:55 a.m.</span>
+            </div>
+            <div class="subj">☕ Tu Cortadito: FIFA, vegetales y el precio de los chips</div>
+          </div>
+          <div class="mail-body">
+            <div class="hola">¡Buenos días! Esto es lo esencial de hoy — te toma 5 minutos:</div>
+            <div class="mimg"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt=""></div>
+            <span class="chip" style="background:var(--azul)">Mundo</span>
+            <h3 style="margin-top:8px">FIFA propone empresa de capital privado de $20,000 millones</h3>
+            <p class="sum">Infantino propuso crear una empresa para operar torneos. Lo que pasó y por qué importa, en un sorbo.</p>
+            <div class="mail-row" style="margin-top:14px">
+              <span class="c2" style="color:var(--verde)">Salud</span>
+              <span><b>Miedo en el pasillo de vegetales</b> — los casos de infección siguen subiendo en EE. UU.</span>
+            </div>
+            <div class="mail-row">
+              <span class="c2" style="color:var(--ciruela)">Tecnología</span>
+              <span><b>Precios de chips se elevan</b> — TSMC planea subir tarifas desde 2027.</span>
+            </div>
+            <div class="mail-cta"><a href="./games.html">Jugar el reto de hoy →</a></div>
+          </div>
+        </div>
+        <aside class="side">
+          <div class="side-head">Y en el sitio, lo último</div>
+          <a class="side-item" href="#">
+            <span class="c" style="color:var(--verde)">Salud</span>
+            <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
+            <div class="d">Jul 27, 2026 · 3 min</div>
+          </a>
+          <a class="side-item" href="#">
+            <span class="c" style="color:var(--ciruela)">Tecnología</span>
+            <h3>La IA encontró cómo escapar de su espacio de pruebas</h3>
+            <div class="d">Jul 24, 2026 · 3 min</div>
+          </a>
+          <a class="side-item" href="#">
+            <span class="c" style="color:var(--oro)">Dinero</span>
+            <h3>Apple vuelve a la cima</h3>
+            <div class="d">Jul 20, 2026 · 2 min</div>
+          </a>
+          <a class="side-item" href="#">
+            <span class="c" style="color:var(--verde)">Salud</span>
+            <h3>Café filtrado, corazón protegido</h3>
+            <div class="d">Jul 21, 2026 · 2 min</div>
+          </a>
+        </aside>
       </div>
     </div>
   </section>
 
-  <!-- 4 · EL PLAN -->
-  <section class="alt tight">
+  <!-- 5 · EL PLAN -->
+  <section class="tight">
     <div class="wrap">
       <div class="sec-head">
         <span class="kick">El plan</span>
@@ -318,51 +488,6 @@
     </div>
   </section>
 
-  <!-- 5 · LA EDICIÓN DE HOY (contenido real) -->
-  <section id="edicion">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kick">Así llega a tu correo</span>
-        <h2>La edición de hoy</h2>
-      </div>
-      <div class="ed-grid">
-        <a class="main-story" href="#">
-          <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt=""></div>
-          <div class="tx">
-            <span class="chip" style="background:var(--azul)">Mundo</span>
-            <h3>FIFA propone empresa de capital privado de $20,000 millones</h3>
-            <p>Infantino propuso crear una empresa valorada en $20,000 millones para operar torneos. Lo esencial, explicado en un sorbo.</p>
-            <div class="meta">Jul 29, 2026 · <b>3 min de lectura</b></div>
-          </div>
-        </a>
-        <aside class="side">
-          <div class="side-head">Lo último</div>
-          <a class="side-item" href="#">
-            <span class="c" style="color:var(--verde)">Salud</span>
-            <h3>Miedo en el pasillo de vegetales: casos de infección siguen subiendo</h3>
-            <div class="d">Jul 28, 2026 · 2 min</div>
-          </a>
-          <a class="side-item" href="#">
-            <span class="c" style="color:var(--verde)">Salud</span>
-            <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
-            <div class="d">Jul 27, 2026 · 3 min</div>
-          </a>
-          <a class="side-item" href="#">
-            <span class="c" style="color:var(--ciruela)">Tecnología</span>
-            <h3>La IA encontró cómo escapar de su espacio de pruebas</h3>
-            <div class="d">Jul 24, 2026 · 3 min</div>
-          </a>
-          <a class="side-item" href="#">
-            <span class="c" style="color:var(--ciruela)">Tecnología</span>
-            <h3>Precios de chips se elevan: TSMC sube tarifas desde 2027</h3>
-            <div class="d">Jul 22, 2026 · 2 min</div>
-          </a>
-        </aside>
-      </div>
-      <div class="ed-note"><b>Historias reales de esta semana.</b> Sin suscribirte puedes leerlas todas en el sitio — el correo simplemente te las trae antes de que empiece el ruido.</div>
-    </div>
-  </section>
-
   <!-- 6 · POR QUÉ SUSCRIBIRSE -->
   <section class="tight" id="suscribete">
     <div class="wrap">
@@ -379,60 +504,80 @@
         </div>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
-          <button class="btn-ink">Recibir mi Cortadito gratis</button>
+          <button class="btn-ink">Enviar mi primer Cortadito</button>
           <div class="fine">Lunes a viernes, antes de las 8 a.m. Cancelas cuando quieras.</div>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- 7 · PRUEBA SOCIAL -->
+  <!-- 7 · DATOS, NO PROMESAS -->
   <section class="alt tight">
     <div class="wrap">
       <div class="sec-head">
-        <span class="kick">Lectores como tú</span>
-        <h2>Ya es parte de la mañana de mucha gente</h2>
+        <span class="kick">Sin letra pequeña</span>
+        <h2>Lo que recibes, en números</h2>
       </div>
-      <div class="tests">
-        <div class="test">
-          <div class="q">Por fin puedo seguir las noticias sin pasar media mañana leyendo.</div>
-          <div class="who">María G. <span>Miami, FL</span></div>
-        </div>
-        <div class="test">
-          <div class="q">Abro el correo, leo Cortadito y después hago Palabreo. Ya es parte de mi mañana.</div>
-          <div class="who">Andrés R. <span>Houston, TX</span></div>
-        </div>
-        <div class="test">
-          <div class="q">Es la única pausa del día que no me deja peor que antes.</div>
-          <div class="who">Carolina M. <span>Queens, NY</span></div>
-        </div>
+      <div class="facts">
+        <div class="fact"><div class="big">&lt; 5 min</div><p>de lectura por edición</p></div>
+        <div class="fact"><div class="big">L–V</div><p>antes de las 8 a.m. en tu correo</p></div>
+        <div class="fact"><div class="big">100% español</div><p>escrito natural, no traducido</p></div>
+        <div class="fact"><div class="big">$0</div><p>gratis, sin spam ni alertas infinitas</p></div>
       </div>
-      <div class="test-note">* Testimonios de ejemplo para el mockup — se reemplazan con lectores reales antes de publicar.</div>
     </div>
   </section>
 
-  <!-- 8 · TRANSICIÓN A JUEGOS -->
+  <!-- 8 · JUEGOS -->
   <section class="tight">
     <div class="wrap">
       <div class="reto">
         <img class="art" src="https://cortadito.games/apple-touch-icon.png" alt="">
         <div class="t">
-          <span class="k">¿Ya estás al día?</span>
-          <h2>Ahora despierta la mente.</h2>
+          <span class="k">Listo: ya estás al día</span>
+          <h2>Ahora date un respiro.</h2>
           <p>Tu descanso no tiene que convertirse en otra hora perdida en el teléfono. Un reto breve, en español, y sigues con tu día.</p>
         </div>
         <a class="go" href="./games.html">Jugar el reto de hoy →</a>
       </div>
+      <div class="gcards">
+        <a class="gcard" href="./games.html">
+          <div class="gb" style="background:var(--verde)">GRATIS</div>
+          <div class="in">
+            <div class="rt">Silueta · palabras</div>
+            <h4>Racimo</h4>
+            <div class="tm">Disponible hoy · 5–8 min</div>
+            <span class="jg">Jugar</span>
+          </div>
+        </a>
+        <a class="gcard" href="./games.html">
+          <div class="gb" style="background:var(--verde)">GRATIS</div>
+          <div class="in">
+            <div class="rt">Palabreo · la palabra del día</div>
+            <h4>Clásico</h4>
+            <div class="tm">Disponible hoy · 3–5 min</div>
+            <span class="jg">Jugar</span>
+          </div>
+        </a>
+        <a class="gcard" href="./games.html">
+          <div class="gb" style="background:var(--azul)">GRATIS HOY</div>
+          <div class="in">
+            <div class="rt">Sudoku · un sorbo</div>
+            <h4>Mini</h4>
+            <div class="tm">Rotación de hoy · 3 min</div>
+            <span class="jg">Jugar</span>
+          </div>
+        </a>
+      </div>
     </div>
   </section>
 
-  <!-- 9 · CIERRE — Ristretto invita a volver -->
+  <!-- 9 · CIERRE -->
   <section class="fin">
     <div class="wrap">
       <img class="face" src="./ristre-close.jpg" alt="Ristretto">
       <h2>Mañana habrá más ruido. Tu Cortadito estará listo.</h2>
       <p>En pocos minutos sabrás qué está pasando, pondrás tu mente en marcha y podrás seguir con tu día.</p>
-      <a class="btn-ink" href="#suscribete">Recibirlo gratis</a>
+      <a class="btn-ink" href="#suscribete">Quiero mi Cortadito</a>
     </div>
   </section>
 
@@ -443,7 +588,7 @@
     <div class="fb">
       <a class="brand" href="#">
         <img src="https://cortadito.games/apple-touch-icon.png" alt="">
-        <span class="word">Cortadito<span style="color:var(--tostado)">.news</span></span>
+        <span class="word">Cortadito</span>
       </a>
       <p>Cortadito reúne noticias breves y juegos diarios en español para ayudarte a comenzar informado, enfocado y listo para el día.</p>
       <span class="tagline">¡Lo esencial en un sorbo!</span>
