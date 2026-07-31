@@ -119,11 +119,12 @@
   /* ============ 5 · EDICIÓN ============ */
   .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
-  .rsays.under{margin:24px 2px 0; max-width:none; gap:16px; align-items:center;}
-  .rsays.under img{width:112px; height:112px; border-width:4px;}
-  .rsays.under .bub{padding:18px 22px;}
-  .rsays.under .bub .q{font-size:19px;}
-  .rsays.under .bub .who{font-size:11.5px; margin-top:7px;}
+  /* full-width curator quote — its own section */
+  .curator-quote{display:flex; align-items:center; gap:38px; background:var(--blanco); border:1px solid var(--linea); border-radius:26px; padding:36px 48px; box-shadow:0 26px 54px -44px rgba(28,17,8,.45);}
+  .curator-quote img{width:172px; height:172px; border-radius:50%; object-fit:cover; flex:none; border:5px solid var(--crema); box-shadow:0 16px 34px -20px rgba(28,17,8,.5);}
+  .curator-quote .q{font-family:var(--marca); font-style:italic; font-weight:600; font-size:clamp(22px,3vw,31px); line-height:1.28;}
+  .curator-quote .who{font-size:13px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--tostado); margin-top:12px;}
+  @media(max-width:700px){.curator-quote{flex-direction:column; text-align:center; padding:30px 24px; gap:20px;}}
   .latest-card{display:block; background:var(--blanco); border:1px solid var(--linea); border-radius:18px; overflow:hidden; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
   .latest-card:hover{transform:translateY(-3px);}
   .lc-img{aspect-ratio:16/10; overflow:hidden;}
@@ -380,13 +381,6 @@
             <p>FIFA propone una empresa de capital privado de $20,000 millones…</p>
           </div>
         </a>
-        <div class="rsays under">
-          <img src="./ristre-reporter.jpg" alt="Ristretto, reportero de Cortadito">
-          <div class="bub">
-            <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
-            <div class="who">Ristretto · el que lee todo por ti</div>
-          </div>
-        </div>
         </div>
         <aside class="side">
           <div class="latest-head">
@@ -414,6 +408,19 @@
             <div class="d">Jul 21, 2026 · 2 min</div>
           </a>
         </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2b · RISTRETTO, EL CURADOR -->
+  <section class="tight">
+    <div class="wrap">
+      <div class="curator-quote">
+        <img src="./ristre-reporter.jpg" alt="Ristretto, reportero de Cortadito">
+        <div>
+          <div class="q">«Hoy revisé el panorama y te serví solo lo que merece tu atención. Sin relleno.»</div>
+          <div class="who">Ristretto · el que lee todo por ti</div>
+        </div>
       </div>
     </div>
   </section>
