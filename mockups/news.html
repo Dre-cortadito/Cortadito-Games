@@ -62,19 +62,24 @@
   .meta{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
   .meta b{color:var(--tostado);}
 
-  /* ============ 1 · HERO ============ */
-  .hero{padding:58px 0 64px;}
-  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center;}
-  @media(max-width:880px){.hero-grid{grid-template-columns:1fr;}}
-  .hero h1{font-family:var(--marca); font-weight:900; font-size:clamp(38px,4.8vw,56px); line-height:1.04; margin:16px 0 18px;}
-  .hero .sub{font-size:18.5px; color:var(--suave); max-width:34em; margin-bottom:26px;}
-  .hero .ctas{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
-  .hero .trust{margin-top:16px; font-size:13px; font-weight:600; letter-spacing:.05em; color:var(--cafe); text-transform:uppercase;}
-  .hero .trust b{color:var(--tostado);}
-  .hero-art{border:1px solid var(--linea); border-radius:22px; overflow:hidden; box-shadow:0 30px 60px -45px rgba(28,17,8,.55); position:relative;}
-  .hero-art img{width:100%; height:100%; object-fit:cover;}
-  .hero-art .tag{position:absolute; left:14px; bottom:14px; background:rgba(28,17,8,.82); color:#F5EDE3; font-size:12px; font-weight:700; padding:7px 13px; border-radius:999px;}
-  .hero-art .tag em{color:#FFB899; font-style:normal;}
+  /* ============ 1 · HERO — banda naranja (estructura Morning Brew, identidad Cortadito) ============ */
+  .hero-band{background:var(--naranja); color:#fff; padding:58px 0 62px;}
+  .hb-grid{display:grid; grid-template-columns:1.08fr .92fr; gap:48px; align-items:center;}
+  @media(max-width:880px){.hb-grid{grid-template-columns:1fr;}}
+  .hero-band .kick{color:#FFE4D7;}
+  .hero-band h1{font-family:var(--marca); font-weight:900; font-size:clamp(36px,4.6vw,54px); line-height:1.05; margin:14px 0 16px;}
+  .hero-band .sub{font-size:18px; color:#FFE4D7; max-width:34em; margin-bottom:24px;}
+  .hero-band form{display:flex; gap:10px; max-width:480px; margin-bottom:12px;}
+  .hero-band form input{flex:1; border:none; border-radius:999px; padding:14px 20px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
+  .hero-band form input:focus{outline:3px solid rgba(28,17,8,.55);}
+  .hb-fine{font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#FFD9C7;}
+  .hb-art img{width:100%; border:6px solid #fff; border-radius:20px; box-shadow:0 34px 64px -38px rgba(28,17,8,.65); display:block;}
+  @media(max-width:880px){.hb-art{max-width:440px; margin:6px auto 0;}}
+
+  /* proof strip — datos rápidos bajo el hero */
+  .proof{background:var(--crema); border-bottom:1px solid var(--linea);}
+  .proof-in{max-width:1060px; margin:0 auto; display:flex; justify-content:center; align-items:center; gap:12px 38px; padding:14px 22px; flex-wrap:wrap; font-size:12.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--cafe);}
+  .proof-in b{color:var(--tostado);}
 
   /* ============ 2 · PROBLEMA ============ */
   .probs{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
@@ -192,32 +197,6 @@
   /* master brand */
   .word-sec{font-size:12px; letter-spacing:.22em; color:var(--tostado); font-weight:800; text-transform:uppercase; border-left:1.5px solid var(--linea); padding-left:14px; margin-left:2px;}
 
-  /* hero v3 — one story: illustration + newsletter proof */
-  .hero{padding:44px 0 70px;}
-  .hero form{display:flex; gap:10px; max-width:480px; margin-bottom:14px;}
-  .hero form input{flex:1; border:2px solid var(--linea); border-radius:999px; padding:13px 19px; font-size:15px; font-family:inherit; background:#fff; color:var(--tinta);}
-  .hero form input:focus{outline:2px solid var(--naranja); border-color:transparent;}
-  .collage{position:relative; min-height:480px;}
-  .circle{position:absolute; right:2%; top:2%; width:min(430px,94%); aspect-ratio:1; background:var(--naranja); border-radius:50%; box-shadow:0 30px 60px -42px rgba(233,83,30,.8);}
-  .circle::after{content:""; position:absolute; inset:0; border-radius:inherit; background-image:var(--newsprint); background-size:520px auto; opacity:.5; filter:invert(1); mix-blend-mode:soft-light;}
-  .ph{position:absolute; right:9%; top:11%; width:66%; border:6px solid #fff; border-radius:18px; overflow:hidden; box-shadow:0 26px 50px -30px rgba(28,17,8,.55);}
-  .ph img{width:100%; display:block;}
-  .mini-mail{position:absolute; left:4%; bottom:4%; width:58%; background:#fff; border:1px solid var(--linea); border-radius:14px; padding:16px 18px; transform:rotate(-1.5deg); box-shadow:0 22px 44px -30px rgba(28,17,8,.5);}
-  .mini-mail .k3{font-size:9.5px; font-weight:800; letter-spacing:.2em; color:var(--tostado); text-transform:uppercase; display:flex; justify-content:space-between;}
-  .mini-mail .k3 span{color:var(--suave); letter-spacing:.05em;}
-  .mini-mail h4{font-family:var(--serif); font-weight:700; font-size:16.5px; line-height:1.25; margin:7px 0 5px;}
-  .mini-mail .m2{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
-  .mini-mail .m2 b{color:var(--tostado);}
-  @media(max-width:880px){ .collage{min-height:430px; margin-top:10px;} }
-
-  /* reto strip (games teased below the hero, not inside it) */
-  .reto-strip{background:var(--crema); border-bottom:1px solid var(--linea);}
-  .rs-in{display:flex; align-items:center; justify-content:center; gap:16px; padding:13px 22px; flex-wrap:wrap;}
-  .rs-q{font-family:var(--marca); font-style:italic; font-weight:600; font-size:16px; color:var(--tostado);}
-  .rs-t{font-size:14.5px; color:var(--suave);}
-  .rs-t b{color:var(--tinta);}
-  .rs-go{background:var(--tinta); color:#fff; border-radius:999px; padding:7px 18px; font-size:13px; font-weight:800; transition:.15s;}
-  .rs-go:hover{background:#000;}
 
   /* ticker */
   .ticker{background:var(--tinta); overflow:hidden; border-top:1px solid #000;}
@@ -296,7 +275,7 @@
 </head>
 <body>
 
-<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + formato sorbo (v4.1 — hero simplificado) &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
+<div class="mock">PROPUESTA DE DISEÑO — cortadito.news · narrativa SB7 + formato sorbo (v5 — estructura clara) &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
 
 <header class="masthead">
   <div class="bar">
@@ -315,27 +294,21 @@
 
 <main>
 
-  <!-- 1 · HERO — collage editorial -->
-  <section class="hero">
-    <div class="wrap hero-grid">
+  <!-- 1 · HERO — banda naranja, una sola imagen -->
+  <section class="hero-band">
+    <div class="wrap hb-grid">
       <div>
         <span class="kick">Noticias + juegos · en español</span>
         <h1>Lo esencial del día. La pausa que necesitas.</h1>
-        <p class="sub">Noticias claras en español, listas en pocos minutos para que sigas con tu día.</p>
+        <p class="sub">Noticias claras y retos diarios en español, listos en pocos minutos para que sigas con tu día.</p>
         <form onsubmit="return false">
           <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
           <button class="btn-ink">Recibir mi Cortadito gratis</button>
         </form>
-        <div class="trust">Lunes a viernes · antes de las 8 a.m. · <b>5 min de lectura</b> · gratis</div>
+        <div class="hb-fine">Gratis · cancelas cuando quieras</div>
       </div>
-      <div class="collage">
-        <div class="circle"></div>
-        <div class="ph"><img src="./ristre-hero.jpg" alt="Ristretto leyendo su Cortadito.news en la mañana"></div>
-        <div class="mini-mail">
-          <div class="k3">Cortadito de hoy <span>Jueves, 31 de julio</span></div>
-          <h4>FIFA propone empresa de capital privado de $20,000 millones</h4>
-          <div class="m2">Lo que pasó y por qué importa · <b>3 min</b></div>
-        </div>
+      <div class="hb-art">
+        <img src="./ristre-hero.jpg" alt="Ristretto desayunando con su Cortadito.news">
       </div>
     </div>
   </section>
@@ -358,71 +331,18 @@
     </div>
   </div>
 
-  <!-- reto strip -->
-  <div class="reto-strip">
-    <div class="rs-in">
-      <span class="rs-q">¿Ya estás al día?</span>
-      <span class="rs-t">Juega el reto de hoy: <b>Racimo</b> · palabras · 5–8 min</span>
-      <a class="rs-go" href="./games.html">Jugar →</a>
+  <!-- proof strip -->
+  <div class="proof">
+    <div class="proof-in">
+      <span>Lunes a viernes</span>
+      <span>Antes de las <b>8 a.m.</b></span>
+      <span><b>5 min</b> de lectura</span>
+      <span>100% español</span>
+      <span><b>Gratis</b></span>
     </div>
   </div>
 
-  <!-- 2 · EL PROBLEMA -->
-  <section class="alt tight">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kick">El problema</span>
-        <h2>Mantenerte informado no debería sentirse como otro trabajo.</h2>
-      </div>
-      <div class="probs">
-        <div class="prob">
-          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><g stroke="#E9531E" stroke-width="5" stroke-linecap="round"><line x1="14" y1="16" x2="98" y2="12" transform="rotate(-4 60 14)"/><line x1="10" y1="30" x2="106" y2="30" transform="rotate(3 60 30)"/><line x1="18" y1="44" x2="94" y2="44" transform="rotate(-2 60 44)"/><line x1="12" y1="58" x2="102" y2="60" transform="rotate(5 60 59)"/></g><circle cx="104" cy="14" r="9" fill="#CF2A2A"/><text x="104" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">9+</text></svg></div>
-          <h3>Demasiadas noticias</h3>
-          <p>Cientos de titulares al día — y muy pocos que de verdad te sirven.</p>
-        </div>
-        <div class="prob">
-          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><circle cx="34" cy="36" r="24" stroke="#1C1108" stroke-width="5"/><line x1="34" y1="36" x2="34" y2="20" stroke="#E9531E" stroke-width="5" stroke-linecap="round"/><line x1="34" y1="36" x2="46" y2="42" stroke="#1C1108" stroke-width="5" stroke-linecap="round"/><g stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"><line x1="70" y1="20" x2="112" y2="20"/><line x1="70" y1="32" x2="106" y2="32"/><line x1="70" y1="44" x2="112" y2="44"/><line x1="70" y1="56" x2="88" y2="56"/></g></svg></div>
-          <h3>Muy poco tiempo</h3>
-          <p>Nadie tiene media mañana para separar lo importante del ruido.</p>
-        </div>
-        <div class="prob">
-          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><rect x="44" y="4" width="32" height="64" rx="7" stroke="#1C1108" stroke-width="5"/><g stroke="#E9531E" stroke-width="4" stroke-linecap="round"><line x1="52" y1="18" x2="68" y2="18"/><line x1="52" y1="28" x2="68" y2="28"/><line x1="52" y1="38" x2="68" y2="38"/><line x1="52" y1="48" x2="68" y2="48" opacity=".6"/><line x1="52" y1="58" x2="68" y2="58" opacity=".3"/></g><path d="M88 22c8 6 8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/><path d="M30 22c-8 6-8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/></svg></div>
-          <h3>Pausas que no descansan</h3>
-          <p>El descanso se convierte en una hora perdida de scroll.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3 · LA SOLUCIÓN -->
-  <section class="tight">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kick">La solución</span>
-        <h2>Nosotros filtramos. Tú entiendes.</h2>
-      </div>
-      <div class="quote">
-        <div class="q">«Yo filtro el ruido. Tú quédate con lo esencial.»</div>
-        <div class="who">— Ristretto</div>
-      </div>
-      <div class="sol-duo">
-        <div class="sol">
-          <span class="k2">Cortadito · Noticias</span>
-          <h3>Infórmate</h3>
-          <p>Las historias que realmente merecen tu atención, explicadas de forma clara, breve y natural en español.</p>
-          <a class="go" href="#edicion">Ver la edición de hoy →</a>
-        </div>
-        <div class="sol">
-          <span class="k2">Cortadito · Juegos</span>
-          <h3>Despierta la mente</h3>
-          <p>Retos diarios de palabras, números y lógica — una pausa breve que sí se siente bien, sin anuncios ni niveles infinitos.</p>
-          <a class="go" href="./games.html">Jugar el reto de hoy →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4 · LA EDICIÓN — como llega al correo -->
+  <!-- 2 · LA EDICIÓN — así se ve tu Cortadito -->
   <section class="alt" id="edicion">
     <div class="wrap">
       <div class="sec-head">
@@ -499,79 +419,13 @@
     </div>
   </section>
 
-  <!-- 5 · EL PLAN -->
-  <section class="tight">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kick">El plan</span>
-        <h2>Tu rutina en tres sorbos</h2>
-      </div>
-      <div class="steps">
-        <div class="step">
-          <div class="n">1</div>
-          <h3>Suscríbete gratis</h3>
-          <p>Recibe lo esencial directamente en tu correo.</p>
-        </div>
-        <div class="step">
-          <div class="n">2</div>
-          <h3>Tómate tu Cortadito</h3>
-          <p>Lee las noticias del día en pocos minutos.</p>
-        </div>
-        <div class="step">
-          <div class="n">3</div>
-          <h3>Despierta la mente</h3>
-          <p>Completa el reto diario y sigue con tu día.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6 · POR QUÉ SUSCRIBIRSE -->
-  <section class="tight" id="suscribete">
-    <div class="wrap">
-      <div class="sub-band">
-        <div>
-          <h2>Tu Cortadito, listo antes de que empiece el ruido.</h2>
-          <ul>
-            <li>Noticias esenciales seleccionadas para ti.</li>
-            <li>Explicaciones claras, en español natural.</li>
-            <li>Lectura de menos de cinco minutos.</li>
-            <li>Acceso directo al reto diario.</li>
-            <li>Gratis — y sin llenar tu bandeja de ruido.</li>
-          </ul>
-        </div>
-        <form onsubmit="return false">
-          <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
-          <button class="btn-ink">Enviar mi primer Cortadito</button>
-          <div class="fine">Lunes a viernes, antes de las 8 a.m. Cancelas cuando quieras.</div>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7 · DATOS, NO PROMESAS -->
-  <section class="alt tight">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kick">Sin letra pequeña</span>
-        <h2>Lo que recibes, en números</h2>
-      </div>
-      <div class="facts">
-        <div class="fact"><div class="big">&lt; 5 min</div><p>de lectura por edición</p></div>
-        <div class="fact"><div class="big">L–V</div><p>antes de las 8 a.m. en tu correo</p></div>
-        <div class="fact"><div class="big">100% español</div><p>escrito natural, no traducido</p></div>
-        <div class="fact"><div class="big">$0</div><p>gratis, sin spam ni alertas infinitas</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8 · JUEGOS -->
+  <!-- 3 · DESPUÉS DE LEER, JUEGA -->
   <section class="tight">
     <div class="wrap">
       <div class="reto">
         <img class="art" src="./ristre-close.jpg" alt="Ristretto en su descanso" style="object-fit:cover; object-position:50% 14%; border:3px solid rgba(255,255,255,.55);">
         <div class="t">
-          <span class="k">Listo: ya estás al día</span>
+          <span class="k">Después de leer</span>
           <h2>Ahora date un respiro.</h2>
           <p class="rq">«¿Ya estás al día? Ahora regálate dos minutos para despertar la mente — sin scroll y sin culpa.»</p>
           <div class="rwho">— Ristretto</div>
@@ -610,7 +464,112 @@
     </div>
   </section>
 
-  <!-- 9 · CIERRE -->
+  <!-- 4 · EL PROBLEMA -->
+  <section class="alt tight">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kick">El problema</span>
+        <h2>Mantenerte informado no debería sentirse como otro trabajo.</h2>
+      </div>
+      <div class="probs">
+        <div class="prob">
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><g stroke="#E9531E" stroke-width="5" stroke-linecap="round"><line x1="14" y1="16" x2="98" y2="12" transform="rotate(-4 60 14)"/><line x1="10" y1="30" x2="106" y2="30" transform="rotate(3 60 30)"/><line x1="18" y1="44" x2="94" y2="44" transform="rotate(-2 60 44)"/><line x1="12" y1="58" x2="102" y2="60" transform="rotate(5 60 59)"/></g><circle cx="104" cy="14" r="9" fill="#CF2A2A"/><text x="104" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">9+</text></svg></div>
+          <h3>Demasiadas noticias</h3>
+          <p>Cientos de titulares al día — y muy pocos que de verdad te sirven.</p>
+        </div>
+        <div class="prob">
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><circle cx="34" cy="36" r="24" stroke="#1C1108" stroke-width="5"/><line x1="34" y1="36" x2="34" y2="20" stroke="#E9531E" stroke-width="5" stroke-linecap="round"/><line x1="34" y1="36" x2="46" y2="42" stroke="#1C1108" stroke-width="5" stroke-linecap="round"/><g stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"><line x1="70" y1="20" x2="112" y2="20"/><line x1="70" y1="32" x2="106" y2="32"/><line x1="70" y1="44" x2="112" y2="44"/><line x1="70" y1="56" x2="88" y2="56"/></g></svg></div>
+          <h3>Muy poco tiempo</h3>
+          <p>Nadie tiene media mañana para separar lo importante del ruido.</p>
+        </div>
+        <div class="prob">
+          <div class="p-art"><svg viewBox="0 0 120 72" fill="none"><rect x="44" y="4" width="32" height="64" rx="7" stroke="#1C1108" stroke-width="5"/><g stroke="#E9531E" stroke-width="4" stroke-linecap="round"><line x1="52" y1="18" x2="68" y2="18"/><line x1="52" y1="28" x2="68" y2="28"/><line x1="52" y1="38" x2="68" y2="38"/><line x1="52" y1="48" x2="68" y2="48" opacity=".6"/><line x1="52" y1="58" x2="68" y2="58" opacity=".3"/></g><path d="M88 22c8 6 8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/><path d="M30 22c-8 6-8 22 0 28" stroke="#B9AC9C" stroke-width="4" stroke-linecap="round"/></svg></div>
+          <h3>Pausas que no descansan</h3>
+          <p>El descanso se convierte en una hora perdida de scroll.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · LA SOLUCIÓN -->
+  <section class="tight">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kick">La solución</span>
+        <h2>Nosotros filtramos. Tú entiendes.</h2>
+      </div>
+      <div class="quote">
+        <div class="q">«Yo filtro el ruido. Tú quédate con lo esencial.»</div>
+        <div class="who">— Ristretto</div>
+      </div>
+      <div class="sol-duo">
+        <div class="sol">
+          <span class="k2">Cortadito · Noticias</span>
+          <h3>Infórmate</h3>
+          <p>Las historias que realmente merecen tu atención, explicadas de forma clara, breve y natural en español.</p>
+          <a class="go" href="#edicion">Ver la edición de hoy →</a>
+        </div>
+        <div class="sol">
+          <span class="k2">Cortadito · Juegos</span>
+          <h3>Despierta la mente</h3>
+          <p>Retos diarios de palabras, números y lógica — una pausa breve que sí se siente bien, sin anuncios ni niveles infinitos.</p>
+          <a class="go" href="./games.html">Jugar el reto de hoy →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · EL PLAN -->
+  <section class="tight">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kick">El plan</span>
+        <h2>Tu rutina en tres sorbos</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Suscríbete gratis</h3>
+          <p>Recibe lo esencial directamente en tu correo.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Tómate tu Cortadito</h3>
+          <p>Lee las noticias del día en pocos minutos.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Despierta la mente</h3>
+          <p>Completa el reto diario y sigue con tu día.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · POR QUÉ SUSCRIBIRSE -->
+  <section class="tight" id="suscribete">
+    <div class="wrap">
+      <div class="sub-band">
+        <div>
+          <h2>Tu Cortadito, listo antes de que empiece el ruido.</h2>
+          <ul>
+            <li>Noticias esenciales seleccionadas para ti.</li>
+            <li>Explicaciones claras, en español natural.</li>
+            <li>Lectura de menos de cinco minutos.</li>
+            <li>Acceso directo al reto diario.</li>
+            <li>Gratis — y sin llenar tu bandeja de ruido.</li>
+          </ul>
+        </div>
+        <form onsubmit="return false">
+          <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
+          <button class="btn-ink">Enviar mi primer Cortadito</button>
+          <div class="fine">Lunes a viernes, antes de las 8 a.m. Cancelas cuando quieras.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · CIERRE -->
   <section class="fin">
     <div class="wrap">
       <img class="face" src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
