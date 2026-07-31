@@ -546,7 +546,69 @@ howOverlay.addEventListener("click",e=>{ if(e.target===howOverlay){ howOverlay.c
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); closeAbout(); howOverlay.classList.remove("open"); document.body.style.overflow=""; } });
 </script>
 
-<script src="/gate.js" defer></script>
+<script>
+/* MOCKUP: replica visual de las bandas + filtro de gate.js (gate.js solo
+   decora en la ruta del hub real, así que aquí lo inyectamos localmente). */
+(function(){
+  var css = ".cgk-band{display:block;width:100%;box-sizing:border-box;flex:none;font:800 11px/1 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#fff;text-align:center;padding:6px 0 7px}"
+    + ".cgk-band.free{background:#427C40}"
+    + ".cgk-band.hoy{background:#2670B8}"
+    + ".cgk-band.prem{background:#9C3B8E}"
+    + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
+    + ".cgk-filter{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px auto 2px;padding:0 16px}"
+    + ".cgk-filter button{font:600 13px/1 system-ui,sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer;background:var(--paper,#fff);color:var(--ink,#171210);border:1.5px solid var(--card-line,#e9dcc4)}"
+    + ".cgk-filter button.on{background:var(--ink,#171210);color:var(--bg,#fff);border-color:var(--ink,#171210)}";
+  var st=document.createElement("style"); st.textContent=css; document.head.appendChild(st);
+
+  var cards=document.querySelectorAll("a.card, a.feature");
+  cards.forEach(function(a){
+    var href=a.getAttribute("href")||"";
+    var mm=href.match(/^\/(racimo|palabreo|sudoku|flechas)\/?([a-z]*\.?h?t?m?l?)?(\?modo=([a-z]+))?/);
+    if(!mm) return;
+    var game=mm[1], mode=mm[4]||(mm[2]?mm[2].replace(".html",""):null);
+    if(game==="flechas") mode=(!mode||mode==="")?"borde":mode;
+    var anchor=game==="racimo"||(game==="palabreo"&&(mode||"clasico")==="clasico");
+    var stt=anchor?"free":(_freeToday(game,mode)?"hoy":"prem");
+    a.classList.add("cgk-edge-"+stt);
+    var band=document.createElement("div");
+    band.className="cgk-band "+stt;
+    band.textContent=stt==="free"?"Gratis":(stt==="hoy"?"Gratis hoy":"Premium");
+    a.insertBefore(band,a.firstChild);
+    var body=a.querySelector(".cbody"); if(!body) return;
+    var go=body.querySelector(".go");
+    if(stt==="prem"&&go) go.innerHTML=go.innerHTML.replace(/Jugar/,"Ver Premium");
+  });
+
+  var appEl=document.getElementById("app");
+  var firstFam=appEl&&appEl.querySelector(".fam");
+  if(!appEl||!firstFam) return;
+  var bar=document.createElement("div");
+  bar.className="cgk-filter";
+  bar.innerHTML='<button data-f="all" class="on">Todos</button><button data-f="free">Gratis</button><button data-f="prem">Premium</button>';
+  appEl.insertBefore(bar,firstFam);
+  function cardSt(a){
+    if(a.classList.contains("soon")) return "soon";
+    if(a.classList.contains("cgk-edge-free")||a.classList.contains("cgk-edge-hoy")) return "free";
+    if(a.classList.contains("cgk-edge-prem")) return "prem";
+    return "all";
+  }
+  bar.addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    var f=b.dataset.f;
+    bar.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x.dataset.f===f);});
+    appEl.querySelectorAll(".fam").forEach(function(fam){
+      var visible=0;
+      fam.querySelectorAll("a.card").forEach(function(a){
+        var s=cardSt(a);
+        var show=f==="all"||s===f;
+        a.style.display=show?"":"none";
+        if(show) visible++;
+      });
+      fam.style.display=visible?"":"none";
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
