@@ -140,12 +140,14 @@
   .gs-row{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
   @media(max-width:820px){.gs-row{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:460px){.gs-row{grid-template-columns:1fr;}}
-  .gs-card{border:2px solid var(--tinta); border-radius:14px; padding:22px 16px 20px; text-align:center; transition:transform .15s, box-shadow .15s;}
+  .gs-card{background:var(--blanco); border:1.5px solid var(--tinta); border-radius:16px; overflow:hidden; text-align:center; transition:transform .15s, box-shadow .15s;}
   .gs-card:hover{transform:translateY(-4px); box-shadow:0 18px 34px -24px rgba(28,17,8,.6);}
-  .gs-card svg, .gs-card .gs-img{width:58px; height:58px; margin:0 auto 12px; display:block;}
-  .gs-card h3{font-family:var(--marca); font-weight:900; font-size:22px; margin-bottom:5px;}
+  .gs-tile{display:flex; align-items:center; justify-content:center; aspect-ratio:16/11;}
+  .gs-tile svg, .gs-tile .gs-img{width:72px; height:72px; display:block;}
+  .gs-tx{padding:16px 14px 20px;}
+  .gs-card h3{font-family:var(--marca); font-weight:900; font-size:23px; margin-bottom:5px;}
   .gs-card p{font-size:14px; line-height:1.35; color:var(--cafe);}
-  .gs-fam{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--cafe); opacity:.7; margin-bottom:8px;}
+  .gs-fam{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--cafe); opacity:.7; margin-bottom:6px;}
 
   /* full-width curator quote — its own section */
   .curator-quote{display:flex; align-items:center; gap:44px; background:var(--blanco); border:1px solid var(--linea); border-radius:26px; padding:40px 52px; box-shadow:0 26px 54px -44px rgba(28,17,8,.45);}
@@ -545,33 +547,41 @@
   </section>
 
   <!-- 7 · TIRA DE JUEGOS -->
-  <section class="tight">
+  <section class="alt tight">
     <div class="wrap games-strip">
       <h2>Despierta la mente con nuestros juegos:</h2>
       <div class="gs-row">
-        <a class="gs-card" href="./games.html" style="background:#F4D8D2">
-          <svg aria-hidden="true" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="21" r="18" fill="#cf2a2a"/><circle cx="93.8" cy="40.5" r="18" fill="#cf2a2a"/><circle cx="26.2" cy="40.5" r="18" fill="#cf2a2a"/><circle cx="93.8" cy="79.5" r="18" fill="#cf2a2a"/><circle cx="26.2" cy="79.5" r="18" fill="#cf2a2a"/><circle cx="60" cy="99" r="18" fill="#cf2a2a"/><circle cx="60" cy="60" r="18" fill="#548C4C"/></svg>
-          <div class="gs-fam">Silueta</div>
-          <h3>Racimo</h3>
-          <p>Si las palabras son lo tuyo.</p>
+        <a class="gs-card" href="./games.html">
+          <div class="gs-tile" style="background:#F4D8D2"><svg aria-hidden="true" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="21" r="18" fill="#cf2a2a"/><circle cx="93.8" cy="40.5" r="18" fill="#cf2a2a"/><circle cx="26.2" cy="40.5" r="18" fill="#cf2a2a"/><circle cx="93.8" cy="79.5" r="18" fill="#cf2a2a"/><circle cx="26.2" cy="79.5" r="18" fill="#cf2a2a"/><circle cx="60" cy="99" r="18" fill="#cf2a2a"/><circle cx="60" cy="60" r="18" fill="#548C4C"/></svg></div>
+          <div class="gs-tx">
+            <div class="gs-fam">Silueta</div>
+            <h3>Racimo</h3>
+            <p>Si las palabras son lo tuyo.</p>
+          </div>
         </a>
-        <a class="gs-card" href="./games.html" style="background:#F3E3C4">
-          <svg aria-hidden="true" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="12" height="12" rx="3" fill="#CF2A2A"/><rect x="17" y="3" width="12" height="12" rx="3" fill="#548C4C"/><rect x="3" y="17" width="12" height="12" rx="3" fill="#548C4C"/><rect x="17" y="17" width="12" height="12" rx="3" fill="#CF2A2A"/></svg>
-          <div class="gs-fam">Palabreo</div>
-          <h3>Clásico</h3>
-          <p>Si adivinas la palabra del día.</p>
+        <a class="gs-card" href="./games.html">
+          <div class="gs-tile" style="background:#CFE6D5"><svg aria-hidden="true" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60) scale(1.27) translate(-60 -60)"><g transform="rotate(-22 36 36)"><ellipse cx="36" cy="36" rx="17.05" ry="11.625" style="fill:#2f3640"/><path d="M 22.05 37.86 Q 36 31.35 49.95 36.62" style="fill:none;stroke:#548C4C;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(18 84 36)"><ellipse cx="84" cy="36" rx="17.05" ry="11.625" style="fill:#548C4C"/><path d="M 70.05 37.86 Q 84 31.35 97.95 36.62" style="fill:none;stroke:#2f3640;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(14 36 84)"><ellipse cx="36" cy="84" rx="17.05" ry="11.625" style="fill:#548C4C"/><path d="M 22.05 85.86 Q 36 79.35 49.95 84.62" style="fill:none;stroke:#2f3640;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(-26 84 84)"><ellipse cx="84" cy="84" rx="17.05" ry="11.625" style="fill:#2f3640"/><path d="M 70.05 85.86 Q 84 79.35 97.95 84.62" style="fill:none;stroke:#548C4C;stroke-width:3.1;stroke-linecap:round"/></g></g></svg></div>
+          <div class="gs-tx">
+            <div class="gs-fam">Sudoku</div>
+            <h3>Mini</h3>
+            <p>Si los números te despejan.</p>
+          </div>
         </a>
-        <a class="gs-card" href="./games.html" style="background:#CFE6D5">
-          <svg aria-hidden="true" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60) scale(1.27) translate(-60 -60)"><g transform="rotate(-22 36 36)"><ellipse cx="36" cy="36" rx="17.05" ry="11.625" style="fill:#2f3640"/><path d="M 22.05 37.86 Q 36 31.35 49.95 36.62" style="fill:none;stroke:#548C4C;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(18 84 36)"><ellipse cx="84" cy="36" rx="17.05" ry="11.625" style="fill:#548C4C"/><path d="M 70.05 37.86 Q 84 31.35 97.95 36.62" style="fill:none;stroke:#2f3640;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(14 36 84)"><ellipse cx="36" cy="84" rx="17.05" ry="11.625" style="fill:#548C4C"/><path d="M 22.05 85.86 Q 36 79.35 49.95 84.62" style="fill:none;stroke:#2f3640;stroke-width:3.1;stroke-linecap:round"/></g><g transform="rotate(-26 84 84)"><ellipse cx="84" cy="84" rx="17.05" ry="11.625" style="fill:#2f3640"/><path d="M 70.05 85.86 Q 84 79.35 97.95 84.62" style="fill:none;stroke:#548C4C;stroke-width:3.1;stroke-linecap:round"/></g></g></svg>
-          <div class="gs-fam">Sudoku</div>
-          <h3>Mini</h3>
-          <p>Si los números te despejan.</p>
+        <a class="gs-card" href="./games.html">
+          <div class="gs-tile" style="background:#F4D8D2"><svg aria-hidden="true" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="12" height="12" rx="3" fill="#CF2A2A"/><rect x="17" y="3" width="12" height="12" rx="3" fill="#548C4C"/><rect x="3" y="17" width="12" height="12" rx="3" fill="#548C4C"/><rect x="17" y="17" width="12" height="12" rx="3" fill="#CF2A2A"/></svg></div>
+          <div class="gs-tx">
+            <div class="gs-fam">Palabreo</div>
+            <h3>Clásico</h3>
+            <p>Si adivinas la palabra del día.</p>
+          </div>
         </a>
-        <a class="gs-card" href="./games.html" style="background:#E4EDFA">
-          <img src="./tile-flechas.png" alt="" class="gs-img">
-          <div class="gs-fam">Flechas</div>
-          <h3>Clásico</h3>
-          <p>Si te gusta encontrar el camino.</p>
+        <a class="gs-card" href="./games.html">
+          <div class="gs-tile" style="background:#EAF1EA"><img src="./tile-flechas.png" alt="" class="gs-img"></div>
+          <div class="gs-tx">
+            <div class="gs-fam">Flechas</div>
+            <h3>Clásico</h3>
+            <p>Si te gusta encontrar el camino.</p>
+          </div>
         </a>
       </div>
     </div>
