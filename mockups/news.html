@@ -14,7 +14,7 @@
     --crema:#FAF5EC; --blanco:#FFFFFF; --linea:#E9DCC4;
     --tinta:#1C1108; --suave:#6E6155; --cafe:#4A2F21;
     --naranja:#FE622F; --tostado:#E9531E;
-    --azul:#2670B8; --verde:#427C40; --ciruela:#9C3B8E; --oro:#B06E2E;
+    --azul:#2670B8; --verde:#427C40; --ciruela:#9C3B8E; --oro:#B06E2E; --teal:#17706E;
     --serif:'Lora', Georgia, serif;
     --marca:'Fraunces', Georgia, serif;
     --sans:'Source Sans 3', -apple-system, system-ui, sans-serif;
@@ -135,8 +135,9 @@
   .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
   /* full-width curator quote — its own section */
-  .curator-quote{display:flex; align-items:center; gap:38px; background:var(--blanco); border:1px solid var(--linea); border-radius:26px; padding:36px 48px; box-shadow:0 26px 54px -44px rgba(28,17,8,.45);}
-  .curator-quote img{width:172px; height:172px; border-radius:50%; object-fit:cover; flex:none; border:5px solid var(--crema); box-shadow:0 16px 34px -20px rgba(28,17,8,.5);}
+  .curator-quote{display:flex; align-items:center; gap:44px; background:var(--blanco); border:1px solid var(--linea); border-radius:26px; padding:40px 52px; box-shadow:0 26px 54px -44px rgba(28,17,8,.45);}
+  .curator-quote img{width:250px; height:250px; border-radius:50%; object-fit:cover; flex:none; border:6px solid var(--crema); box-shadow:0 18px 38px -22px rgba(28,17,8,.5);}
+  @media(max-width:900px){.curator-quote img{width:200px; height:200px;}}
   .curator-quote .q{font-family:var(--marca); font-style:italic; font-weight:600; font-size:clamp(22px,3vw,31px); line-height:1.28;}
   .curator-quote .who{font-size:13px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--tostado); margin-top:12px;}
   @media(max-width:700px){.curator-quote{flex-direction:column; text-align:center; padding:30px 24px; gap:20px;}}
@@ -211,6 +212,7 @@
   /* ============ 9 · CIERRE ============ */
   .fin{text-align:center; padding:70px 0 78px;}
   .fin .face{width:150px; height:150px; border-radius:50%; object-fit:cover; object-position:50% 12%; margin:0 auto 22px; border:4px solid var(--blanco); box-shadow:0 20px 44px -28px rgba(28,17,8,.5);}
+  .fin .wave{width:min(300px,72vw); height:auto; margin:0 auto 10px;}
   .fin h2{font-family:var(--marca); font-weight:900; font-size:clamp(30px,4.4vw,46px); line-height:1.06; max-width:640px; margin:0 auto 14px;}
   .fin p{color:var(--suave); font-size:17px; margin-bottom:26px;}
 
@@ -350,17 +352,17 @@
   <div class="ticker" aria-hidden="true">
     <div class="ticker-in">
       <span class="lead">HOY EN CORTADITO</span>
-      <span><b style="background:var(--azul)">MUNDO</b>FIFA propone empresa de capital privado</span>
-      <span><b style="background:var(--verde)">SALUD</b>Miedo en el pasillo de vegetales</span>
-      <span><b style="background:var(--ciruela)">TECNOLOGÍA</b>La IA encontró cómo escapar</span>
-      <span><b style="background:var(--oro)">DINERO</b>Apple vuelve a la cima</span>
-      <span><b style="background:var(--verde)">SALUD</b>Café filtrado, corazón protegido</span>
+      <span><b style="background:var(--verde)">ECONOMÍA</b>FIFA propone empresa de capital privado</span>
+      <span><b style="background:var(--ciruela)">ASUNTOS PÚBLICOS</b>Miedo en el pasillo de vegetales</span>
+      <span><b style="background:var(--azul)">CIENCIA Y TECH</b>La IA encontró cómo escapar</span>
+      <span><b style="background:var(--teal)">GLOBALES</b>Farmacéutica acelera el acceso al VIH</span>
+      <span><b style="background:var(--oro)">TRENDING VARIOS</b>Café filtrado, corazón protegido</span>
       <span class="lead">HOY EN CORTADITO</span>
-      <span><b style="background:var(--azul)">MUNDO</b>FIFA propone empresa de capital privado</span>
-      <span><b style="background:var(--verde)">SALUD</b>Miedo en el pasillo de vegetales</span>
-      <span><b style="background:var(--ciruela)">TECNOLOGÍA</b>La IA encontró cómo escapar</span>
-      <span><b style="background:var(--oro)">DINERO</b>Apple vuelve a la cima</span>
-      <span><b style="background:var(--verde)">SALUD</b>Café filtrado, corazón protegido</span>
+      <span><b style="background:var(--verde)">ECONOMÍA</b>FIFA propone empresa de capital privado</span>
+      <span><b style="background:var(--ciruela)">ASUNTOS PÚBLICOS</b>Miedo en el pasillo de vegetales</span>
+      <span><b style="background:var(--azul)">CIENCIA Y TECH</b>La IA encontró cómo escapar</span>
+      <span><b style="background:var(--teal)">GLOBALES</b>Farmacéutica acelera el acceso al VIH</span>
+      <span><b style="background:var(--oro)">TRENDING VARIOS</b>Café filtrado, corazón protegido</span>
     </div>
   </div>
 
@@ -403,22 +405,22 @@
             <a href="#">Todas las historias →</a>
           </div>
           <a class="side-item" href="#">
-            <span class="c" style="color:var(--verde)">Salud</span>
+            <span class="c" style="color:var(--teal)">Globales</span>
             <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
             <div class="d">Jul 27, 2026 · 3 min</div>
           </a>
           <a class="side-item" href="#">
-            <span class="c" style="color:var(--ciruela)">Tecnología</span>
+            <span class="c" style="color:var(--azul)">Ciencia y Tech</span>
             <h3>La IA encontró cómo escapar de su espacio de pruebas</h3>
             <div class="d">Jul 24, 2026 · 3 min</div>
           </a>
           <a class="side-item" href="#">
-            <span class="c" style="color:var(--oro)">Dinero</span>
+            <span class="c" style="color:var(--verde)">Economía</span>
             <h3>Apple vuelve a la cima</h3>
             <div class="d">Jul 20, 2026 · 2 min</div>
           </a>
           <a class="side-item" href="#">
-            <span class="c" style="color:var(--verde)">Salud</span>
+            <span class="c" style="color:var(--oro)">Trending Varios</span>
             <h3>Café filtrado, corazón protegido</h3>
             <div class="d">Jul 21, 2026 · 2 min</div>
           </a>
@@ -521,7 +523,7 @@
   <!-- 6 · CIERRE -->
   <section class="fin">
     <div class="wrap">
-      <img class="face" src="./ristre-face.jpg" alt="Ristretto" style="object-position:50% 40%;">
+      <img class="wave" src="./ristre-wave.png" alt="Ristretto se despide con el periódico del día">
       <h2>«Mañana habrá más ruido. Tu Cortadito estará listo.»</h2>
       <div class="fwho">— Ristretto</div>
       <p>En pocos minutos sabrás qué está pasando, pondrás tu mente en marcha y podrás seguir con tu día.</p>
