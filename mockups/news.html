@@ -134,6 +134,19 @@
   /* ============ 5 · EDICIÓN ============ */
   .ed-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:40px; align-items:start;}
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
+  /* ============ TIRA DE JUEGOS (estilo NYT Games) ============ */
+  .games-strip{text-align:center;}
+  .games-strip h2{font-family:var(--marca); font-weight:900; font-size:clamp(26px,3.6vw,38px); margin-bottom:26px;}
+  .gs-row{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media(max-width:820px){.gs-row{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:460px){.gs-row{grid-template-columns:1fr;}}
+  .gs-card{border:2px solid var(--tinta); border-radius:14px; padding:22px 16px 20px; text-align:center; transition:transform .15s, box-shadow .15s;}
+  .gs-card:hover{transform:translateY(-4px); box-shadow:0 18px 34px -24px rgba(28,17,8,.6);}
+  .gs-card svg{height:46px; margin:0 auto 12px; display:block;}
+  .gs-card h3{font-family:var(--marca); font-weight:900; font-size:22px; margin-bottom:5px;}
+  .gs-card p{font-size:14px; line-height:1.35; color:var(--cafe);}
+  .gs-fam{font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--cafe); opacity:.7; margin-bottom:8px;}
+
   /* full-width curator quote — its own section */
   .curator-quote{display:flex; align-items:center; gap:44px; background:var(--blanco); border:1px solid var(--linea); border-radius:26px; padding:40px 52px; box-shadow:0 26px 54px -44px rgba(28,17,8,.45);}
   .curator-quote img{width:250px; height:250px; border-radius:50%; object-fit:cover; flex:none; border:6px solid var(--crema); box-shadow:0 18px 38px -22px rgba(28,17,8,.5);}
@@ -520,7 +533,64 @@
     </div>
   </section>
 
-  <!-- 6 · CIERRE -->
+  <!-- 6 · TIRA DE JUEGOS -->
+  <section class="tight">
+    <div class="wrap games-strip">
+      <h2>Despierta la mente con nuestros juegos:</h2>
+      <div class="gs-row">
+        <a class="gs-card" href="./games.html" style="background:#F4D8D2">
+          <svg viewBox="0 0 60 60" fill="none" aria-hidden="true">
+            <circle cx="30" cy="30" r="8.5" fill="#E9531E"/>
+            <circle cx="30" cy="13" r="7" fill="#1C1108"/><circle cx="44.7" cy="21.5" r="7" fill="#1C1108"/>
+            <circle cx="44.7" cy="38.5" r="7" fill="#1C1108"/><circle cx="30" cy="47" r="7" fill="#1C1108"/>
+            <circle cx="15.3" cy="38.5" r="7" fill="#1C1108"/><circle cx="15.3" cy="21.5" r="7" fill="#1C1108"/>
+          </svg>
+          <div class="gs-fam">Silueta</div>
+          <h3>Racimo</h3>
+          <p>Si las palabras son lo tuyo.</p>
+        </a>
+        <a class="gs-card" href="./games.html" style="background:#F3E3C4">
+          <svg viewBox="0 0 60 60" fill="none" aria-hidden="true">
+            <rect x="4" y="14" width="15" height="15" rx="3" fill="#1C1108"/>
+            <rect x="22.5" y="14" width="15" height="15" rx="3" fill="#B06E2E"/>
+            <rect x="41" y="14" width="15" height="15" rx="3" fill="#1C1108"/>
+            <rect x="13" y="33" width="15" height="15" rx="3" fill="#B06E2E"/>
+            <rect x="31.5" y="33" width="15" height="15" rx="3" fill="#1C1108"/>
+          </svg>
+          <div class="gs-fam">Palabreo</div>
+          <h3>Clásico</h3>
+          <p>Si adivinas la palabra del día.</p>
+        </a>
+        <a class="gs-card" href="./games.html" style="background:#CFE6D5">
+          <svg viewBox="0 0 60 60" fill="none" aria-hidden="true">
+            <rect x="6" y="6" width="48" height="48" rx="6" stroke="#1C1108" stroke-width="3.5"/>
+            <line x1="22" y1="6" x2="22" y2="54" stroke="#1C1108" stroke-width="2.5"/>
+            <line x1="38" y1="6" x2="38" y2="54" stroke="#1C1108" stroke-width="2.5"/>
+            <line x1="6" y1="22" x2="54" y2="22" stroke="#1C1108" stroke-width="2.5"/>
+            <line x1="6" y1="38" x2="54" y2="38" stroke="#1C1108" stroke-width="2.5"/>
+            <rect x="24" y="8" width="12" height="12" rx="2" fill="#427C40"/>
+            <rect x="8" y="40" width="12" height="12" rx="2" fill="#427C40"/>
+            <rect x="40" y="24" width="12" height="12" rx="2" fill="#427C40"/>
+          </svg>
+          <div class="gs-fam">Sudoku</div>
+          <h3>Mini</h3>
+          <p>Si los números te despejan.</p>
+        </a>
+        <a class="gs-card" href="./games.html" style="background:#E4EDFA">
+          <svg viewBox="0 0 60 60" fill="none" aria-hidden="true">
+            <path d="M8 44 H30 a8 8 0 0 0 8-8 V16" stroke="#1C1108" stroke-width="9" stroke-linecap="round" fill="none"/>
+            <path d="M30 22 L38 12 L46 22" stroke="#2670B8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="8" cy="44" r="5.5" fill="#2670B8"/>
+          </svg>
+          <div class="gs-fam">Flechas</div>
+          <h3>Clásico</h3>
+          <p>Si te gusta encontrar el camino.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · CIERRE -->
   <section class="fin">
     <div class="wrap">
       <img class="wave" src="./ristre-wave.png" alt="Ristretto se despide con el periódico del día">
