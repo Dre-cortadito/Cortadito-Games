@@ -27,3 +27,7 @@ _archive/
 # Hero lockup images — part of the deployable site.
 !lockup-light.png
 !lockup-dark.png
+
+# Mockup assets — part of the deployable /mockups/ preview.
+!mockups/ristre-scene.jpg
+!mockups/ristre-close.jpg
