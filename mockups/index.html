@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cortadito · Mockups de unificación</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="https://cortadito.games/favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,900;1,9..144,500&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--crema:#FAF5EC;--linea:#E9DCC4;--tinta:#1C1108;--suave:#6E6155;--naranja:#FE622F;--tostado:#E9531E;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--crema);color:var(--tinta);font-family:'Nunito Sans',system-ui,sans-serif;line-height:1.55;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 22px;text-align:center}
+  img.tile{width:64px;height:64px;border-radius:14px;margin-bottom:18px}
+  .k{font-size:11px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;color:var(--tostado)}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:10px 0 12px}
+  p.l{color:var(--suave);max-width:520px;font-size:16px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:36px 0 22px;width:100%;max-width:640px}
+  @media(max-width:560px){.cards{grid-template-columns:1fr}}
+  a.c{display:block;background:#fff;border:1px solid var(--linea);border-radius:18px;padding:26px 22px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
+  a.c:hover{transform:translateY(-4px);box-shadow:0 22px 44px -34px rgba(28,17,8,.45)}
+  a.c .t{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:24px}
+  a.c .t span{color:var(--tostado)}
+  a.c .d{color:var(--suave);font-size:14px;margin-top:6px}
+  a.c .go{display:inline-block;margin-top:14px;background:var(--tinta);color:#fff;border-radius:999px;padding:9px 20px;font-size:13.5px;font-weight:800}
+  .cur{font-size:13px;color:var(--suave)}
+  .cur a{color:var(--tostado);font-weight:800;text-decoration:none}
+  .foot{margin-top:34px;font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--tostado)}
+</style>
+</head>
+<body>
+  <img class="tile" src="https://cortadito.games/apple-touch-icon.png" alt="">
+  <div class="k">Propuesta de diseño · 31 jul 2026</div>
+  <h1>Una marca.<br>Dos habitaciones.</h1>
+  <p class="l">Mockups navegables de la unificación estética de Cortadito. Mismo masthead, mismo papel crema, misma tinta y el mismo naranja en las dos casas — solo cambia la habitación.</p>
+  <div class="cards">
+    <a class="c" href="./news.html">
+      <div class="t">Cortadito<span>.news</span></div>
+      <div class="d">La portada del boletín, rediseñada: masthead compartido, chips de categoría, sin emojis en titulares.</div>
+      <span class="go">Ver mockup →</span>
+    </a>
+    <a class="c" href="./games.html">
+      <div class="t">Cortadito<span>.games</span></div>
+      <div class="d">El hub real, re-vestido: barra fija con navegación, papel crema, tarjetas blancas, hero compacto.</div>
+      <span class="go">Ver mockup →</span>
+    </a>
+  </div>
+  <div class="cur">Comparar con los sitios actuales: <a href="https://cortadito.news" target="_blank" rel="noopener">cortadito.news</a> · <a href="https://cortadito.games" target="_blank" rel="noopener">cortadito.games</a></div>
+  <div class="foot">¡Lo esencial en un sorbo!</div>
+</body>
+</html>

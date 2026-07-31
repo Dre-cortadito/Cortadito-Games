@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOCKUP · Cortadito.News unificado</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="https://cortadito.games/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,500&family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FAF5EC; --blanco:#FFFFFF; --linea:#E9DCC4;
+    --tinta:#1C1108; --suave:#6E6155; --cafe:#4A2F21;
+    --naranja:#FE622F; --tostado:#E9531E;
+    --azul:#2670B8; --verde:#427C40; --ciruela:#9C3B8E; --oro:#B06E2E;
+    --serif:'Lora', Georgia, serif;
+    --marca:'Fraunces', Georgia, serif;
+    --sans:'Source Sans 3', -apple-system, system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--crema); color:var(--tinta); font-family:var(--sans); line-height:1.55; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 22px;}
+
+  /* mockup strip */
+  .mock{background:var(--tinta); color:#EFE6D8; font-size:12px; font-weight:600; letter-spacing:.06em; text-align:center; padding:7px 14px;}
+  .mock a{color:#FFB899; font-weight:800; border-bottom:1px solid currentColor;}
+
+  /* ============ MASTHEAD ============ */
+  .masthead{position:sticky; top:0; z-index:50; background:var(--crema); border-bottom:3px solid var(--tinta);}
+  .bar{max-width:1060px; margin:0 auto; padding:0 22px; height:62px; display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .brand{display:flex; align-items:center; gap:11px;}
+  .brand img{width:34px; height:34px; border-radius:8px;}
+  .word{font-family:var(--marca); font-weight:900; font-size:23px; letter-spacing:-.01em;}
+  .word span{color:var(--tostado);}
+  nav{display:flex; align-items:center; gap:26px;}
+  nav .lnk{font-size:15px; font-weight:700; color:var(--suave); padding:20px 1px 17px; border-bottom:3px solid transparent; margin-bottom:-3px;}
+  nav .lnk.on{color:var(--tinta); border-bottom-color:var(--naranja);}
+  nav .lnk:hover{color:var(--tinta);}
+  .cta{background:var(--tinta); color:#fff; border-radius:999px; padding:10px 20px; font-size:14px; font-weight:800; transition:.15s;}
+  .cta:hover{background:#000;}
+  @media(max-width:760px){ nav .lnk{display:none;} }
+
+  /* ============ HERO ============ */
+  .hero{padding:34px 0 8px;}
+  .hero-grid{display:grid; grid-template-columns:1.65fr 1fr; gap:26px; align-items:stretch;}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr;}}
+  .main-story{background:var(--blanco); border:1px solid var(--linea); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 50px -42px rgba(28,17,8,.4); transition:transform .15s;}
+  .main-story:hover{transform:translateY(-3px);}
+  .main-story .imgbox{aspect-ratio:16/8.6; overflow:hidden;}
+  .main-story .imgbox img{width:100%; height:100%; object-fit:cover;}
+  .main-story .tx{padding:22px 26px 26px;}
+  .chip{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:#fff; padding:4px 11px; border-radius:999px;}
+  .main-story h1{font-family:var(--serif); font-weight:700; font-size:clamp(24px,3.3vw,34px); line-height:1.13; margin:12px 0 8px;}
+  .main-story p{color:var(--suave); font-size:16.5px; max-width:56ch;}
+  .meta{margin-top:12px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave);}
+  .meta b{color:var(--tostado);}
+
+  .side{display:flex; flex-direction:column;}
+  .side .side-head{font-size:11px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--cafe); padding:2px 2px 10px; display:flex; align-items:center; gap:8px;}
+  .side .side-head::after{content:""; flex:1; height:1px; background:var(--linea);}
+  .side-item{padding:13px 2px; border-bottom:1px solid var(--linea); display:block;}
+  .side-item:last-of-type{border-bottom:none;}
+  .side-item .c{font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; margin-bottom:3px; display:block;}
+  .side-item h3{font-family:var(--serif); font-weight:600; font-size:17.5px; line-height:1.25;}
+  .side-item:hover h3{text-decoration:underline; text-decoration-color:var(--naranja); text-underline-offset:3px;}
+  .side-item .d{font-size:12px; color:var(--suave); margin-top:3px;}
+
+  /* ============ SUBSCRIBE BAND ============ */
+  .sub-band{margin:34px 0 8px; background:var(--blanco); border:1px solid var(--linea); border-radius:20px; padding:26px 30px; display:flex; align-items:center; gap:26px; flex-wrap:wrap;}
+  .sub-band .t h2{font-family:var(--serif); font-weight:700; font-size:22px;}
+  .sub-band .t p{color:var(--suave); font-size:14.5px; margin-top:2px;}
+  .sub-band form{display:flex; gap:10px; flex:1; min-width:280px; justify-content:flex-end;}
+  .sub-band input{flex:1; max-width:340px; border:1.5px solid var(--linea); border-radius:999px; padding:11px 18px; font-size:14.5px; font-family:inherit; background:var(--crema); color:var(--tinta);}
+  .sub-band input:focus{outline:2px solid var(--naranja); border-color:transparent;}
+  .btn-ink{background:var(--tinta); color:#fff; border:none; border-radius:999px; padding:11px 24px; font-size:14.5px; font-weight:800; font-family:inherit; cursor:pointer;}
+  .btn-ink:hover{background:#000;}
+
+  /* ============ GRID ============ */
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin:40px 0 18px;}
+  .section-head h2{font-family:var(--marca); font-weight:900; font-size:clamp(26px,3.4vw,34px);}
+  .section-head a{font-size:13.5px; font-weight:800; color:var(--tostado);}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--blanco); border:1px solid var(--linea); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; transition:transform .15s, box-shadow .15s;}
+  .card:hover{transform:translateY(-4px); box-shadow:0 24px 44px -36px rgba(28,17,8,.45);}
+  .card .imgbox{aspect-ratio:16/9; overflow:hidden; border-bottom:1px solid var(--linea);}
+  .card .imgbox img{width:100%; height:100%; object-fit:cover;}
+  .card .tx{padding:16px 18px 18px; display:flex; flex-direction:column; flex:1;}
+  .card h3{font-family:var(--serif); font-weight:600; font-size:19px; line-height:1.22; margin:9px 0 6px;}
+  .card p{color:var(--suave); font-size:14px; flex:1;}
+  .card .meta{margin-top:12px;}
+
+  /* ============ GAME CROSS-PROMO ============ */
+  .reto{margin:46px 0 0; background:var(--tinta); border-radius:22px; padding:30px 34px; display:flex; align-items:center; gap:26px; color:#F5EDE3; position:relative; overflow:hidden;}
+  .reto::before{content:""; position:absolute; inset:0; background:radial-gradient(420px 300px at 106% -30%, rgba(254,98,47,.38), transparent 60%); pointer-events:none;}
+  .reto .art{width:74px; height:74px; border-radius:16px; flex:none; position:relative; z-index:1;}
+  .reto .t{flex:1; position:relative; z-index:1;}
+  .reto .k{font-size:11px; font-weight:800; letter-spacing:.22em; text-transform:uppercase; color:#FFB899;}
+  .reto h2{font-family:var(--marca); font-weight:900; font-size:clamp(22px,3vw,30px); margin:6px 0 4px;}
+  .reto p{font-size:14.5px; color:#CDBFAF; max-width:52ch;}
+  .reto .go{position:relative; z-index:1; background:var(--naranja); color:#fff; border-radius:999px; padding:13px 28px; font-size:15px; font-weight:800; flex:none; transition:.15s;}
+  .reto .go:hover{background:var(--tostado);}
+  @media(max-width:700px){.reto{flex-direction:column; text-align:center;}}
+
+  /* ============ FOOTER ============ */
+  footer{margin-top:60px; border-top:3px solid var(--tinta); background:var(--crema);}
+  .foot{max-width:1060px; margin:0 auto; padding:34px 22px 44px; display:flex; justify-content:space-between; gap:26px; flex-wrap:wrap;}
+  .foot .fb{display:flex; flex-direction:column; gap:8px; max-width:340px;}
+  .foot .brand img{width:30px; height:30px;}
+  .foot .word{font-size:19px;}
+  .foot p{font-size:13.5px; color:var(--suave);}
+  .foot .tagline{font-family:var(--marca); font-style:italic; color:var(--tostado); font-weight:500; font-size:15px;}
+  .foot .cols{display:flex; gap:48px;}
+  .foot .col h4{font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--cafe); margin-bottom:10px;}
+  .foot .col a{display:block; font-size:14px; font-weight:600; color:var(--suave); padding:3px 0;}
+  .foot .col a:hover{color:var(--tinta);}
+  .legal{border-top:1px solid var(--linea); padding:14px 22px 18px; text-align:center; font-size:12px; color:var(--suave);}
+</style>
+</head>
+<body>
+
+<div class="mock">PROPUESTA DE DISEÑO — así se vería cortadito.news unificado &nbsp;·&nbsp; <a href="./index.html">volver al índice</a> &nbsp;·&nbsp; <a href="https://cortadito.news" target="_blank" rel="noopener">ver el sitio actual</a></div>
+
+<header class="masthead">
+  <div class="bar">
+    <a class="brand" href="#">
+      <img src="https://cortadito.games/apple-touch-icon.png" alt="">
+      <span class="word">Cortadito<span>.news</span></span>
+    </a>
+    <nav>
+      <a class="lnk on" href="#">Noticias</a>
+      <a class="lnk" href="./games.html">Juegos</a>
+      <a class="lnk" href="#">Sobre Cortadito</a>
+      <a class="cta" href="#suscribete">Suscribirse</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid">
+      <a class="main-story" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/c28d1033-2690-46ed-b786-dad1b461919c/91296fd3-70a3-4786-a74c-f2023d381fd2.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--azul)">Mundo</span>
+          <h1>FIFA propone empresa de capital privado de $20,000 millones</h1>
+          <p>Infantino propuso crear una empresa valorada en $20,000 millones para operar torneos. Lo esencial, explicado en un sorbo.</p>
+          <div class="meta">Jul 29, 2026 · <b>3 min de lectura</b></div>
+        </div>
+      </a>
+      <aside class="side">
+        <div class="side-head">Lo último</div>
+        <a class="side-item" href="#">
+          <span class="c" style="color:var(--verde)">Salud</span>
+          <h3>Miedo en el pasillo de vegetales: casos de infección siguen subiendo</h3>
+          <div class="d">Jul 28, 2026 · 2 min</div>
+        </a>
+        <a class="side-item" href="#">
+          <span class="c" style="color:var(--verde)">Salud</span>
+          <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
+          <div class="d">Jul 27, 2026 · 3 min</div>
+        </a>
+        <a class="side-item" href="#">
+          <span class="c" style="color:var(--ciruela)">Tecnología</span>
+          <h3>La IA encontró cómo escapar de su espacio de pruebas</h3>
+          <div class="d">Jul 24, 2026 · 3 min</div>
+        </a>
+        <a class="side-item" href="#">
+          <span class="c" style="color:var(--ciruela)">Tecnología</span>
+          <h3>Precios de chips se elevan: TSMC sube tarifas desde 2027</h3>
+          <div class="d">Jul 22, 2026 · 2 min</div>
+        </a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SUBSCRIBE -->
+  <section class="sub-band" id="suscribete">
+    <div class="t">
+      <h2>Las noticias que importan, en 5 minutos</h2>
+      <p>Lo esencial para hispanohablantes en EE. UU. — claro, breve y en tu correo cada mañana.</p>
+    </div>
+    <form onsubmit="return false">
+      <input type="email" placeholder="tu@correo.com" aria-label="Correo electrónico">
+      <button class="btn-ink">Suscríbete</button>
+    </form>
+  </section>
+
+  <!-- LATEST -->
+  <section>
+    <div class="section-head">
+      <h2>Últimas publicaciones</h2>
+      <a href="#">Ver todas →</a>
+    </div>
+    <div class="grid">
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/4b8032d0-2a31-44dc-a2ee-32ea257cf28b/V60.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--verde)">Salud</span>
+          <h3>Café filtrado, corazón protegido</h3>
+          <p>Cinco tazas al día son seguras para la mayoría de los adultos.</p>
+          <div class="meta">Jul 21, 2026 · <b>2 min</b></div>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/5e6492dd-a8be-4577-9d0e-075a7e5da6d4/ChatGPT_Image_Jul_19__2026__11_03_47_PM.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--oro)">Dinero</span>
+          <h3>Apple vuelve a la cima</h3>
+          <p>Apple recuperó el puesto de compañía más valiosa.</p>
+          <div class="meta">Jul 20, 2026 · <b>2 min</b></div>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/cbb168ec-7e0e-4c7f-bf32-be294b804d0d/Plane.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--oro)">Dinero</span>
+          <h3>El combustible sacude los cielos</h3>
+          <p>Tarifas aéreas seguirán aumentando este año.</p>
+          <div class="meta">Jul 17, 2026 · <b>2 min</b></div>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/e7897acb-c7de-49e6-b3a1-ee2e8e8a09db/Fruits.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--verde)">Salud</span>
+          <h3>Miedo en el pasillo de vegetales</h3>
+          <p>Casos de infección intestinal siguen aumentando en EE. UU.</p>
+          <div class="meta">Jul 28, 2026 · <b>2 min</b></div>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/4b053283-f6eb-49b9-b8e4-1b6e18874191/ChatGPT_Image_Jul_27__2026__02_01_18_AM.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--verde)">Salud</span>
+          <h3>Farmacéutica acelera acceso global contra VIH</h3>
+          <p>Merck firmó siete licencias sin regalías para fabricantes de África e India.</p>
+          <div class="meta">Jul 27, 2026 · <b>3 min</b></div>
+        </div>
+      </a>
+      <a class="card" href="#">
+        <div class="imgbox"><img src="https://media.beehiiv.com/cdn-cgi/image/format=auto,fit=scale-down,onerror=redirect/uploads/asset/file/3bec8488-e7e6-40e8-9980-456c1fe0af3f/Openai.png" alt=""></div>
+        <div class="tx">
+          <span class="chip" style="background:var(--ciruela)">Tecnología</span>
+          <h3>La IA encontró cómo escapar</h3>
+          <p>Dos sistemas experimentales salieron de un espacio de pruebas.</p>
+          <div class="meta">Jul 24, 2026 · <b>3 min</b></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- GAME CROSS-PROMO -->
+  <section class="reto">
+    <img class="art" src="https://cortadito.games/apple-touch-icon.png" alt="">
+    <div class="t">
+      <span class="k">El reto de hoy</span>
+      <h2>¿Ya jugaste tu espressito mental?</h2>
+      <p>Terminaste de leer — ahora despeja la mente. Cada día hay un juego gratis en Cortadito Games.</p>
+    </div>
+    <a class="go" href="./games.html">Jugar hoy →</a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot">
+    <div class="fb">
+      <a class="brand" href="#">
+        <img src="https://cortadito.games/apple-touch-icon.png" alt="">
+        <span class="word">Cortadito<span>.news</span></span>
+      </a>
+      <p>Las noticias más importantes de EE. UU. para hispanohablantes, en menos de 5 minutos.</p>
+      <span class="tagline">¡Lo esencial en un sorbo!</span>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <h4>Cortadito</h4>
+        <a href="#">Noticias</a>
+        <a href="./games.html">Juegos</a>
+        <a href="#">Sobre Cortadito</a>
+      </div>
+      <div class="col">
+        <h4>Boletín</h4>
+        <a href="#suscribete">Suscribirse</a>
+        <a href="#">Artículos</a>
+      </div>
+      <div class="col">
+        <h4>Legal</h4>
+        <a href="#">Política de Privacidad</a>
+        <a href="#">Términos de Uso</a>
+      </div>
+    </div>
+  </div>
+  <div class="legal">© 2026 Cortadito News LLC.</div>
+</footer>
+
+</body>
+</html>
