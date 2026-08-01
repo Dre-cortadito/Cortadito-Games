@@ -136,6 +136,24 @@
   @media(max-width:860px){.ed-grid{grid-template-columns:1fr;}}
   /* ============ TIRA DE JUEGOS (estilo NYT Games) ============ */
   .games-strip{text-align:center;}
+  .ed-more{text-align:center; margin-top:34px;}
+
+  /* ============ MÁS RECIENTES (archivo) ============ */
+  .rec-list{max-width:860px; margin:0 auto; border-top:2px solid var(--tinta);}
+  .rec{display:flex; align-items:flex-start; justify-content:space-between; gap:26px;
+    padding:20px 4px; border-bottom:1px solid var(--linea); transition:background .15s;}
+  .rec:hover{background:var(--blanco);}
+  .rec-cat{font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:5px;}
+  .rec h3{font-family:var(--serif); font-weight:700; font-size:20px; line-height:1.25; margin-bottom:4px;}
+  .rec:hover h3{text-decoration:underline; text-decoration-color:var(--naranja); text-underline-offset:3px;}
+  .rec p{font-size:14.5px; color:var(--suave); max-width:62ch;}
+  .rec-meta{flex:none; text-align:right; font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--suave); padding-top:2px;}
+  .rec-meta span{display:block; color:var(--tostado); margin-top:3px;}
+  @media(max-width:620px){
+    .rec{flex-direction:column; gap:8px;}
+    .rec-meta{text-align:left;}
+    .rec-meta span{display:inline; margin-left:8px;}
+  }
   .gs-all{display:inline-flex; align-items:center; gap:10px; margin-top:30px;
     background:var(--tinta); color:#fff; border-radius:999px; padding:14px 30px;
     font-size:15.5px; font-weight:800; transition:.15s;}
@@ -200,7 +218,7 @@
   .main-story p{color:var(--suave); font-size:16px; max-width:56ch;}
   .main-story .meta{margin-top:12px;}
   .side{display:flex; flex-direction:column;}
-  .latest-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding-bottom:12px; border-bottom:2px solid var(--tinta);}
+  .latest-head{display:flex; align-items:baseline; gap:14px; padding-bottom:12px; border-bottom:2px solid var(--tinta);}
   .latest-head h3{font-family:var(--marca); font-weight:900; font-size:26px;}
   .latest-head a{font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--tostado); white-space:nowrap;}
   .latest-head a:hover{text-decoration:underline; text-underline-offset:3px;}
@@ -442,7 +460,6 @@
         <aside class="side">
           <div class="latest-head">
             <h3>Lo último</h3>
-            <a href="#">Todas las historias →</a>
           </div>
           <a class="side-item" href="#">
             <span class="c" style="color:var(--teal)">Globales</span>
@@ -466,6 +483,7 @@
           </a>
         </aside>
       </div>
+      <div class="ed-more"><a class="gs-all" href="#recientes">Mira las más recientes <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v13M6 13l6 6 6-6"/></svg></a></div>
     </div>
   </section>
 
@@ -611,6 +629,61 @@
       </div>
       <a class="gs-all" href="./games.html">Ver todos nuestros juegos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
         </div>
+  </section>
+
+
+  <!-- 8 · MÁS RECIENTES -->
+  <section class="tight" id="recientes">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kick">El archivo</span>
+        <h2>Más recientes</h2>
+        <p>Las últimas ediciones de Cortadito, por si te perdiste alguna.</p>
+      </div>
+      <div class="rec-list">
+        <a class="rec" href="#">
+          <div class="rec-tx">
+            <span class="rec-cat" style="color:var(--verde)">Economía</span>
+            <h3>FIFA propone empresa de capital privado de $20,000 millones</h3>
+            <p>Infantino propuso crear una empresa valuada en $20,000 millones para operar los torneos.</p>
+          </div>
+          <div class="rec-meta">Jul 29, 2026<span>3 min</span></div>
+        </a>
+        <a class="rec" href="#">
+          <div class="rec-tx">
+            <span class="rec-cat" style="color:var(--ciruela)">Asuntos Públicos</span>
+            <h3>Miedo en el pasillo de vegetales</h3>
+            <p>Los casos de infección intestinal siguen aumentando en EE. UU.</p>
+          </div>
+          <div class="rec-meta">Jul 28, 2026<span>2 min</span></div>
+        </a>
+        <a class="rec" href="#">
+          <div class="rec-tx">
+            <span class="rec-cat" style="color:var(--teal)">Globales</span>
+            <h3>Farmacéutica acelera el acceso global contra el VIH</h3>
+            <p>Merck firmó siete licencias sin regalías para fabricantes de África e India.</p>
+          </div>
+          <div class="rec-meta">Jul 27, 2026<span>3 min</span></div>
+        </a>
+        <a class="rec" href="#">
+          <div class="rec-tx">
+            <span class="rec-cat" style="color:var(--azul)">Ciencia y Tech</span>
+            <h3>La IA encontró cómo escapar de su espacio de pruebas</h3>
+            <p>Un modelo halló la salida de su entorno de pruebas antes de que lo notaran.</p>
+          </div>
+          <div class="rec-meta">Jul 24, 2026<span>3 min</span></div>
+        </a>
+        <a class="rec" href="#">
+          <div class="rec-tx">
+            <span class="rec-cat" style="color:var(--oro)">Trending Varios</span>
+            <h3>Café filtrado, corazón protegido</h3>
+            <p>Un estudio largo asocia el café de filtro con menos riesgo cardiovascular.</p>
+          </div>
+          <div class="rec-meta">Jul 21, 2026<span>2 min</span></div>
+        </a>
+      </div>
+      <div class="ed-more"><a class="gs-all" href="#suscribete">Recibirlas en mi correo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+    </div>
   </section>
 
 </main>
