@@ -190,37 +190,37 @@
 
   main{max-width:1000px;margin:0 auto;padding:20px 24px 100px}
 
-  /* ---------- hero de Juegos (texto · collage central · texto) ---------- */
+  /* ---------- hero de Juegos (collage a la izquierda, info a la derecha) ---------- */
   .ghero{background:linear-gradient(180deg,#F6EAD6 0%,#F2E3CC 100%);border-bottom:1px solid rgba(36,18,9,.08);
-    padding:56px 0 60px;position:relative;overflow:hidden}
+    padding:56px 0 62px;position:relative;overflow:hidden}
   .ghero::before{content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(560px 400px at 50% 6%, rgba(254,98,47,.14), transparent 64%)}
-  .ghero-in{max-width:1120px;margin:0 auto;padding:0 26px;position:relative;z-index:1;
-    display:grid;grid-template-columns:1fr 1.5fr .95fr;gap:28px;align-items:center}
-  .gh-over{font-size:15px;line-height:1.45;color:#8a6f57;margin:0 0 12px;max-width:24ch}
-  .ghero h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(27px,3vw,38px);
-    line-height:1.03;margin:0;color:#1c1108;letter-spacing:-.01em}
-  .gh-desc{font-size:16px;line-height:1.5;color:#5f5347;margin:0 0 16px;max-width:30ch}
-  .gh-fine{font-size:13.5px;line-height:1.5;color:#8a7b6b;margin:0 0 16px;max-width:30ch}
-  .gh-prem{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:800;
+    background:radial-gradient(560px 400px at 22% 8%, rgba(254,98,47,.14), transparent 64%)}
+  .ghero-in{max-width:1080px;margin:0 auto;padding:0 26px;position:relative;z-index:1;
+    display:grid;grid-template-columns:1.22fr .78fr;gap:46px;align-items:center}
+
+  .ghero-art{position:relative;display:flex;align-items:flex-start;justify-content:flex-start;padding:26px 0 34px}
+  .ghero-art figure{margin:0;width:62%;aspect-ratio:7/5;overflow:hidden;border-radius:24px;
+    border:1px solid rgba(36,18,9,.12);box-shadow:0 30px 52px -26px rgba(28,17,8,.5);background:#fff}
+  .ghero-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .art-a{transform:translateY(-20px);z-index:1}
+  .art-a img{object-position:38% 50%}
+  .art-b{margin-left:-13%;transform:translateY(24px);z-index:2;
+    box-shadow:0 30px 52px -26px rgba(28,17,8,.5), 0 0 0 8px #F3E4CD}
+  .art-b img{object-position:58% 48%}
+
+  .gh-over{font-size:15.5px;line-height:1.45;color:#8a6f57;margin:0 0 12px}
+  .ghero h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(28px,3.2vw,40px);
+    line-height:1.03;margin:0 0 16px;color:#1c1108;letter-spacing:-.01em}
+  .gh-desc{font-size:16.5px;line-height:1.5;color:#5f5347;margin:0 0 16px}
+  .gh-fine{font-size:14px;line-height:1.5;color:#8a7b6b;margin:0 0 18px}
+  .gh-prem{display:inline-flex;align-items:center;gap:7px;font-size:14.5px;font-weight:800;
     color:#E9531E;text-decoration:none;border-bottom:2px solid currentColor;padding-bottom:1px}
   .gh-prem svg{width:13px;height:13px}
 
-  .ghero-art{position:relative;display:flex;align-items:flex-start;justify-content:center;padding:24px 0 32px}
-  .ghero-art figure{margin:0;width:62%;aspect-ratio:7/5;overflow:hidden;border-radius:22px;
-    border:1px solid rgba(36,18,9,.12);box-shadow:0 26px 46px -26px rgba(28,17,8,.5);background:#fff}
-  .ghero-art img{width:100%;height:100%;object-fit:cover;display:block}
-  .art-a{transform:translateY(-18px);z-index:1}
-  .art-a img{object-position:38% 50%}
-  .art-b{margin-left:-13%;transform:translateY(22px);z-index:2;
-    box-shadow:0 26px 46px -26px rgba(28,17,8,.5), 0 0 0 7px #F3E4CD}
-  .art-b img{object-position:58% 48%}
-
-  @media(max-width:980px){
-    .ghero{padding:36px 0 42px}
-    .ghero-in{grid-template-columns:1fr;gap:24px;text-align:left}
-    .gh-over,.gh-desc,.gh-fine{max-width:52ch}
-    .ghero-art{max-width:540px;margin:0 auto;padding:8px 0 26px}
+  @media(max-width:900px){
+    .ghero{padding:34px 0 42px}
+    .ghero-in{grid-template-columns:1fr;gap:26px}
+    .ghero-art{max-width:540px;margin:0 auto;padding:8px 0 28px;justify-content:center}
     .ghero-art figure{width:58%}
     .art-a{transform:translateY(-10px)}
     .art-b{margin-left:-12%;transform:translateY(12px)}
@@ -358,15 +358,13 @@
 
   <section class="ghero">
     <div class="ghero-in">
-      <div class="gh-left">
-        <p class="gh-over">Juegos que activan tu mente en pocos minutos.</p>
-        <h2>Juega un poco.<br>Despeja mucho.</h2>
-      </div>
       <div class="ghero-art">
         <figure class="art-a"><img src="./ristre-playa.jpg" alt="Ristretto en su descanso, jugando frente al mar"></figure>
         <figure class="art-b"><img src="./ristre-oficina.jpg" alt="Ristretto jugando un rato en la oficina"></figure>
       </div>
-      <div class="gh-right">
+      <div class="gh-tx">
+        <p class="gh-over">Juegos que activan tu mente en pocos minutos.</p>
+        <h2>Juega un poco.<br>Despeja mucho.</h2>
         <p class="gh-desc">Palabras, lógica y retos rápidos para regalarle a tu mente una pausa que sí aporta.</p>
         <p class="gh-fine">Los 12 juegos abiertos todos los días, sin esperar la rotación y sin anuncios.</p>
         <a class="gh-prem" href="#premium">Ver Premium <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
