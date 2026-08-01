@@ -226,6 +226,27 @@
     .art-b{margin-left:-12%;transform:translateY(12px)}
   }
 
+  /* ---------- cinta Premium (como el ticker de News) ---------- */
+  .ptick{display:block;background:#1c1108;overflow:hidden;text-decoration:none;border-top:1px solid #000}
+  .ptick-in{display:flex;gap:46px;padding:13px 0;white-space:nowrap;width:max-content;animation:ptick 34s linear infinite}
+  .ptick-in span{font-size:13.5px;font-weight:600;color:#EFE6D8}
+  .ptick-in .lead{color:#FFB899;font-weight:800;letter-spacing:.14em;font-size:11px}
+  .ptick-in .go{color:#FE622F;font-weight:800}
+  .ptick:hover .ptick-in{animation-play-state:paused}
+  @keyframes ptick{to{transform:translateX(-50%)}}
+
+  /* ---------- llamada a Premium entre familias ---------- */
+  .pcta{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
+    background:#FE622F;color:#fff;border-radius:26px;padding:28px 34px;margin:34px 0 6px;
+    box-shadow:var(--shadow)}
+  .pcta h3{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(22px,2.8vw,30px);margin:0 0 6px;color:#fff}
+  .pcta p{font-size:15px;color:#FFE4D7;margin:0;max-width:52ch}
+  .pcta .go{flex:none;display:inline-flex;align-items:center;gap:9px;background:#141210;color:#fff;
+    border-radius:999px;padding:14px 30px;font-size:15.5px;font-weight:800;text-decoration:none;transition:.16s}
+  .pcta .go:hover{background:#000}
+  .pcta .go svg{width:14px;height:14px}
+  @media(max-width:640px){.pcta{padding:24px 22px}.pcta .go{width:100%;justify-content:center}}
+
   /* ---------- Racimo hero (wide, premium — colored panel) ---------- */
   .feature{
     display:flex;align-items:center;gap:36px;text-decoration:none;color:inherit;cursor:pointer;
@@ -366,11 +387,14 @@
         <p class="gh-over">Juegos que activan tu mente en pocos minutos.</p>
         <h2>Juega un poco.<br>Despeja mucho.</h2>
         <p class="gh-desc">Palabras, lógica y retos rápidos para regalarle a tu mente una pausa que sí aporta.</p>
-        <p class="gh-fine">Los 12 juegos abiertos todos los días, sin esperar la rotación y sin anuncios.</p>
-        <a class="gh-prem" href="#premium">Ver Premium <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
       </div>
     </div>
   </section>
+
+
+  <a class="ptick" href="#premium" aria-label="Cortadito Premium">
+    <div class="ptick-in"><span class="lead">CORTADITO PREMIUM</span><span>Los 12 juegos abiertos todos los días</span><span>Sin esperar la rotación</span><span>Sin anuncios</span><span>Con el archivo de Anteriores</span><span class="go">Hazte Premium →</span><span class="lead">CORTADITO PREMIUM</span><span>Los 12 juegos abiertos todos los días</span><span>Sin esperar la rotación</span><span>Sin anuncios</span><span>Con el archivo de Anteriores</span><span class="go">Hazte Premium →</span></div>
+  </a>
 
   <main id="app"></main>
 
@@ -521,19 +545,9 @@ FAMILIES.forEach(fam=>fam.modes.forEach(m=>{
 }));
 const FEATURED = FEATURED_POOL.length ? FEATURED_POOL[_fnv("destacado:"+_day())%FEATURED_POOL.length]
                                       : { title:RACIMO.name, q:RACIMO.question, logo:RACIMO.logo, url:RACIMO.url, bg:"#f4d8d2" };
-app.insertAdjacentHTML("beforeend",`
-  <a class="feature" ${attrs(FEATURED.url)} style="background:${FEATURED.bg||'#f4d8d2'}">
-    <div class="flogo">${FEATURED.logo}</div>
-    <div class="ftext">
-      <span class="kick">Destacado</span>
-      <h2>${FEATURED.title}</h2>
-      <p class="q">${FEATURED.q}</p>
-    </div>
-    <span class="btn">Jugar ${ARROW}</span>
-  </a>
-`);
 
-FAMILIES.forEach(fam=>{
+
+FAMILIES.forEach((fam,_i)=>{
   const cards=fam.modes.map(m=> m.soon ? `
     <a class="card soon" href="#" onclick="return false" aria-disabled="true">
       <div class="panel" style="background:${m.bg}">
@@ -563,6 +577,17 @@ FAMILIES.forEach(fam=>{
       <div class="modes">${cards}</div>
     </section>
   `);
+  if(_i===1){
+    app.insertAdjacentHTML("beforeend",`
+      <section class="pcta">
+        <div>
+          <h3>Juega sin esperar la rotación.</h3>
+          <p>Con Premium tienes los 12 juegos abiertos todos los días, sin anuncios y con el archivo de Anteriores.</p>
+        </div>
+        <a class="go" href="#premium">Hazte Premium ${ARROW}</a>
+      </section>
+    `);
+  }
 });
 
 /* ---------- tema + menú ---------- */
