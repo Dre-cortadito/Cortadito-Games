@@ -196,7 +196,7 @@
   .ghero::before{content:"";position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(520px 380px at 88% 12%, rgba(254,98,47,.16), transparent 62%)}
   .ghero-in{max-width:1000px;margin:0 auto;padding:0 24px;position:relative;z-index:1;
-    display:grid;grid-template-columns:.92fr 1.08fr;gap:44px;align-items:center}
+    display:grid;grid-template-columns:.88fr 1.12fr;gap:36px;align-items:center}
   .gh-over{font-size:clamp(15px,1.9vw,17.5px);color:#8a6f57;margin:0 0 10px}
   .ghero h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(34px,4.6vw,52px);
     line-height:1.02;margin:0 0 14px;color:#1c1108;letter-spacing:-.01em}
@@ -213,21 +213,23 @@
   .gh-chips span{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7a5c3f;
     background:rgba(255,255,255,.72);border:1px solid rgba(36,18,9,.10);border-radius:999px;padding:7px 15px}
 
-  .ghero-art{position:relative;padding:0 0 15% 0}
-  .ghero-art figure{margin:0}
-  .ghero-art img{width:100%;height:auto;display:block;border-radius:22px}
-  .art-main{width:93%;margin-left:auto;transform:translateY(-18px);
-    border-radius:22px;overflow:hidden;border:1px solid rgba(36,18,9,.12);
-    box-shadow:0 30px 56px -30px rgba(28,17,8,.5)}
-  .art-sec{position:absolute;left:-7%;bottom:-1%;width:46%;
-    border-radius:22px;overflow:hidden;border:1px solid rgba(36,18,9,.12);
-    box-shadow:0 22px 40px -22px rgba(28,17,8,.55), 0 0 0 7px #F4E6D0}
+  .ghero-art{position:relative;display:flex;align-items:flex-start;justify-content:center;padding:22px 0 30px}
+  .ghero-art figure{margin:0;width:60%;aspect-ratio:7/5;overflow:hidden;border-radius:22px;
+    border:1px solid rgba(36,18,9,.12);box-shadow:0 26px 46px -26px rgba(28,17,8,.5);background:#fff}
+  .ghero-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .art-a{transform:translateY(-18px);z-index:1}
+  .art-a img{object-position:38% 50%}
+  .art-b{margin-left:-13%;transform:translateY(22px);z-index:2;
+    box-shadow:0 26px 46px -26px rgba(28,17,8,.5), 0 0 0 7px #F3E4CD}
+  .art-b img{object-position:58% 48%}
+
   @media(max-width:820px){
     .ghero{padding:34px 0 40px}
     .ghero-in{grid-template-columns:1fr;gap:30px}
-    .ghero-art{max-width:520px;margin:0 auto;padding-bottom:18%}
-    .art-main{width:90%;transform:none}
-    .art-sec{width:50%;left:-2%}
+    .ghero-art{max-width:520px;margin:0 auto;padding:16px 0 26px}
+    .ghero-art figure{width:56%}
+    .art-a{transform:translateY(-10px)}
+    .art-b{margin-left:-12%;transform:translateY(12px)}
   }
 
   /* ---------- Racimo hero (wide, premium — colored panel) ---------- */
@@ -372,8 +374,8 @@
         <div class="gh-chips"><span>Palabreo</span><span>Racimo</span><span>Flechas</span></div>
       </div>
       <div class="ghero-art">
-        <figure class="art-main"><img src="./ristre-playa.jpg" alt="Ristretto en su descanso, jugando en el banco frente al mar"></figure>
-        <figure class="art-sec"><img src="./ristre-oficina.jpg" alt="Ristretto jugando un rato en la oficina"></figure>
+        <figure class="art-a"><img src="./ristre-playa.jpg" alt="Ristretto en su descanso, jugando frente al mar"></figure>
+        <figure class="art-b"><img src="./ristre-oficina.jpg" alt="Ristretto jugando un rato en la oficina"></figure>
       </div>
     </div>
   </section>
