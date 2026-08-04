@@ -12,11 +12,11 @@
   var POOLS = {
     palabreo: ["trenza", "cuarteto"],
     sudoku: ["clasico", "niebla", "mini"],
-    flechas: ["borde", "cascada", "clasico", "desvio", "rumbo", "flujo"]
+    flechas: ["borde", "cascada", "clasico"]   /* Desvío, Rumbo y Flujo retirados: no jugables */
   };
   var NAME = { racimo:"Racimo", palabreo:"Palabreo", sudoku:"Sudoku", flechas:"Flechas",
     clasico:"Clásico", trenza:"Trenza", cuarteto:"Cuarteto", niebla:"Niebla", mini:"Mini",
-    borde:"Borde", cascada:"Cascada", desvio:"Desvío", rumbo:"Rumbo", flujo:"Flujo" };
+    borde:"Borde", cascada:"Cascada" };
   var DOW = ["dom","lun","mar","mié","jue","vie","sáb"];
 
   function fnv(s){ var h=2166136261; for (var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
@@ -222,21 +222,24 @@
       var dia = document.createElement("span");
       dia.className = "cgk-dia"; dia.textContent = "\u25C6"; dia.title = "Premium";
       el.appendChild(dia);
-      if (ACTIVE){
-        el.addEventListener("click", function(ev){
-          if (isPremium()) return;
-          ev.preventDefault(); ev.stopImmediatePropagation();
-          var h = here(); showLock("anteriores", h.game, h.mode);
-        }, true);
-      }
+      el.addEventListener("click", function(ev){
+        if (isPremium()) return;
+        ev.preventDefault(); ev.stopImmediatePropagation();
+        var h = here(); showLock("anteriores", h.game, h.mode);
+      }, true);
     });
   }
 
   function boot(){
     var h = here();
+    /* Nothing visible until the gate is ACTIVE (ENFORCE, or ?cgpreview=1 to
+       demo). Before 2026-08-05 the ◆ diamond on "Anteriores" and the hub's
+       Gratis/Premium bands rendered in preview-off mode too — players saw
+       Premium chrome on a product with no Premium. */
+    if (!ACTIVE) return;
     if (h.game === "hub"){ decorateHub(); }
     else {
-      if (ACTIVE && !isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);
+      if (!isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);
       tagAnteriores();
       setTimeout(tagAnteriores, 1200);
     }

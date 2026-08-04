@@ -427,7 +427,7 @@ const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el
 /* Destacado rota a diario entre los juegos gratis de hoy (mismo hash que gate.js) */
 const _fnv=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
 const _day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
-const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["borde","cascada","clasico","desvio","rumbo","flujo"]};
+const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["borde","cascada","clasico"]};
 const _freeToday=(game,mode)=>{
   if(game==="racimo") return true;
   if(game==="palabreo"&&mode==="clasico") return true;
@@ -568,6 +568,26 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); c
     if(document.visibilityState==='hidden'){ close(); }
     else if(sent){ sent=false; t0=Date.now(); }
   });
+})();
+</script>
+<script>
+/* ===== CORTADITO — cgPhoneZoom (2026-08-05) =====
+   A phone forced to "Sitio para computadoras" gets a ~980px CSS viewport, so
+   px-sized UI renders tiny. When that state is detected (wide + very tall +
+   coarse pointer = a phone held upright, never a desktop or tablet), lay the
+   page out as a 520px phone and scale it up with CSS zoom. zoom divides the
+   layout viewport, so EVERYTHING (fonts, header, keyboard, boards) scales
+   together. Media queries still see the real viewport. Real phones and real
+   desktops are untouched. */
+(function(){
+  var MQ = '(min-width: 700px) and (max-aspect-ratio: 2/3) and (pointer: coarse)';
+  function apply(){
+    var on = window.matchMedia(MQ).matches;
+    document.body.style.zoom = on ? String(window.innerWidth/520) : '';
+  }
+  apply();
+  window.addEventListener('resize', apply);
+  try{ window.matchMedia(MQ).addEventListener('change', apply); }catch(e){}
 })();
 </script>
 </body>
