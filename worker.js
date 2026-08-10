@@ -67,15 +67,20 @@ async function readEmail(request, url) {
   return EMAIL_RE.test(email) && email.length <= 254 ? email : null;
 }
 
-/* Spec §4: only status "active" counts; premium requires subscription_tier
-   "premium" AND at least one currently-active premium tier (a lapsed payment
-   leaves tier "premium" with no active entries — that is FREE, not PAID). */
+/* Spec §4: only status "active" counts. Premium requires subscription_tier
+   "premium". When BeeHiiv returns the premium-tiers detail array (Stripe-backed
+   subs), at least one entry must be active — a lapsed payment leaves tier
+   "premium" with no active entries, which is FREE, not PAID. Comped /
+   API-granted subs (e.g. tier gifted via the API, no Stripe) come back WITHOUT
+   that array even when expanded — for those, BeeHiiv's own tier verdict rules. */
 function classify(sub) {
   if (!sub) return "NOT_SUBSCRIBED";
   if (sub.status !== "active") return "PENDING";
-  const paid = sub.subscription_tier === "premium" &&
-    Array.isArray(sub.subscription_premium_tiers) &&
-    sub.subscription_premium_tiers.some(t => t && t.status === "active");
+  if (sub.subscription_tier !== "premium") return "FREE_SUBSCRIBER";
+  const tiers = sub.subscription_premium_tiers;
+  const paid = (Array.isArray(tiers) && tiers.length)
+    ? tiers.some(t => t && t.status === "active")
+    : true;   // comped: no tier entries to check
   return paid ? "PAID_SUBSCRIBER" : "FREE_SUBSCRIBER";
 }
 

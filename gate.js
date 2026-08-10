@@ -101,16 +101,13 @@
     + ".cgk-btn.plum{background:#9C3B8E;color:#fff}"
     + ".cgk-linkbtn{display:block;width:100%;background:none;border:0;font:600 13px system-ui,sans-serif;color:#5f5852;"
     + "cursor:pointer;padding:9px;text-decoration:underline;text-underline-offset:2px}"
-    + ".cgk-sec{font:700 10px/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8d8580;margin:0 0 8px}"
     + ".cgk-btn{display:block;width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:0;font-size:15px;font-weight:700;"
     + "cursor:pointer;text-decoration:none;margin-bottom:8px}"
     + ".cgk-btn.main{background:#e35336;color:#fff}"
     + ".cgk-btn.dark{background:#171210;color:#fff}"
     + ".cgk-btn.ghost{background:none;border:1.5px solid #eee2d6;color:#5f5852;font-weight:600}"
-    + ".cgk-cal{display:flex;gap:4px;justify-content:center;margin:12px 0 16px}"
-    + ".cgk-cal div{flex:1;max-width:48px;background:#F7EFE0;border-radius:8px;padding:6px 2px;font-size:10px;color:#5f5852}"
-    + ".cgk-cal div.on{background:#e35336;color:#fff}"
-    + ".cgk-cal b{display:block;font-size:10px;margin-top:2px}"
+    + ".cgk-back{font-size:13px;color:#5f5852;margin:0 0 2px}"
+    + ".cgk-back b{color:#171210}"
     + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}"
     + ".cgk-note.ok{color:#427C40;font-size:13px;font-weight:600}"
     + ".cgk-note.warn{color:#B02E2E;font-size:12px}"
@@ -130,14 +127,19 @@
   } }catch(e){}
 
   /* ---------- lock overlay ---------- */
-  function calendarHtml(fam){
-    var out = "";
-    for (var i=0;i<7;i++){
-      var d = new Date(); d.setDate(d.getDate()+i);
-      var m = freeMode(fam, d);
-      out += '<div class="'+(i===0?"on":"")+'">'+(i===0?"hoy":DOW[d.getDay()])+"<b>"+NAME[m]+"</b></div>";
+  /* "Cuarteto vuelve gratis el martes." — when the locked mode next rotates
+     into the free slot. Answers the question the old weekly strip didn't. */
+  var DOWFULL = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  function comebackHtml(game, mode){
+    if (!mode) return "";
+    for (var i = 1; i <= 14; i++){
+      var d = new Date(); d.setDate(d.getDate() + i);
+      if (freeMode(game, d) === mode){
+        var when = i === 1 ? "mañana" : "el " + DOWFULL[d.getDay()];
+        return '<p class="cgk-back">📅 ' + NAME[mode] + ' vuelve gratis <b>' + when + '</b>.</p>';
+      }
     }
-    return '<div class="cgk-cal">'+out+"</div>";
+    return "";
   }
   /* ---------- hub card art, verbatim (same SVGs as the hub cards) ---------- */
   function csvg(i){ return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">'+i+'</svg>'; }
@@ -191,7 +193,8 @@
         + miniCard(game, fm, "hoy")
         + (game !== "racimo" ? miniCard("racimo", null, "free") : "")
         + miniCard("palabreo", "clasico", "free")
-        + '</div>';
+        + '</div>'
+        + comebackHtml(game, mode);
     }
     html += '<div class="cgk-premblock">'
       + '<p class="tx">Con <b>Premium</b> juegas todos los juegos, todos los días, más el archivo de Anteriores.</p>'
