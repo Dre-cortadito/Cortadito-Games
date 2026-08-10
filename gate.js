@@ -108,6 +108,14 @@
     + ".cgk-btn.ghost{background:none;border:1.5px solid #eee2d6;color:#5f5852;font-weight:600}"
     + ".cgk-back{font-size:13px;color:#5f5852;margin:0 0 2px}"
     + ".cgk-back b{color:#171210}"
+    /* aviso "Sitio para computadoras": only ever shown on a phone rendering a
+       ~980px desktop layout viewport, i.e. the page is zoomed way out — so
+       these sizes are ~2.4x normal to read at physical size after scaling. */
+    + ".cgk-dsktip{position:fixed;left:20px;right:20px;bottom:20px;z-index:99995;background:#FAF5EC;color:#171210;"
+    + "border:2px solid #eee2d6;border-radius:22px;box-shadow:0 16px 50px -12px rgba(0,0,0,.4);padding:22px 26px;"
+    + "display:flex;gap:22px;align-items:center;justify-content:space-between;font:500 27px/1.45 system-ui,sans-serif}"
+    + ".cgk-dsktip button{flex:none;border:0;background:#171210;color:#fff;font:700 25px system-ui,sans-serif;"
+    + "border-radius:999px;padding:16px 28px;cursor:pointer}"
     + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}"
     + ".cgk-note.ok{color:#427C40;font-size:13px;font-weight:600}"
     + ".cgk-note.warn{color:#B02E2E;font-size:12px}"
@@ -411,8 +419,34 @@
     });
   }
 
+  /* ---------- aviso "Sitio para computadoras" ----------
+     A phone whose browser has Chrome's per-site "Desktop site" flag on renders
+     the page at a ~980px layout viewport shrunk onto a small screen — boards
+     land below the fold, headers cram. We can't override the flag, but we can
+     tell the player how to fix it. Fires ONLY on: wide layout viewport + small
+     physical screen + touch. Dismissal remembered for 7 days. */
+  function desktopSiteTip(){
+    try{
+      if (window.innerWidth < 900) return;                                  /* layout viewport is phone-sized: fine */
+      var sw = Math.min(screen.width || 9999, screen.height || 9999);
+      if (sw > 500) return;                                                 /* real desktop/tablet screen: fine */
+      if (!(navigator.maxTouchPoints > 0)) return;
+      if (Number(localStorage.getItem("cg-dsk-tip") || 0) > Date.now() - 7*86400000) return;
+      var b = document.createElement("div");
+      b.className = "cgk-dsktip";
+      b.innerHTML = '<span>📱 ¿Se ve rara la página? Desactiva <b>«Sitio para computadoras»</b> en el menú <b>⋮</b> de tu navegador.</span>'
+        + '<button id="cgk-dsk-x" type="button">Entendido</button>';
+      document.body.appendChild(b);
+      document.getElementById("cgk-dsk-x").addEventListener("click", function(){
+        try{ localStorage.setItem("cg-dsk-tip", String(Date.now())); }catch(e){}
+        b.remove();
+      });
+    }catch(e){}
+  }
+
   function boot(){
     var h = here();
+    desktopSiteTip();
     /* Nothing visible until the gate is ACTIVE (ENFORCE, or ?cgpreview=1 to
        demo). Before 2026-08-05 the ◆ diamond on "Anteriores" and the hub's
        Gratis/Premium bands rendered in preview-off mode too — players saw
