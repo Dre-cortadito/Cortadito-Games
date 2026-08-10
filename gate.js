@@ -191,9 +191,7 @@
         + miniCard(game, fm, "hoy")
         + (game !== "racimo" ? miniCard("racimo", null, "free") : "")
         + miniCard("palabreo", "clasico", "free")
-        + '</div>'
-        + '<div class="cgk-sec">Esta semana en ' + NAME[game] + '</div>'
-        + calendarHtml(game);
+        + '</div>';
     }
     html += '<div class="cgk-premblock">'
       + '<p class="tx">Con <b>Premium</b> juegas todos los juegos, todos los días, más el archivo de Anteriores.</p>'
