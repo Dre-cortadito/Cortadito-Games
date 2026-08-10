@@ -1,10 +1,14 @@
 /* Cortadito Games — freemium gate (rotación diaria + Premium).
    Served from the hub at /gate.js; every game and the hub include it.
-   ENFORCE=false → preview mode: badges and calendar are visible, nothing is
-   blocked. Add ?cgpreview=1 to any URL to demo the real lock screen.
-   Flip ENFORCE to true (one line, hub deploy) on Premium launch day. */
+   ENFORCE=true → gate live. Add ?cgpreview=1 to any URL to demo the lock
+   screen even without ENFORCE; ?cgpremium=1 demos the subscriber view.
+   Verification: POST /a/premium (worker → BeeHiiv, key server-side only).
+   States: PAID_SUBSCRIBER unlocks; FREE_SUBSCRIBER → upgrade CTA; PENDING →
+   confirm-your-email; NOT_SUBSCRIBED → in-app signup via POST /a/subscribe. */
 (function () {
-  var ENFORCE = false;
+  var ENFORCE = true;
+  var NEWS_URL = "https://cortadito.news/";
+  var UPGRADE_URL = "https://cortadito.news/upgrade";
   var PREVIEW = /[?&]cgpreview=1/.test(location.search);
   var PREMDEMO = /[?&]cgpremium=1/.test(location.search);   /* demo the subscriber view */
   var ACTIVE = ENFORCE || PREVIEW;
@@ -81,6 +85,11 @@
     + ".cgk-cal div.on{background:#e35336;color:#fff}"
     + ".cgk-cal b{display:block;font-size:10px;margin-top:2px}"
     + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}"
+    + ".cgk-note.ok{color:#427C40;font-size:13px;font-weight:600}"
+    + ".cgk-note.warn{color:#B02E2E;font-size:12px}"
+    + ".cgk-input{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1.5px solid #eee2d6;"
+    + "border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:8px;background:#fff;color:#171210}"
+    + ".cgk-input:focus{outline:none;border-color:#171210}"
     + ".cgk-filter{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px auto 2px;padding:0 16px}"
     + ".cgk-filter button{font:600 13px/1 system-ui,sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer;"
     + "background:transparent;color:var(--ink,#171210);border:1.5px solid var(--line,#eee2d6);transition:background .15s}"
@@ -107,7 +116,7 @@
         + "<p>El puzzle de hoy siempre es gratis. Con <b>Premium</b> juegas también todos los Anteriores — cada puzzle que hemos publicado.</p>";
     } else {
       html += "<h2>" + NAME[game] + " " + (NAME[mode]||"") + " descansa hoy</h2>"
-        + "<p>Hoy gratis en " + NAME[game] + ": <b>" + NAME[fm] + "</b>. Con <b>Premium</b> juegas los 12 juegos todos los días, más el archivo de Anteriores.</p>"
+        + "<p>Hoy gratis en " + NAME[game] + ": <b>" + NAME[fm] + "</b>. Con <b>Premium</b> juegas todos los juegos, todos los días, más el archivo de Anteriores.</p>"
         + calendarHtml(game)
         + '<a class="cgk-btn main" href="' + modeUrl(game, fm) + '">Jugar ' + NAME[fm] + " gratis</a>";
     }
@@ -117,23 +126,114 @@
       + "</div>";
     var ov = document.createElement("div"); ov.className = "cgk-ov"; ov.id = "cgk-ov"; ov.innerHTML = html;
     document.body.appendChild(ov);
-    document.getElementById("cgk-prem").addEventListener("click", function(){
-      var email = prompt("Tu correo de suscriptor de Cortadito.News:");
-      if (!email) return;
-      fetch("/a/premium?email=" + encodeURIComponent(email.trim()))
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          var msg = document.getElementById("cgk-msg");
-          if (d && d.premium){
-            try{ localStorage.setItem("cg-premium", JSON.stringify({ email: email.trim(), until: Date.now() + 7*86400000 })); }catch(e){}
-            msg.textContent = "✅ ¡Premium activo! Disfruta.";
-            setTimeout(function(){ ov.remove(); }, 900);
-          } else if (d && d.configured === false){
-            msg.textContent = "La verificación Premium se activa muy pronto, junto con el lanzamiento.";
-          } else {
-            msg.textContent = "No encontramos una suscripción Premium con ese correo.";
-          }
-        }).catch(function(){ document.getElementById("cgk-msg").textContent = "No se pudo verificar ahora. Intenta de nuevo."; });
+    document.getElementById("cgk-prem").addEventListener("click", function(){ openVerify(ov); });
+  }
+
+  /* ---------- email verification form (the four states) ---------- */
+  function storedEmail(){
+    try{ var p = JSON.parse(localStorage.getItem("cg-premium")||"null"); return (p && p.email) || ""; }catch(e){ return ""; }
+  }
+  function grantPremium(email){
+    try{ localStorage.setItem("cg-premium", JSON.stringify({ email: email, until: Date.now() + 7*86400000 })); }catch(e){}
+  }
+  function apiPost(path, email, cb){
+    fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ email: email }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ cb(null, d); })
+      .catch(function(e){ cb(e); });
+  }
+  function openVerify(ov){
+    var btn = document.getElementById("cgk-prem");
+    if (!btn || document.getElementById("cgk-email")) return;
+    var wrap = document.createElement("div");
+    wrap.innerHTML = '<input class="cgk-input" id="cgk-email" type="email" inputmode="email" autocomplete="email" '
+      + 'placeholder="tu@correo.com" value="' + storedEmail().replace(/"/g,"&quot;") + '">'
+      + '<button class="cgk-btn dark" id="cgk-check">Verificar</button>'
+      + '<div id="cgk-extra"></div>';
+    btn.replaceWith(wrap);
+    var input = document.getElementById("cgk-email");
+    input.focus();
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter") check(); });
+    document.getElementById("cgk-check").addEventListener("click", check);
+
+    function msg(text, cls){
+      var m = document.getElementById("cgk-msg");
+      if (m){ m.textContent = text; m.className = "cgk-note" + (cls ? " " + cls : ""); }
+    }
+    function extra(html){
+      var x = document.getElementById("cgk-extra");
+      if (x) x.innerHTML = html;
+    }
+    function upgradeBtn(){
+      return '<a class="cgk-btn main" href="' + UPGRADE_URL + '" target="_blank" rel="noopener">Hazte Premium</a>';
+    }
+    function check(){
+      var email = (input.value || "").trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ msg("Escribe un correo válido.", "warn"); return; }
+      msg("Verificando…"); extra("");
+      apiPost("/a/premium", email, function(err, d){
+        if (err || !d){ msg("No se pudo verificar ahora. Intenta de nuevo.", "warn"); return; }
+        if (d.configured === false){ msg("La verificación Premium se activa muy pronto, junto con el lanzamiento."); return; }
+        if (!d.ok){
+          msg(d.error === "rate" || d.error === "busy"
+            ? "Demasiados intentos. Espera un minuto e intenta de nuevo."
+            : "No se pudo verificar ahora. Intenta de nuevo.", "warn");
+          return;
+        }
+        if (d.state === "PAID_SUBSCRIBER"){
+          grantPremium(email);
+          msg("✅ ¡Premium activo! Disfruta.", "ok");
+          setTimeout(function(){ ov.remove(); if (here().game === "hub") location.reload(); }, 900);
+        } else if (d.state === "FREE_SUBSCRIBER"){
+          msg("Ese correo recibe Cortadito.News gratis 💌 — pero este contenido es del Club Premium.");
+          extra(upgradeBtn());
+        } else if (d.state === "PENDING"){
+          msg("Tu suscripción está pendiente de confirmar. Busca nuestro correo, pulsa el enlace y verifica de nuevo aquí.");
+          document.getElementById("cgk-check").textContent = "Comprobar de nuevo";
+        } else {   /* NOT_SUBSCRIBED */
+          msg("Ese correo no está suscrito a Cortadito.News.");
+          extra('<button class="cgk-btn main" id="cgk-sub">Suscribirme gratis al boletín</button>');
+          var sb = document.getElementById("cgk-sub");
+          if (sb) sb.addEventListener("click", function(){
+            sb.disabled = true; sb.textContent = "Un momento…";
+            apiPost("/a/subscribe", email, function(e2, d2){
+              if (e2 || !d2 || !d2.ok){
+                sb.disabled = false; sb.textContent = "Suscribirme gratis al boletín";
+                msg(d2 && (d2.error === "rate" || d2.error === "busy")
+                  ? "Demasiados intentos. Espera un minuto e intenta de nuevo."
+                  : "No se pudo completar. Intenta de nuevo.", "warn");
+                return;
+              }
+              if (d2.state === "FREE_SUBSCRIBER"){
+                msg("✅ ¡Suscrito! El boletín llega cada mañana. Para desbloquear todos los juegos, hazte Premium.", "ok");
+              } else {
+                msg("📬 Te enviamos un correo — confirma tu suscripción y el boletín llega cada mañana. Para desbloquear todos los juegos, hazte Premium.", "ok");
+              }
+              extra(upgradeBtn());
+            });
+          });
+        }
+      });
+    }
+  }
+
+  /* ---------- silent weekly re-validation ----------
+     Premium is stored per-browser for 7 days. When it has expired (or is
+     about to), re-check the stored email in the background: still paid →
+     renew quietly (and lift any lock already on screen); no longer paid →
+     clear, so the gate applies again. Network errors leave things as-is. */
+  function refreshPremium(){
+    var p; try{ p = JSON.parse(localStorage.getItem("cg-premium")||"null"); }catch(e){ p = null; }
+    if (!p || !p.email) return;
+    if (p.until - Date.now() > 86400000) return;   /* fresh — nothing to do */
+    apiPost("/a/premium", p.email, function(err, d){
+      if (err || !d || !d.ok || !d.state) return;
+      if (d.state === "PAID_SUBSCRIBER"){
+        grantPremium(p.email);
+        var ov = document.getElementById("cgk-ov"); if (ov) ov.remove();
+      } else {
+        try{ localStorage.removeItem("cg-premium"); }catch(e){}
+      }
     });
   }
 
@@ -237,6 +337,7 @@
        Gratis/Premium bands rendered in preview-off mode too — players saw
        Premium chrome on a product with no Premium. */
     if (!ACTIVE) return;
+    refreshPremium();
     if (h.game === "hub"){ decorateHub(); }
     else {
       if (!isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);

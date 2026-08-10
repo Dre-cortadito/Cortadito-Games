@@ -423,7 +423,7 @@ const FAMILIES = [
    ===================================================================== */
 const ARROW=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>`;
 const app=document.getElementById("app");
-const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el archivo"':`href="${u}"`;   /* same tab — Recreo → landing → game, Back walks home */
+const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el archivo"':`href="${u}"`;   /* same tab — hub → landing → game, Back walks home */
 
 /* Destacado rota a diario entre los juegos gratis de hoy (mismo hash que gate.js) */
 const _fnv=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};

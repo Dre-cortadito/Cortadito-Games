@@ -50,6 +50,77 @@ function authed(request) {
 
 const GAMES = ["racimo", "palabreo", "sudoku", "flechas", "hub"];
 
+// ============ BeeHiiv validation helpers ============
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/* Accepts the email from a POST JSON body ({email}) or the legacy GET
+   ?email= param; trims, lowercases, and format-checks it. Returns null if bad. */
+async function readEmail(request, url) {
+  let raw = "";
+  if (request.method === "POST") {
+    try { const b = await request.json(); raw = String((b && b.email) || ""); } catch (e) { return null; }
+  } else {
+    raw = url.searchParams.get("email") || "";
+  }
+  const email = raw.trim().toLowerCase();
+  return EMAIL_RE.test(email) && email.length <= 254 ? email : null;
+}
+
+/* Spec §4: only status "active" counts; premium requires subscription_tier
+   "premium" AND at least one currently-active premium tier (a lapsed payment
+   leaves tier "premium" with no active entries — that is FREE, not PAID). */
+function classify(sub) {
+  if (!sub) return "NOT_SUBSCRIBED";
+  if (sub.status !== "active") return "PENDING";
+  const paid = sub.subscription_tier === "premium" &&
+    Array.isArray(sub.subscription_premium_tiers) &&
+    sub.subscription_premium_tiers.some(t => t && t.status === "active");
+  return paid ? "PAID_SUBSCRIBER" : "FREE_SUBSCRIBER";
+}
+
+/* Per-isolate IP rate limit (best effort — Workers isolates are ephemeral,
+   but this still stops a single client from probing emails or burning the
+   shared 180/min BeeHiiv budget). maxPerMin requests per IP per minute. */
+const rlBuckets = new Map();
+function clientIp(request) {
+  return request.headers.get("CF-Connecting-IP") || "0";
+}
+function rateLimited(ip, maxPerMin) {
+  const now = Date.now();
+  if (rlBuckets.size > 5000) rlBuckets.clear();
+  let b = rlBuckets.get(ip);
+  if (!b || now > b.reset) { b = { n: 0, reset: now + 60000 }; rlBuckets.set(ip, b); }
+  b.n++;
+  return b.n > maxPerMin;
+}
+
+/* Short per-isolate cache of classifications (5 min) — absorbs repeat checks
+   ("Comprobar de nuevo", re-validation on load) without spending rate limit. */
+const vCache = new Map();
+const V_TTL = 5 * 60000;
+function cacheGet(email) {
+  const c = vCache.get(email);
+  if (c && c.exp > Date.now()) return c.state;
+  if (c) vCache.delete(email);
+  return null;
+}
+function cachePut(email, state) {
+  if (vCache.size > 2000) vCache.clear();
+  vCache.set(email, { state, exp: Date.now() + V_TTL });
+}
+
+/* fetch with exponential backoff on 429/5xx (0.5s, 1s), max 3 attempts. */
+async function bhFetch(url, opts) {
+  let r;
+  for (let i = 0; i < 3; i++) {
+    r = await fetch(url, opts);
+    if (r.status !== 429 && r.status < 500) return r;
+    if (i < 2) await new Promise(res => setTimeout(res, 500 * Math.pow(2, i)));
+  }
+  return r;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -82,22 +153,63 @@ export default {
         return new Response("ok", { status: 202 });
       }
 
-      // ---------- premium check (BeeHiiv) ----------
-      if (p === "/a/premium" && request.method === "GET") {
-        const email = (url.searchParams.get("email") || "").trim().toLowerCase();
-        if (!email || !email.includes("@")) return json({ ok: false, error: "bad-email" });
+      // ---------- subscription validation (BeeHiiv) ----------
+      // Four states: NOT_SUBSCRIBED | PENDING | FREE_SUBSCRIBER | PAID_SUBSCRIBER.
+      // The API key never leaves this worker; the browser only ever sees
+      // { ok, state, premium } — never the raw subscriber object.
+      // GET kept alongside POST for backwards compat with cached gate.js.
+      if (p === "/a/premium" && (request.method === "GET" || request.method === "POST")) {
+        const email = await readEmail(request, url);
+        if (!email) return json({ ok: false, error: "bad-email" }, 400);
         if (!env.BEEHIIV_API_KEY || !env.BEEHIIV_PUB_ID) return json({ ok: false, configured: false });
+        if (rateLimited("v:" + clientIp(request), 10)) return json({ ok: false, error: "rate" }, 429);
+
+        const cached = cacheGet(email);
+        if (cached) return json({ ok: true, state: cached, premium: cached === "PAID_SUBSCRIBER" });
+
         try {
-          const r = await fetch(
-            `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions/by_email/${encodeURIComponent(email)}`,
+          const r = await bhFetch(
+            `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions/by_email/${encodeURIComponent(email)}`
+            + `?expand[]=subscription_premium_tiers`,
             { headers: { "Authorization": `Bearer ${env.BEEHIIV_API_KEY}` } });
-          if (r.status === 404) return json({ ok: true, premium: false });
+          let state;
+          if (r.status === 404) state = "NOT_SUBSCRIBED";           // never subscribed — clean answer, not an error
+          else if (r.ok) { const d = await r.json(); state = classify(d && d.data); }
+          else if (r.status === 429) return json({ ok: false, error: "busy" }, 503);
+          else return json({ ok: false, error: "upstream" }, 502);
+          cachePut(email, state);
+          return json({ ok: true, state, premium: state === "PAID_SUBSCRIBER" });
+        } catch (e) { return json({ ok: false, error: "upstream" }, 502); }
+      }
+
+      // ---------- in-app newsletter signup (BeeHiiv create subscription) ----------
+      if (p === "/a/subscribe" && request.method === "POST") {
+        const email = await readEmail(request, url);
+        if (!email) return json({ ok: false, error: "bad-email" }, 400);
+        if (!env.BEEHIIV_API_KEY || !env.BEEHIIV_PUB_ID) return json({ ok: false, configured: false });
+        if (rateLimited("s:" + clientIp(request), 5)) return json({ ok: false, error: "rate" }, 429);
+
+        try {
+          const r = await bhFetch(
+            `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions`,
+            { method: "POST",
+              headers: { "Authorization": `Bearer ${env.BEEHIIV_API_KEY}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email,
+                send_welcome_email: true,
+                reactivate_existing: true,
+                utm_source: "cortadito-games",   // measure games-driven growth in beehiiv
+                utm_medium: "email-gate",
+              }) });
+          if (r.status === 429) return json({ ok: false, error: "busy" }, 503);
+          if (!r.ok && r.status !== 201) return json({ ok: false, error: "upstream" }, 502);
           const d = await r.json();
           const sub = d && d.data;
-          const premium = !!(sub && sub.status === "active" &&
-            (sub.subscription_tier ? sub.subscription_tier !== "free" : false));
-          return json({ ok: true, premium });
-        } catch (e) { return json({ ok: false, error: "upstream" }); }
+          // With double opt-in on, new signups land as "validating" until confirmed.
+          const state = sub && sub.status === "active" ? "FREE_SUBSCRIBER" : "PENDING";
+          vCache.delete(email);   // don't serve a stale NOT_SUBSCRIBED afterwards
+          return json({ ok: true, state });
+        } catch (e) { return json({ ok: false, error: "upstream" }, 502); }
       }
 
       // ---------- admin auth ----------
@@ -236,8 +348,9 @@ async function exportCsv(env, url) {
     "Content-Disposition": `attachment; filename="cortadito-stats-${etDay(Date.now())}.csv"` } });
 }
 
-function json(o) {
-  return new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json" } });
+function json(o, status) {
+  return new Response(JSON.stringify(o), { status: status || 200,
+    headers: { "Content-Type": "application/json" } });
 }
 
 // ============ pages ============
