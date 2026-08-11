@@ -423,7 +423,7 @@
       + '<li>Los <b>juegos y modos nuevos</b> entran directo a tu Premium al salir.</li>'
       + '</ul>'
       + (em ? '<div class="cgk-note" style="margin:0 0 12px">Activo en este navegador como <b>' + em.replace(/</g,"&lt;") + '</b>.</div>' : '')
-      + '<p style="font-style:italic;color:#8d8580;font-size:12.5px">Gracias por apoyar a Cortadito. ☕</p>'
+      + '<p style="font-style:italic;color:#9C3B8E;font-weight:600;font-size:12.5px">Gracias por apoyar a Cortadito. ☕</p>'
       + '<button class="cgk-btn white" id="cgk-pi-close" style="margin-bottom:0">Cerrar</button>'
       + '</div></div>';
     var ov = document.createElement("div"); ov.className = "cgk-ov"; ov.id = "cgk-ov"; ov.innerHTML = html;
