@@ -55,7 +55,6 @@
     + ".cgk-chip.free{background:#548C4C;color:#fff}"
     + ".cgk-chip.today{background:#e35336;color:#fff}"
     + ".cgk-chip.prem{background:#171210;color:#F7EFE0}"
-    + ".cgk-dia{color:#c47a3d;font-size:.72em;vertical-align:.12em;margin-left:4px}"
     + ".cgk-band{display:block;width:100%;box-sizing:border-box;flex:none;font:800 11px/1 system-ui,sans-serif;"
     + "letter-spacing:.14em;text-transform:uppercase;color:#fff;text-align:center;padding:7px 10px 6px}"
     + ".cgk-band.free{background:#427C40}"
@@ -63,7 +62,7 @@
     + ".cgk-band.prem{background:#9C3B8E}"
     + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
     + "a.card.cgk-edge-prem .go{padding:9px 14px;font-size:13.5px}"
-    + ".cgk-prem-pill{display:inline-flex;align-items:center;gap:5px;font:800 11px/1 system-ui,sans-serif;"
+    + ".cgk-prem-pill{display:inline-flex;align-items:center;gap:5px;font:800 11px/1 system-ui,sans-serif;cursor:pointer;border:0;"
     + "letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#9C3B8E;border-radius:999px;"
     + "padding:7px 12px;margin-right:10px;white-space:nowrap}"
     + ".cgk-prem-pill .ck{font-weight:800}"
@@ -109,6 +108,7 @@
     + ".cgk-btn.main{background:#e35336;color:#fff}"
     + ".cgk-btn.dark{background:#171210;color:#fff}"
     + ".cgk-btn.ghost{background:none;border:1.5px solid #eee2d6;color:#5f5852;font-weight:600}"
+    + ".cgk-btn.white{background:#fff;border:1.5px solid #171210;color:#171210}"
     + ".cgk-back{font-size:13px;color:#5f5852;margin:0 0 2px}"
     + ".cgk-back b{color:#171210}"
     /* aviso "Sitio para computadoras": only ever shown on a phone rendering a
@@ -120,6 +120,9 @@
     + ".cgk-dsktip button{flex:none;border:0;background:#171210;color:#fff;font:700 25px system-ui,sans-serif;"
     + "border-radius:999px;padding:16px 28px;cursor:pointer}"
     + ".cgk-note{font-size:11px;color:#8d8580;margin-top:10px}"
+    + ".cgk-list{margin:0 0 12px;padding-left:20px;text-align:left}"
+    + ".cgk-list li{font-size:13.5px;color:#5f5852;margin-bottom:7px;line-height:1.45}"
+    + ".cgk-list b{color:#1c1108}"
     + ".cgk-note.ok{color:#427C40;font-size:13px;font-weight:600}"
     + ".cgk-note.warn{color:#B02E2E;font-size:12px}"
     + ".cgk-input{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1.5px solid #eee2d6;"
@@ -213,7 +216,7 @@
       + '<a class="cgk-btn plum" style="margin-bottom:0" href="' + UPGRADE_URL + '" target="_blank" rel="noopener">Hazte Premium →</a>'
       + '</div>'
       + '<button class="cgk-linkbtn" id="cgk-prem">Ya soy Premium</button>'
-      + '<a class="cgk-btn ghost" style="margin-bottom:0" href="/">Ver todos los juegos</a>'
+      + '<a class="cgk-btn white" style="margin-bottom:0" href="/">Ver todos los juegos</a>'
       + '<div class="cgk-note" id="cgk-msg"></div>'
       + "</div></div>";
     var ov = document.createElement("div"); ov.className = "cgk-ov"; ov.id = "cgk-ov"; ov.innerHTML = html;
@@ -396,12 +399,37 @@
     /* "Premium activo ✓" pill next to the menu button */
     var wrap = document.querySelector(".menu-wrap");
     if (wrap){
-      var pill = document.createElement("span");
+      var pill = document.createElement("button");
+      pill.type = "button";
       pill.className = "cgk-prem-pill";
       pill.innerHTML = '<span class="ck">✓</span><span class="txt">Premium activo</span>';
-      pill.title = "Premium activo";
+      pill.title = "Premium activo — toca para ver qué incluye";
+      pill.setAttribute("aria-label", "Premium activo — ver qué incluye");
+      pill.addEventListener("click", showPremiumInfo);
       wrap.insertBefore(pill, wrap.firstChild);
     }
+  }
+
+  /* ---------- "Eres Premium" info box (opens from the masthead pill) ---------- */
+  function showPremiumInfo(){
+    if (document.getElementById("cgk-ov")) return;
+    var em = storedEmail();
+    var html = '<div class="cgk-panel"><div class="cgk-topband">Premium</div><div class="cgk-inner">'
+      + '<h2>Eres Premium ✓</h2>'
+      + '<p>Tu cortadito completo, servido cada mañana. Esto es lo que incluye:</p>'
+      + '<ul class="cgk-list">'
+      + '<li><b>Los diez modos</b> de los cuatro juegos, abiertos <b>todos los días</b> — sin esperar la rotación gratis.</li>'
+      + '<li>El <b>archivo de Anteriores</b> completo, en todos los juegos.</li>'
+      + '<li>Los <b>juegos y modos nuevos</b> entran directo a tu Premium al salir.</li>'
+      + '</ul>'
+      + (em ? '<div class="cgk-note" style="margin:0 0 12px">Activo en este navegador como <b>' + em.replace(/</g,"&lt;") + '</b>.</div>' : '')
+      + '<p style="font-style:italic;color:#8d8580;font-size:12.5px">Gracias por apoyar a Cortadito. ☕</p>'
+      + '<button class="cgk-btn white" id="cgk-pi-close" style="margin-bottom:0">Cerrar</button>'
+      + '</div></div>';
+    var ov = document.createElement("div"); ov.className = "cgk-ov"; ov.id = "cgk-ov"; ov.innerHTML = html;
+    document.body.appendChild(ov);
+    document.getElementById("cgk-pi-close").addEventListener("click", function(){ ov.remove(); });
+    ov.addEventListener("click", function(e){ if (e.target === ov) ov.remove(); });
   }
 
   /* ---------- Anteriores chips + gate ---------- */
@@ -412,9 +440,6 @@
       var t = (el.textContent || "").trim();
       if (!/^Anteriores\b/i.test(t) || t.length > 24) return;
       el._cgkTagged = true;
-      var dia = document.createElement("span");
-      dia.className = "cgk-dia"; dia.textContent = "\u25C6"; dia.title = "Premium";
-      el.appendChild(dia);
       el.addEventListener("click", function(ev){
         if (isPremium()) return;
         ev.preventDefault(); ev.stopImmediatePropagation();
@@ -452,9 +477,10 @@
     var h = here();
     desktopSiteTip();
     /* Nothing visible until the gate is ACTIVE (ENFORCE, or ?cgpreview=1 to
-       demo). Before 2026-08-05 the ◆ diamond on "Anteriores" and the hub's
-       Gratis/Premium bands rendered in preview-off mode too — players saw
-       Premium chrome on a product with no Premium. */
+       demo). Before 2026-08-05 the hub's Gratis/Premium bands rendered in
+       preview-off mode too — players saw Premium chrome on a product with no
+       Premium. (2026-08-11: the ◆ diamond that used to mark "Anteriores" was
+       removed at Dre's request — the click itself still gates via showLock.) */
     if (!ACTIVE) return;
     refreshPremium();
     if (h.game === "hub"){ decorateHub(); }
