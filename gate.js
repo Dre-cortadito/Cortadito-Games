@@ -67,6 +67,9 @@
     + "letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#9C3B8E;border-radius:999px;"
     + "padding:7px 12px;margin-right:10px;white-space:nowrap}"
     + ".cgk-prem-pill .ck{font-weight:800}"
+    /* narrow masthead: collapse the pill to a compact ✓ badge */
+    + "@media (max-width:700px){.cgk-prem-pill{width:26px;height:26px;padding:0;justify-content:center;margin-right:8px}"
+    + ".cgk-prem-pill .txt{display:none}}"
     + ".menu-wrap{display:flex;align-items:center}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
     + ".cgk-strip a{color:inherit;text-decoration:underline;text-underline-offset:2px}"
@@ -395,7 +398,8 @@
     if (wrap){
       var pill = document.createElement("span");
       pill.className = "cgk-prem-pill";
-      pill.innerHTML = '<span class="ck">✓</span>Premium activo';
+      pill.innerHTML = '<span class="ck">✓</span><span class="txt">Premium activo</span>';
+      pill.title = "Premium activo";
       wrap.insertBefore(pill, wrap.firstChild);
     }
   }

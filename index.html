@@ -108,7 +108,9 @@
     align-items:center;justify-content:center;touch-action:manipulation;transition:background .15s;
   }
   .menu-btn svg,.menu-btn *{pointer-events:none}
-  .menu-btn:hover{background:var(--card)}
+  /* hover tint must NOT be --card (cream in dark mode) - and hover only on real
+     pointers: on touch, :hover sticks after a tap and left a bright circle. */
+  @media (hover:hover){ .menu-btn:hover{background:var(--line)} }
   .menu-btn svg{width:20px;height:20px}
   .menu{
     position:absolute;top:48px;right:0;min-width:230px;
