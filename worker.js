@@ -26,6 +26,13 @@ async function initDB(env) {
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_ev_day ON events(day)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_ev_uid ON events(uid)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_ev_game ON events(game, ev)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS gate_codes(
+      email TEXT PRIMARY KEY,
+      hash TEXT NOT NULL,
+      expires INTEGER NOT NULL,
+      attempts INTEGER NOT NULL DEFAULT 0,
+      last_sent INTEGER NOT NULL
+    )`),
   ]);
   dbReady = true;
 }
@@ -82,6 +89,88 @@ function classify(sub) {
     ? tiers.some(t => t && t.status === "active")
     : true;   // comped: no tier entries to check
   return paid ? "PAID_SUBSCRIBER" : "FREE_SUBSCRIBER";
+}
+
+// ============ One-time-code premium verification (audit CG-01) ============
+// Email lookup alone no longer grants premium: a paid email receives a
+// 6-digit code (Resend) and only the code confirmation returns a signed
+// grant. The flow activates when BOTH secrets exist (wrangler secret put
+// GATE_SECRET / RESEND_API_KEY); until then /a/premium behaves as before,
+// so deploying this worker ahead of the Resend setup changes nothing.
+
+const CODE_TTL = 10 * 60000;        // a code lives 10 minutes
+const CODE_RESEND_MS = 60000;       // one email per address per minute
+const GRANT_MS = 30 * 86400000;     // signed grant: 30 days, rolled forward by /a/premium-check
+
+function codeFlowOn(env) { return !!(env.GATE_SECRET && env.RESEND_API_KEY); }
+
+function normEmail(raw) {
+  const email = String(raw || "").trim().toLowerCase();
+  return EMAIL_RE.test(email) && email.length <= 254 ? email : null;
+}
+
+async function makeGrant(env, email) {
+  const until = Date.now() + GRANT_MS;
+  const token = await sha256hex("grant|" + email + "|" + until + "|" + env.GATE_SECRET);
+  return { until, token };
+}
+
+function codeEmailHtml(code) {
+  return '<div style="font-family:Georgia,serif;max-width:420px;margin:0 auto;padding:28px 20px;color:#171210">'
+    + '<p style="font-size:17px;margin:0 0 6px"><strong>Cortadito<span style="color:#e35336">.</span>games</strong></p>'
+    + '<p style="font-size:15px;margin:0 0 18px">Tu código de verificación Premium:</p>'
+    + '<p style="font-size:38px;letter-spacing:10px;font-weight:700;margin:0 0 18px;color:#171210">' + code + '</p>'
+    + '<p style="font-size:13px;color:#7a6a5f;margin:0">Caduca en 10 minutos. Si no lo pediste, ignora este correo.</p>'
+    + '</div>';
+}
+
+/* Creates/replaces the code row and emails it. A second request inside the
+   per-email cooldown quietly reuses the code already in the inbox. */
+async function sendLoginCode(env, email) {
+  await initDB(env);
+  const now = Date.now();
+  const prev = await env.DB.prepare("SELECT last_sent FROM gate_codes WHERE email=?").bind(email).first();
+  if (prev && now - prev.last_sent < CODE_RESEND_MS) return { ok: true, throttled: true };
+  const code = String((crypto.getRandomValues(new Uint32Array(1))[0] % 900000) + 100000);
+  const hash = await sha256hex(code + "|" + email + "|" + env.GATE_SECRET);
+  await env.DB.prepare(
+    "INSERT INTO gate_codes (email, hash, expires, attempts, last_sent) VALUES (?,?,?,0,?) "
+    + "ON CONFLICT(email) DO UPDATE SET hash=excluded.hash, expires=excluded.expires, attempts=0, last_sent=excluded.last_sent"
+  ).bind(email, hash, now + CODE_TTL, now).run();
+  const from = env.RESEND_FROM || "Cortadito Games <juegos@cortadito.games>";
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from, to: [email],
+      subject: "Tu código de Cortadito Games: " + code,
+      html: codeEmailHtml(code),
+      text: "Tu código de verificación de Cortadito Games es: " + code
+        + "\nCaduca en 10 minutos. Si no lo pediste, ignora este correo.",
+    }),
+  });
+  if (!r.ok) return { ok: false, error: r.status === 429 ? "busy" : "mail", status: r.status === 429 ? 503 : 502 };
+  return { ok: true };
+}
+
+/* Cache-aware BeeHiiv state lookup shared by the premium endpoints.
+   Returns a state string, or { err, status } on upstream trouble. */
+async function lookupState(env, email) {
+  const cached = cacheGet(email);
+  if (cached) return cached;
+  try {
+    const r = await bhFetch(
+      `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions/by_email/${encodeURIComponent(email)}`
+      + `?expand[]=subscription_premium_tiers`,
+      { headers: { "Authorization": `Bearer ${env.BEEHIIV_API_KEY}` } });
+    let state;
+    if (r.status === 404) state = "NOT_SUBSCRIBED";           // never subscribed — clean answer, not an error
+    else if (r.ok) { const d = await r.json(); state = classify(d && d.data); }
+    else if (r.status === 429) return { err: "busy", status: 503 };
+    else return { err: "upstream", status: 502 };
+    cachePut(email, state);
+    return state;
+  } catch (e) { return { err: "upstream", status: 502 }; }
 }
 
 /* Per-isolate IP rate limit (best effort — Workers isolates are ephemeral,
@@ -164,27 +253,76 @@ export default {
       // { ok, state, premium } — never the raw subscriber object.
       // GET kept alongside POST for backwards compat with cached gate.js.
       if (p === "/a/premium" && (request.method === "GET" || request.method === "POST")) {
-        const email = await readEmail(request, url);
+        let body = {};
+        if (request.method === "POST") {
+          try { body = (await request.json()) || {}; } catch (e) { return json({ ok: false, error: "bad-email" }, 400); }
+        } else {
+          body = { email: url.searchParams.get("email") || "", silent: url.searchParams.get("silent") === "1" };
+        }
+        const email = normEmail(body.email);
         if (!email) return json({ ok: false, error: "bad-email" }, 400);
         if (!env.BEEHIIV_API_KEY || !env.BEEHIIV_PUB_ID) return json({ ok: false, configured: false });
         if (rateLimited("v:" + clientIp(request), 10)) return json({ ok: false, error: "rate" }, 429);
 
-        const cached = cacheGet(email);
-        if (cached) return json({ ok: true, state: cached, premium: cached === "PAID_SUBSCRIBER" });
+        const state = await lookupState(env, email);
+        if (typeof state !== "string") return json({ ok: false, error: state.err }, state.status);
 
-        try {
-          const r = await bhFetch(
-            `https://api.beehiiv.com/v2/publications/${env.BEEHIIV_PUB_ID}/subscriptions/by_email/${encodeURIComponent(email)}`
-            + `?expand[]=subscription_premium_tiers`,
-            { headers: { "Authorization": `Bearer ${env.BEEHIIV_API_KEY}` } });
-          let state;
-          if (r.status === 404) state = "NOT_SUBSCRIBED";           // never subscribed — clean answer, not an error
-          else if (r.ok) { const d = await r.json(); state = classify(d && d.data); }
-          else if (r.status === 429) return json({ ok: false, error: "busy" }, 503);
-          else return json({ ok: false, error: "upstream" }, 502);
-          cachePut(email, state);
-          return json({ ok: true, state, premium: state === "PAID_SUBSCRIBER" });
-        } catch (e) { return json({ ok: false, error: "upstream" }, 502); }
+        // CG-01: with the code flow on, a paid email triggers a one-time code
+        // instead of an instant grant. Silent background refreshes (gate.js
+        // refreshPremium) never send an email.
+        if (state === "PAID_SUBSCRIBER" && codeFlowOn(env)) {
+          if (body.silent) return json({ ok: true, state, premium: true, code_required: true });
+          const sent = await sendLoginCode(env, email);
+          if (!sent.ok) return json({ ok: false, error: sent.error }, sent.status || 502);
+          return json({ ok: true, state, premium: true, code_required: true, code_sent: true });
+        }
+        return json({ ok: true, state, premium: state === "PAID_SUBSCRIBER" });
+      }
+
+      // ---------- one-time code confirmation (audit CG-01) ----------
+      if (p === "/a/premium-code" && request.method === "POST") {
+        if (!codeFlowOn(env)) return json({ ok: false, configured: false });
+        let body; try { body = (await request.json()) || {}; } catch (e) { return json({ ok: false, error: "bad" }, 400); }
+        const email = normEmail(body.email);
+        const code = String(body.code || "").replace(/\D/g, "");
+        if (!email || code.length !== 6) return json({ ok: false, error: "bad" }, 400);
+        if (rateLimited("c:" + clientIp(request), 15)) return json({ ok: false, error: "rate" }, 429);
+        await initDB(env);
+        const row = await env.DB.prepare("SELECT hash, expires, attempts FROM gate_codes WHERE email=?").bind(email).first();
+        if (!row) return json({ ok: false, error: "expired" });
+        if (row.expires < Date.now()) {
+          await env.DB.prepare("DELETE FROM gate_codes WHERE email=?").bind(email).run();
+          return json({ ok: false, error: "expired" });
+        }
+        if (row.attempts >= 5) return json({ ok: false, error: "many" });
+        const h = await sha256hex(code + "|" + email + "|" + env.GATE_SECRET);
+        if (h !== row.hash) {
+          await env.DB.prepare("UPDATE gate_codes SET attempts=attempts+1 WHERE email=?").bind(email).run();
+          return json({ ok: false, error: "code" });
+        }
+        await env.DB.prepare("DELETE FROM gate_codes WHERE email=?").bind(email).run();
+        const grant = await makeGrant(env, email);
+        return json({ ok: true, granted: true, until: grant.until, token: grant.token });
+      }
+
+      // ---------- signed-grant validation + rolling renewal (audit CG-01) ----------
+      if (p === "/a/premium-check" && request.method === "POST") {
+        let body; try { body = (await request.json()) || {}; } catch (e) { return json({ ok: false, error: "bad" }, 400); }
+        const email = normEmail(body.email);
+        const until = Number(body.until) || 0;
+        const token = String(body.token || "");
+        if (!email || !token) return json({ ok: false, error: "bad" }, 400);
+        if (!codeFlowOn(env)) return json({ ok: true, valid: true });   // legacy mode: never kill grants
+        if (rateLimited("k:" + clientIp(request), 20)) return json({ ok: false, error: "rate" }, 429);
+        const expect = await sha256hex("grant|" + email + "|" + until + "|" + env.GATE_SECRET);
+        if (expect !== token || until < Date.now()) return json({ ok: true, valid: false });
+        // Token holds — if the sub is still paid, roll the grant forward quietly.
+        if (!env.BEEHIIV_API_KEY || !env.BEEHIIV_PUB_ID) return json({ ok: true, valid: true });
+        const state = await lookupState(env, email);
+        if (typeof state !== "string") return json({ ok: true, valid: true });   // upstream trouble: keep the valid grant
+        if (state !== "PAID_SUBSCRIBER") return json({ ok: true, valid: false });
+        const grant = await makeGrant(env, email);
+        return json({ ok: true, valid: true, renewed: true, until: grant.until, token: grant.token });
       }
 
       // ---------- in-app newsletter signup (BeeHiiv create subscription) ----------

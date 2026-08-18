@@ -103,10 +103,13 @@
   /* hamburger menu (estilo Racimo) */
   .menu-wrap{position:relative;flex-shrink:0}
   .menu-btn{
+    position:relative;
     width:36px;height:36px;border-radius:50%;border:none;padding:0;
     background:transparent;color:var(--ink);cursor:pointer;display:inline-flex;
     align-items:center;justify-content:center;touch-action:manipulation;transition:background .15s;
   }
+  /* invisible hit-area extender: 36px visual circle, 44px touch target (audit CG-05) */
+  .menu-btn::before{content:"";position:absolute;inset:-4px;border-radius:50%}
   .menu-btn svg,.menu-btn *{pointer-events:none}
   /* hover tint must NOT be --card (cream in dark mode) - and hover only on real
      pointers: on touch, :hover sticks after a tap and left a bright circle. */

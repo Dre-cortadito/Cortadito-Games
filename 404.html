@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Página no encontrada — Cortadito Games</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta id="theme-color-meta" name="theme-color" content="#ffffff" />
+<script>
+  /* Match the visitor's saved theme before first paint (default light, DESIGN-SYSTEM §1.3). */
+  (function(){
+    var t; try{ t = localStorage.getItem("cortadito-theme"); }catch(e){}
+    if (t === "dark"){
+      document.documentElement.setAttribute("data-theme","dark");
+      var m = document.getElementById("theme-color-meta");
+      if (m) m.setAttribute("content", "#000000");
+    }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito+Sans:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#171210;
+    --muted:#7d726a;
+    --line:#e8e1d8;
+    --brand:#e35336;
+  }
+  html[data-theme="dark"]{
+    --bg:#000000;
+    --ink:#f5ede3;
+    --muted:#b3a89e;
+    --line:#2c241f;
+    --brand:#f26a4a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Nunito Sans",-apple-system,system-ui,sans-serif;
+    color:var(--ink);background:var(--bg);
+    min-height:100svh;display:flex;align-items:center;justify-content:center;
+    padding:32px 20px;text-align:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  main{width:min(560px,100%)}
+  .lockup{width:min(360px,80vw);height:auto;display:block;margin:0 auto 28px}
+  .lockup-dark{display:none}
+  html[data-theme="dark"] .lockup-light{display:none}
+  html[data-theme="dark"] .lockup-dark{display:block}
+  .code{
+    font-family:"Fraunces",Georgia,serif;font-weight:900;letter-spacing:-.02em;
+    font-size:clamp(64px,16vw,110px);line-height:1;margin:0;color:var(--ink);
+  }
+  .code .dot{color:var(--brand)}
+  h1{
+    font-family:"Fraunces",Georgia,serif;font-weight:700;
+    font-size:clamp(22px,4.5vw,28px);margin:14px 0 8px;color:var(--ink);
+  }
+  p.sub{
+    font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500;
+    color:var(--muted);font-size:17px;margin:0 auto 30px;max-width:36ch;line-height:1.45;
+  }
+  a.volver{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    min-height:52px;padding:14px 30px;border-radius:999px;
+    background:var(--ink);color:var(--bg);text-decoration:none;
+    font-weight:800;font-size:16px;
+  }
+  a.volver:active{transform:translateY(1px)}
+  html[data-theme="dark"] a.volver{background:var(--brand);color:#fff}
+  footer{
+    margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--muted);
+  }
+  footer a{color:var(--ink);text-decoration:none;font-weight:800}
+</style>
+</head>
+<body>
+<main>
+  <img class="lockup lockup-light" src="/lockup-light.png" alt="Cortadito Games" />
+  <img class="lockup lockup-dark" src="/lockup-dark.png" alt="Cortadito Games" />
+  <p class="code">4<span class="dot">0</span>4</p>
+  <h1>Esta página no existe</h1>
+  <p class="sub">Puede que el enlace esté mal escrito o que la página se haya movido. Tu espressito mental te espera en los juegos de hoy.</p>
+  <a class="volver" href="/">Volver a juegos&nbsp;→</a>
+  <footer>Un café de <a href="https://cortadito.news" rel="noopener">Cortadito.News</a></footer>
+</main>
+</body>
+</html>

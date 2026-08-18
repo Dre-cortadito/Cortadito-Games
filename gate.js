@@ -1,16 +1,24 @@
 /* Cortadito Games — freemium gate (rotación diaria + Premium).
    Served from the hub at /gate.js; every game and the hub include it.
    ENFORCE=true → gate live. Add ?cgpreview=1 to any URL to demo the lock
-   screen even without ENFORCE; ?cgpremium=1 demos the subscriber view.
+   screen even without ENFORCE; ?cgpremium=1 demos the subscriber view
+   (localhost only — disabled in production per UI audit CG-01).
    Verification: POST /a/premium (worker → BeeHiiv, key server-side only).
    States: PAID_SUBSCRIBER unlocks; FREE_SUBSCRIBER → upgrade CTA; PENDING →
-   confirm-your-email; NOT_SUBSCRIBED → in-app signup via POST /a/subscribe. */
+   confirm-your-email; NOT_SUBSCRIBED → in-app signup via POST /a/subscribe.
+   CG-01 code flow: when the worker has GATE_SECRET + RESEND_API_KEY set,
+   a paid email additionally receives a 6-digit code (code_required in the
+   response) and only POST /a/premium-code returns the signed 30-day grant
+   {until, token}; refreshPremium() validates/renews it via /a/premium-check.
+   Without those secrets everything behaves exactly as before. */
 (function () {
   var ENFORCE = true;
   var NEWS_URL = "https://cortadito.news/";
   var UPGRADE_URL = "https://cortadito.news/upgrade";
   var PREVIEW = /[?&]cgpreview=1/.test(location.search);
-  var PREMDEMO = /[?&]cgpremium=1/.test(location.search);   /* demo the subscriber view */
+  /* demo the subscriber view — LOCAL ONLY (audit CG-01: never honored in production) */
+  var PREMDEMO = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)
+                 && /[?&]cgpremium=1/.test(location.search);
   var ACTIVE = ENFORCE || PREVIEW;
 
   var POOLS = {
@@ -62,13 +70,18 @@
     + ".cgk-band.prem{background:#9C3B8E}"
     + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
     + "a.card.cgk-edge-prem .go{padding:9px 14px;font-size:13.5px}"
-    + ".cgk-prem-pill{display:inline-flex;align-items:center;gap:5px;font:800 11px/1 system-ui,sans-serif;cursor:pointer;border:0;"
+    + ".cgk-prem-pill{position:relative;display:inline-flex;align-items:center;gap:5px;font:800 11px/1 system-ui,sans-serif;cursor:pointer;border:0;"
     + "letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#9C3B8E;border-radius:999px;"
     + "padding:7px 12px;margin-right:10px;white-space:nowrap}"
     + ".cgk-prem-pill .ck{font-weight:800}"
-    /* narrow masthead: collapse the pill to a compact ✓ badge */
-    + "@media (max-width:700px){.cgk-prem-pill{width:26px;height:26px;padding:0;justify-content:center;margin-right:8px}"
-    + ".cgk-prem-pill .txt{display:none}}"
+    /* invisible hit-area extender: keeps the pill visually compact but gives a
+       ~44px touch target (audit CG-05) */
+    + ".cgk-prem-pill::before{content:\"\";position:absolute;inset:-10px -4px}"
+    + ".cgk-prem-pill .txt-s{display:none}"
+    /* narrow masthead: shorten to "✓ Premium" — never a bare check with no
+       visible status text (audit CG-12) */
+    + "@media (max-width:700px){.cgk-prem-pill{padding:6px 10px;margin-right:8px}"
+    + ".cgk-prem-pill .txt{display:none}.cgk-prem-pill .txt-s{display:inline}}"
     + ".menu-wrap{display:flex;align-items:center}"
     + ".cgk-strip{max-width:760px;margin:2px auto 0;padding:0 24px;text-align:center;font:400 13px/1.6 system-ui,sans-serif;color:#8d8580}"
     + ".cgk-strip a{color:inherit;text-decoration:underline;text-underline-offset:2px}"
@@ -128,9 +141,14 @@
     + ".cgk-input{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1.5px solid #eee2d6;"
     + "border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:8px;background:#fff;color:#171210}"
     + ".cgk-input:focus{outline:none;border-color:#171210}"
+    + ".cgk-linkbtn{background:none;border:0;padding:6px 0;cursor:pointer;font:600 12px/1 system-ui,sans-serif;"
+    + "color:#7A6A5F;text-decoration:underline}"
+    + ".cgk-linkbtn:disabled{cursor:default;text-decoration:none;opacity:.6}"
     + ".cgk-filter{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px auto 2px;padding:0 16px}"
-    + ".cgk-filter button{font:600 13px/1 system-ui,sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer;"
+    + ".cgk-filter button{position:relative;font:600 13px/1 system-ui,sans-serif;padding:9px 18px;border-radius:999px;cursor:pointer;"
     + "background:transparent;color:var(--ink,#171210);border:1.5px solid var(--line,#eee2d6);transition:background .15s}"
+    /* invisible hit-area extender → ~44px tall touch target (audit CG-05) */
+    + ".cgk-filter button::before{content:\"\";position:absolute;inset:-5px -3px}"
     + ".cgk-filter button.on{background:var(--ink,#171210);color:var(--bg,#fff);border-color:var(--ink,#171210)}";
   var st = document.createElement("style"); st.textContent = css;
   (document.head || document.documentElement).appendChild(st);
@@ -228,11 +246,19 @@
   function storedEmail(){
     try{ var p = JSON.parse(localStorage.getItem("cg-premium")||"null"); return (p && p.email) || ""; }catch(e){ return ""; }
   }
-  function grantPremium(email){
-    try{ localStorage.setItem("cg-premium", JSON.stringify({ email: email, until: Date.now() + 7*86400000 })); }catch(e){}
+  /* until/token come from the worker once the code flow is live (a signed
+     30-day grant); without them we fall back to the legacy local 7 days. */
+  function grantPremium(email, until, token){
+    try{ localStorage.setItem("cg-premium", JSON.stringify({
+      email: email,
+      until: until || (Date.now() + 7*86400000),
+      token: token || null
+    })); }catch(e){}
   }
-  function apiPost(path, email, cb){
-    fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ email: email }) })
+  /* payload: an email string (legacy call sites) or a plain object body */
+  function apiPost(path, payload, cb){
+    var body = (typeof payload === "string") ? { email: payload } : payload;
+    fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
       .then(function(r){ return r.json(); })
       .then(function(d){ cb(null, d); })
       .catch(function(e){ cb(e); });
@@ -276,9 +302,13 @@
           return;
         }
         if (d.state === "PAID_SUBSCRIBER"){
-          grantPremium(email);
-          msg("✅ ¡Premium activo! Disfruta.", "ok");
-          setTimeout(function(){ ov.remove(); if (here().game === "hub") location.reload(); }, 900);
+          if (d.code_required){
+            codeStep(email);
+          } else {
+            grantPremium(email);
+            msg("✅ ¡Premium activo! Disfruta.", "ok");
+            setTimeout(function(){ ov.remove(); if (here().game === "hub") location.reload(); }, 900);
+          }
         } else if (d.state === "FREE_SUBSCRIBER"){
           msg("Ese correo recibe Cortadito.News gratis 💌 — pero este contenido es del Club Premium.");
           extra(upgradeBtn());
@@ -310,6 +340,58 @@
         }
       });
     }
+
+    /* CG-01 step 2: the paid email got a 6-digit code by correo; only the
+       code confirmation grants premium. */
+    function codeStep(email){
+      msg("📬 Te enviamos un código de 6 dígitos a " + email + ". Revisa tu correo (y el spam).");
+      wrap.innerHTML = '<input class="cgk-input" id="cgk-code" type="text" inputmode="numeric" '
+        + 'autocomplete="one-time-code" maxlength="6" placeholder="123456">'
+        + '<button class="cgk-btn dark" id="cgk-confirm">Confirmar código</button>'
+        + '<div class="cgk-note"><button type="button" class="cgk-linkbtn" id="cgk-resend" disabled>Reenviar código (60s)</button></div>'
+        + '<div id="cgk-extra"></div>';
+      var ci = document.getElementById("cgk-code");
+      ci.focus();
+      ci.addEventListener("keydown", function(e){ if (e.key === "Enter") submitCode(); });
+      document.getElementById("cgk-confirm").addEventListener("click", submitCode);
+
+      var rs = document.getElementById("cgk-resend");
+      function cooldown(){
+        var left = 60; rs.disabled = true; rs.textContent = "Reenviar código (60s)";
+        var tick = setInterval(function(){
+          left--;
+          if (left <= 0){ clearInterval(tick); rs.disabled = false; rs.textContent = "Reenviar código"; }
+          else rs.textContent = "Reenviar código (" + left + "s)";
+        }, 1000);
+      }
+      cooldown();
+      rs.addEventListener("click", function(){
+        if (rs.disabled) return;
+        cooldown();
+        apiPost("/a/premium", { email: email }, function(){});
+        msg("📬 Código reenviado a " + email + ".");
+      });
+
+      function submitCode(){
+        var code = (ci.value || "").replace(/\D/g, "");
+        if (code.length !== 6){ msg("Escribe el código de 6 dígitos.", "warn"); return; }
+        msg("Verificando…");
+        apiPost("/a/premium-code", { email: email, code: code }, function(err, d){
+          if (err || !d){ msg("No se pudo verificar ahora. Intenta de nuevo.", "warn"); return; }
+          if (d.granted){
+            grantPremium(email, d.until, d.token);
+            msg("✅ ¡Premium activo! Disfruta.", "ok");
+            setTimeout(function(){ ov.remove(); if (here().game === "hub") location.reload(); }, 900);
+            return;
+          }
+          if (d.error === "code") msg("Código incorrecto. Revísalo e intenta de nuevo.", "warn");
+          else if (d.error === "expired") msg("El código expiró. Pulsa “Reenviar código” para recibir uno nuevo.", "warn");
+          else if (d.error === "many") msg("Demasiados intentos con este código. Pide uno nuevo.", "warn");
+          else if (d.error === "rate") msg("Demasiados intentos. Espera un minuto.", "warn");
+          else msg("No se pudo verificar ahora. Intenta de nuevo.", "warn");
+        });
+      }
+    }
   }
 
   /* ---------- silent weekly re-validation ----------
@@ -320,12 +402,38 @@
   function refreshPremium(){
     var p; try{ p = JSON.parse(localStorage.getItem("cg-premium")||"null"); }catch(e){ p = null; }
     if (!p || !p.email) return;
+
+    /* Signed grant (code flow): validate/renew server-side at most every 12h,
+       and always when the grant is inside its last day. */
+    if (p.token){
+      var due = p.until - Date.now() < 86400000;
+      var last = 0; try{ last = Number(localStorage.getItem("cg-premium-ck")||0); }catch(e){}
+      if (!due && Date.now() - last < 43200000) return;
+      apiPost("/a/premium-check", { email: p.email, until: p.until, token: p.token }, function(err, d){
+        if (err || !d || !d.ok) return;   /* network/rate trouble: leave things as-is */
+        try{ localStorage.setItem("cg-premium-ck", String(Date.now())); }catch(e){}
+        if (d.valid === false){
+          try{ localStorage.removeItem("cg-premium"); }catch(e){}
+          return;
+        }
+        if (d.renewed) grantPremium(p.email, d.until, d.token);
+        var ov = document.getElementById("cgk-ov"); if (ov) ov.remove();
+      });
+      return;
+    }
+
+    /* Legacy 7-day grant (stored before the code flow). silent:1 keeps the
+       worker from emailing a code during a background refresh. */
     if (p.until - Date.now() > 86400000) return;   /* fresh — nothing to do */
-    apiPost("/a/premium", p.email, function(err, d){
+    apiPost("/a/premium", { email: p.email, silent: true }, function(err, d){
       if (err || !d || !d.ok || !d.state) return;
       if (d.state === "PAID_SUBSCRIBER"){
-        grantPremium(p.email);
-        var ov = document.getElementById("cgk-ov"); if (ov) ov.remove();
+        if (!d.code_required){
+          grantPremium(p.email);
+          var ov = document.getElementById("cgk-ov"); if (ov) ov.remove();
+        }
+        /* code_required: let the legacy grant lapse quietly — the user
+           confirms once with the emailed code on their next visit */
       } else {
         try{ localStorage.removeItem("cg-premium"); }catch(e){}
       }
@@ -402,7 +510,7 @@
       var pill = document.createElement("button");
       pill.type = "button";
       pill.className = "cgk-prem-pill";
-      pill.innerHTML = '<span class="ck">✓</span><span class="txt">Premium activo</span>';
+      pill.innerHTML = '<span class="ck">✓</span><span class="txt">Premium activo</span><span class="txt-s">Premium</span>';
       pill.title = "Premium activo — toca para ver qué incluye";
       pill.setAttribute("aria-label", "Premium activo — ver qué incluye");
       pill.addEventListener("click", showPremiumInfo);
