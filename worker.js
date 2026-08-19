@@ -5,8 +5,12 @@
    the games send — no personal data, matching the "todo vive en tu navegador"
    promise. */
 
-const PW_HASH = "8956b6712e73ae8e7a9760a34096f3c8b879c5eef5d6ccee8f89c45acf274e9f"; // sha256("cortadito-admin:" + password)
-const COOKIE = "cg_admin";
+// El hash de la contrasena de admin ya NO vive aqui: es el secreto
+// env.ADMIN_PW_HASH. Este archivo esta en un repositorio publico, asi que
+// cualquier valor constante que se acepte como credencial es una credencial
+// publicada. La cookie tampoco es el secreto (ver admin-session mas abajo).
+const COOKIE = "cg_sess";              // renombrada: invalida el formato viejo
+const SESSION_TTL_MS = 12 * 3600000;   // 12 h
 
 let dbReady = false;
 async function initDB(env) {
@@ -49,11 +53,72 @@ async function sha256hex(s) {
   return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-function authed(request) {
-  const c = request.headers.get("Cookie") || "";
-  const m = c.match(new RegExp(COOKIE + "=([a-f0-9]{64})"));
-  return !!(m && m[1] === PW_HASH);
+/* --- admin-session:start -------------------------------------------------
+   Sesion de admin firmada. La cookie NO es el secreto: lleva una expiracion
+   mas una firma HMAC-SHA256 real sobre esa expiracion, hecha con
+   ADMIN_SESSION_SECRET, que solo existe como secreto del Worker.
+
+   La verificacion usa crypto.subtle.verify, que es de tiempo constante por
+   construccion: no hay ninguna comparacion manual de material secreto.
+
+   Falla cerrado: falta de secreto, token mal formado o token caducado son
+   siempre un rechazo, nunca un acceso. */
+
+function b64urlFromBytes(buf) {
+  const b = new Uint8Array(buf);
+  let s = "";
+  for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
+
+function bytesFromB64url(s) {
+  const t = s.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(t + "=".repeat((4 - (t.length % 4)) % 4));
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function sessionKey(env) {
+  const secret = env && env.ADMIN_SESSION_SECRET;
+  if (!secret) return null;                       // falla cerrado
+  return crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+}
+
+async function makeSession(env, now) {
+  const key = await sessionKey(env);
+  if (!key) return null;
+  const exp = (now || Date.now()) + SESSION_TTL_MS;
+  const sig = await crypto.subtle.sign(
+    "HMAC", key, new TextEncoder().encode("adm|" + exp));
+  return exp + "." + b64urlFromBytes(sig);
+}
+
+async function verifySession(env, token, now) {
+  const key = await sessionKey(env);
+  if (!key || typeof token !== "string") return false;
+  const dot = token.indexOf(".");
+  if (dot < 1) return false;          // la cookie vieja (64 hex) no tiene punto
+  const expStr = token.slice(0, dot), sigStr = token.slice(dot + 1);
+  if (!/^\d{1,15}$/.test(expStr) || !sigStr) return false;
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || exp <= (now || Date.now())) return false;
+  let sig;
+  try { sig = bytesFromB64url(sigStr); } catch (e) { return false; }
+  return crypto.subtle.verify(
+    "HMAC", key, sig, new TextEncoder().encode("adm|" + exp));
+}
+
+/* OJO: es async. Toda llamada DEBE llevar await — un authed() sin await
+   devuelve una Promise, que siempre es truthy, y dejaria pasar a cualquiera. */
+async function authed(request, env) {
+  const c = request.headers.get("Cookie") || "";
+  const m = c.match(/(?:^|;\s*)cg_sess=([^;\s]+)/);
+  return m ? verifySession(env, m[1]) : false;
+}
+/* --- admin-session:end --------------------------------------------------- */
 
 const GAMES = ["racimo", "palabreo", "sudoku", "flechas", "hub"];
 
@@ -377,13 +442,32 @@ export default {
 
       // ---------- admin auth ----------
       if (p === "/admin/login" && request.method === "POST") {
+        // Sin los dos secretos nadie entra. Preferimos dejar fuera al dueno
+        // antes que dejar dentro a cualquiera.
+        if (!env.ADMIN_PW_HASH || !env.ADMIN_SESSION_SECRET) {
+          return new Response(loginPage(true), { status: 503, headers: { "Content-Type": "text/html;charset=utf-8" } });
+        }
+        // Limite de intentos: el resto de /a/* ya usa rateLimited, el login de
+        // admin no. 10 intentos por IP y minuto no molesta a un humano y quita
+        // la fuerza bruta barata. Cambio SEPARADO del arreglo de sesion firmada.
+        if (rateLimited("adm:" + clientIp(request), 10)) {
+          return new Response(loginPage(true), { status: 429, headers: { "Content-Type": "text/html;charset=utf-8" } });
+        }
         const form = await request.formData();
         const pw = String(form.get("pw") || "");
         const h = await sha256hex("cortadito-admin:" + pw);
-        if (h === PW_HASH) {
+        // Comparacion simple a proposito: se comparan dos digest SHA-256 y el
+        // atacante no puede elegir el suyo sin una preimagen, asi que no hay
+        // un canal temporal aprovechable aqui. El material que SI se compara
+        // en tiempo constante es la firma de sesion, via crypto.subtle.verify.
+        if (h === env.ADMIN_PW_HASH) {
+          const token = await makeSession(env);
+          if (!token) {
+            return new Response(loginPage(true), { status: 503, headers: { "Content-Type": "text/html;charset=utf-8" } });
+          }
           return new Response(null, { status: 302, headers: {
             "Location": "/admin",
-            "Set-Cookie": `${COOKIE}=${h}; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`,
+            "Set-Cookie": `${COOKIE}=${token}; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_TTL_MS / 1000}`,
           }});
         }
         return new Response(loginPage(true), { status: 401, headers: { "Content-Type": "text/html;charset=utf-8" } });
@@ -394,7 +478,7 @@ export default {
       }
 
       if (p === "/admin" || p.startsWith("/admin/")) {
-        if (!authed(request)) {
+        if (!(await authed(request, env))) {
           return new Response(loginPage(false), { headers: { "Content-Type": "text/html;charset=utf-8" } });
         }
         await initDB(env);
