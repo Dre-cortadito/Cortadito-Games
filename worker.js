@@ -221,6 +221,26 @@ export default {
     const p = url.pathname;
 
     try {
+      // ---------- public health probe (Jarvis interface) ----------
+      // Side-effect-free: no BeeHiiv call, no email, no writes. Publishes only
+      // whether things are CONFIGURED and REACHABLE — never a key, hash, id or
+      // any subscriber data. Deliberately public so basic health needs no
+      // credentials; authenticated metrics are pulled separately.
+      if (p === "/a/health" && (request.method === "GET" || request.method === "HEAD")) {
+        let db = "unknown";
+        try {
+          await env.DB.prepare("SELECT 1").first();
+          db = "ok";
+        } catch (e) { db = "error"; }
+        return json({
+          ok: true,
+          ts: Date.now(),
+          beehiiv: (env.BEEHIIV_API_KEY && env.BEEHIIV_PUB_ID) ? "configured" : "unconfigured",
+          code_flow: (env.GATE_SECRET && env.RESEND_API_KEY) ? "active" : "configured_off",
+          db,
+        });
+      }
+
       // ---------- beacon ingest ----------
       if (p === "/a/e" && request.method === "POST") {
         await initDB(env);
