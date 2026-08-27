@@ -24,7 +24,7 @@
   var POOLS = {
     palabreo: ["trenza", "cuarteto"],
     sudoku: ["clasico", "niebla", "mini"],
-    flechas: ["borde", "cascada", "clasico"]   /* Desvío, Rumbo y Flujo retirados: no jugables */
+    flechas: ["cascada", "clasico"]   /* Desvío, Rumbo y Flujo retirados: no jugables. Borde oculto pendiente de rediseño (2026-08-27). */
   };
   var NAME = { racimo:"Racimo", palabreo:"Palabreo", sudoku:"Sudoku", flechas:"Flechas",
     clasico:"Clásico", trenza:"Trenza", cuarteto:"Cuarteto", niebla:"Niebla", mini:"Mini",
@@ -35,7 +35,7 @@
   function dayStr(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function freeMode(fam, d){ var p=POOLS[fam]; if(!p) return null; return p[fnv(dayStr(d)+":"+fam)%p.length]; }
   function isPremium(){ if (PREMDEMO) return true; try{ var p=JSON.parse(localStorage.getItem("cg-premium")||"null"); return !!(p && p.until>Date.now()); }catch(e){ return false; } }
-  function defMode(game){ return game==="flechas" ? "borde" : "clasico"; }
+  function defMode(game){ return game==="flechas" ? "cascada" : "clasico"; }   /* Borde oculto: Cascada es el modo por defecto */
   function isFree(game, mode){
     if (!game || game==="hub" || game==="racimo") return true;
     var m = mode || defMode(game);

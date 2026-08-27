@@ -417,8 +417,10 @@ const FAMILIES = [
     family:"Flechas", note:"Encuentra el camino correcto.",
     modes:[
       { name:"Clásico", desc:"Desenreda el tablero.",              bg:"#EAF1F0", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
-      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" },
-      { name:"Borde",   desc:"Despeja sin tocar el borde.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"/flechas/?modo=borde#landing" }
+      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" }
+      /* Borde OCULTO pendiente de rediseño (2026-08-27). El código del juego queda intacto en
+         el repo Flechas; esta tarjeta y FLECHAS_BORDE se restauran tal cual cuando vuelva.
+      , { name:"Borde",   desc:"Despeja sin tocar el borde.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"/flechas/?modo=borde#landing" } */
     ]
   }
 ];
@@ -433,7 +435,7 @@ const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el
 /* Destacado rota a diario entre los juegos gratis de hoy (mismo hash que gate.js) */
 const _fnv=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
 const _day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
-const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["borde","cascada","clasico"]};
+const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["cascada","clasico"]};   /* Borde fuera mientras está oculto */
 const _freeToday=(game,mode)=>{
   if(game==="racimo") return true;
   if(game==="palabreo"&&mode==="clasico") return true;
