@@ -51,8 +51,13 @@
     var parts = location.pathname.split("/");
     var game = (parts[1]||"").replace(/\.html$/,"") || "hub";
     var mode = (parts[2]||"").replace(/\.html$/,"") || null;
-    if (game==="flechas") mode = mode==="index" ? "borde" : (mode || "borde");
-    else { var q = new URLSearchParams(location.search).get("modo"); if (q) mode = q; }
+    /* Read ?modo= for EVERY game, Flechas included. The hub links Flechas as
+       /flechas/?modo=<m>, and decorateHub() already parses that shape - this is
+       what makes here() agree with it. Flechas keeps its path form
+       (/flechas/<m>.html, what modeUrl() generates) and its borde fallback for a
+       bare router URL. */
+    var q = new URLSearchParams(location.search).get("modo"); if (q) mode = q;
+    if (game==="flechas" && (!mode || mode==="index")) mode = "borde";
     return { game: game, mode: mode };
   }
 
