@@ -228,6 +228,13 @@
       display:flex;gap:14px;overflow-x:auto;
       scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
       margin:0 -24px;padding:4px 24px 12px;scrollbar-width:none;
+      /* El snapport empieza en el borde de PADDING, no en el del contenido: sin
+         esto el navegador ajusta la fila a scrollLeft=24 al cargar y la primera
+         tarjeta queda pegada al borde de la pantalla, 24px descuadrada respecto
+         a su propio titulo. Solo se notaba en Silueta porque su fila tiene una
+         sola tarjeta, no desborda, y era la unica bien alineada. Medido
+         2026-09-16 en 390/430/640. */
+      scroll-padding-left:24px;
     }
     .modes::-webkit-scrollbar{display:none}
     a.card{flex:0 0 78%;scroll-snap-align:start}
@@ -400,22 +407,22 @@ const FAMILIES = [
   {
     family:"Silueta", note:"Palabras que toman forma.",
     modes:[
-      { name:"Racimo", desc:"Un racimo, muchas palabras.", bg:"#f4d8d2", logo: RACIMO_LOGO, url:"/racimo/#landing" }
+      { soon:true, name:"Racimo", desc:"Un racimo, muchas palabras.", bg:"#f4d8d2", logo: RACIMO_LOGO, url:"/racimo/#landing" }
     ]
   },
   {
     family:"Sudoku", note:"Cada número en su lugar.",
     modes:[
-      { name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"/sudoku/?modo=clasico#landing" },
-      { name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#FBEBEF", logo: sudokuMini("#A83254","#BEF4D1"), url:"/sudoku/?modo=mini#landing" },   /* frambuesa + menta: la identidad real de Mini en el juego */
-      { name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"/sudoku/?modo=niebla#landing" }
+      { soon:true, name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"/sudoku/?modo=clasico#landing" },
+      { soon:true, name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#FBEBEF", logo: sudokuMini("#A83254","#BEF4D1"), url:"/sudoku/?modo=mini#landing" },   /* frambuesa + menta: la identidad real de Mini en el juego */
+      { soon:true, name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"/sudoku/?modo=niebla#landing" }
     ]
   },
   {
     family:"Flechas", note:"Encuentra el camino correcto.",
     modes:[
-      { name:"Clásico", desc:"Desenreda el tablero.",              bg:"#EAF1F0", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
-      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" }
+      { soon:true, name:"Clásico", desc:"Desenreda el tablero.",              bg:"#EAF1F0", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
+      { soon:true, name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" }
       /* Borde OCULTO pendiente de rediseño (2026-08-27). El código del juego queda intacto en
          el repo Flechas; esta tarjeta y FLECHAS_BORDE se restauran tal cual cuando vuelva.
       , { name:"Borde",   desc:"Despeja sin tocar el borde.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"/flechas/?modo=borde#landing" } */
@@ -443,14 +450,33 @@ const _freeToday=(game,mode)=>{
 const FEATURED_POOL=[];
 FAMILIES.forEach(fam=>fam.modes.forEach(m=>{
   if(!m.url) return;
+  /* LANZAMIENTO 2026-09-16: un modo bloqueado NO puede salir de Destacado. Sin
+     esta linea el heroe seguia rotando a Sudoku o Flechas y enlazaba a un juego
+     que la tarjeta de abajo muestra como Proximamente. */
+  if(m.soon) return;
   const mm=m.url.match(/^\/(\w+)\/(?:\?modo=(\w+))?/)||[];
   if(!mm[1]) return;
   if(_freeToday(mm[1],mm[2]||null)){
     FEATURED_POOL.push({ title: mm[1]==="racimo" ? m.name : fam.family+" "+m.name, q:m.desc, logo:m.logo, url:m.url, bg:m.bg });
   }
 }));
-const FEATURED = FEATURED_POOL.length ? FEATURED_POOL[_fnv("destacado:"+_day())%FEATURED_POOL.length]
-                                      : { title:RACIMO.name, q:RACIMO.question, logo:RACIMO.logo, url:RACIMO.url, bg:RACIMO.bg };
+/* El respaldo tambien tiene que estar desbloqueado: apuntaba a Racimo, que
+   queda bloqueado hasta que se abra Silueta. Se toma el primer modo abierto que
+   haya en FAMILIES, asi el respaldo sigue solo a los flags soon y no hay que
+   tocarlo en cada desbloqueo semanal. */
+const _firstOpen=(function(){ for(var i=0;i<FAMILIES.length;i++){ var f=FAMILIES[i];
+  for(var j=0;j<f.modes.length;j++){ var m=f.modes[j]; if(!m.soon && m.url) return {fam:f,m:m}; } } return null; })();
+/* Selector del Destacado: usa los bits altos del FNV antes del modulo. El bit
+   bajo de FNV-1a es solo la paridad de los caracteres (el multiplicador es
+   impar), y "destacado:"+dia comparte los mismos caracteres de fecha que
+   dia+":palabreo" en _freeToday, asi que con un pool de dos entradas el
+   indice quedaba amarrado a la rotacion y Trenza nunca salia. _freeToday no
+   cambia: debe seguir igual que gate.js. */
+const FEATURED = FEATURED_POOL.length ? FEATURED_POOL[(_fnv("destacado:"+_day())>>>16)%FEATURED_POOL.length]
+               : _firstOpen ? { title:_firstOpen.fam.family+" "+_firstOpen.m.name, q:_firstOpen.m.desc,
+                                logo:_firstOpen.m.logo, url:_firstOpen.m.url, bg:_firstOpen.m.bg }
+               /* ultimo recurso estructural: solo alcanzable si TODO esta bloqueado */
+               : { title:RACIMO.name, q:RACIMO.question, logo:RACIMO.logo, url:RACIMO.url, bg:RACIMO.bg };
 /* El Destacado se pinta con los colores de SU juego: el mismo tinte del panel
    de su tarjeta, y el color del propio logo para el kicker y el brillo de la
    esquina. Antes eran fijos (rosa + rojo + verde), asi que Borde salia rojo. */
