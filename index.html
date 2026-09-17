@@ -202,6 +202,14 @@
   .promo .go{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15px;background:#fff;color:#141210;border:1.5px solid #141210;padding:11px 26px;border-radius:999px;text-decoration:none;transition:.18s}
   .promo .go:hover{background:#141210;color:#fff}
   .promo .go svg{width:14px;height:14px}
+  /* Enlace pequeño de la tarjeta: baja a la primera familia (no abre ningún juego) */
+  .promo .more{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;color:#1c1108;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px;padding:6px 10px;border-radius:8px;background:transparent}
+  .promo .more:hover{background:rgba(0,0,0,.06)}
+  .promo .more:focus-visible{outline:2px solid #141210;outline-offset:2px}
+  .promo .more .arr{font-weight:900}
+  .fam-head h3{scroll-margin-top:16px}
+  .fam-head h3:focus{outline:none}
+  .fam-head h3:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:4px}
   @media(max-width:640px){
     .promo{padding:20px 18px 18px;text-align:center;align-items:center;gap:8px}
     .promo .kick{align-self:center}
@@ -495,7 +503,7 @@ app.insertAdjacentHTML("beforeend",`
     <div class="cd-label" id="promo-cdl" aria-live="polite"></div>
     <div class="cd" id="promo-cd" role="timer" aria-live="off" aria-atomic="true"><b><span id="promo-t1">00</span><small id="promo-l1"></small></b><b><span id="promo-t2">00</span><small id="promo-l2"></small></b><b><span id="promo-t3">00</span><small id="promo-l3"></small></b></div>
     <p class="next" id="promo-next"></p>
-    <div class="row"><a class="go" id="promo-btn" href="/palabreo/?modo=clasico#landing"><span id="promo-btnt"></span>${ARROW}</a></div>
+    <div class="row"><a class="more" id="promo-btn" href="#juegos"><span id="promo-btnt"></span><span class="arr" aria-hidden="true">↓</span></a></div>
   </section>
 `);
 (function(){
@@ -515,18 +523,18 @@ app.insertAdjacentHTML("beforeend",`
       $("promo-lead").innerHTML="Del <b>17 de septiembre</b> al <b>17 de octubre</b>, todo lo que vaya saliendo se juega gratis. Cada jueves, una familia nueva.";
       setText("promo-cdl","El mes gratis empieza en");
       $("promo-next").innerHTML="<b>Palabreo</b> ya está disponible. El mes gratis empieza el 17 de septiembre a las 4 a.m."+NY+". <b>Racimo</b> llega el jueves 24.";
-      setText("promo-btnt","Jugar Palabreo"); $("promo-btn").setAttribute("href","/palabreo/?modo=clasico#landing"); $("promo-cd").style.display="";
+      setText("promo-btnt","Ver los juegos"); $("promo-btn").setAttribute("href","#juegos"); $("promo-cd").style.display="";
     } else if(ph==="during"){
       setText("promo-kick","Mes gratis"); setText("promo-h2","Un mes de juegos gratis");
       $("promo-lead").innerHTML="Todos los juegos disponibles, gratis hasta el <b>17 de octubre, 4 a.m.</b>"+NY+". Cada jueves se abre una familia nueva.";
       setText("promo-cdl","El mes gratis termina en");
       $("promo-next").innerHTML= nextRel ? "Próxima familia: <b>"+NAMES[nextRel[0]]+"</b>, "+DAYS[nextRel[0]]+", 4 a.m."+NY+"." : "Ya están todas las familias. Aprovecha hasta el 17.";
-      setText("promo-btnt","Jugar"); $("promo-btn").setAttribute("href","/palabreo/?modo=clasico#landing"); $("promo-cd").style.display="";
+      setText("promo-btnt","Ver los juegos"); $("promo-btn").setAttribute("href","#juegos"); $("promo-cd").style.display="";
     } else {
       setText("promo-kick","Gracias por jugar"); setText("promo-h2","El mes gratis terminó");
       $("promo-lead").innerHTML="<b>Racimo</b> y <b>Palabreo Clásico</b> son gratis siempre. En Palabreo, Sudoku y Flechas cada día se abre un modo gratis distinto. Con Premium, todo, todos los días.";
       setText("promo-cdl",""); $("promo-cd").style.display="none"; setText("promo-next","");
-      setText("promo-btnt","Ver qué hay gratis hoy"); $("promo-btn").setAttribute("href","#app");
+      setText("promo-btnt","Ver los juegos"); $("promo-btn").setAttribute("href","#juegos");
     }
   }
   function tick(){
@@ -580,9 +588,22 @@ FAMILIES.forEach(fam=>{
       <div class="modes">${cards}</div>
     </section>
   `);
+  /* La primera cabecera de familia es el destino de "Ver los juegos" (se re-asigna en cada pintado) */
+  { const h=document.querySelector("section.fam .fam-head h3"); if(h){ h.id="juegos"; h.tabIndex=-1; } }
 });
 }
 renderFamilies();
+/* "Ver los juegos": desplazamiento en la misma página (suave solo aquí; auto con reduced-motion) y foco al destino */
+document.getElementById("promo-btn").addEventListener("click",function(e){
+  const href=this.getAttribute("href")||""; if(href.charAt(0)!=="#") return;
+  const t=document.getElementById(href.slice(1)); if(!t) return;
+  e.preventDefault();
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  t.scrollIntoView({behavior: reduce?"auto":"smooth", block:"start"});
+  if(!t.hasAttribute("tabindex")) t.tabIndex=-1;
+  t.focus({preventScroll:true});
+  history.replaceState(null,"",href);
+});
 /* Re-pinta solo cuando cambia el estado de alguna familia (apertura semanal). */
 (function(){
   function famStates(){ return FAMILIES.map(f=>{ const k=FAM_KEY[f.family]; return k ? (_released(k)?"1":"0") : "-"; }).join(""); }

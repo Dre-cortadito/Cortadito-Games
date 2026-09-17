@@ -198,7 +198,8 @@
     + "background:transparent;color:var(--ink,#171210);border:1.5px solid var(--line,#eee2d6);transition:background .15s}"
     /* invisible hit-area extender → ~44px tall touch target (audit CG-05) */
     + ".cgk-filter button::before{content:\"\";position:absolute;inset:-5px -3px}"
-    + ".cgk-filter button.on{background:var(--ink,#171210);color:var(--bg,#fff);border-color:var(--ink,#171210)}";
+    + ".cgk-filter button.on{background:var(--ink,#171210);color:var(--bg,#fff);border-color:var(--ink,#171210)}"
+    + ".cgk-filter[hidden]{display:none}";   /* sin fila ni espacio durante el mes gratis */
   var st = document.createElement("style"); st.textContent = css;
   (document.head || document.documentElement).appendChild(st);
   try{ if (!document.querySelector('link[href*=\"Fraunces\"]')){
@@ -536,6 +537,19 @@
       var b = e.target.closest("button"); if (!b) return;
       applyFilter(b.dataset.f);
     });
+    _filterBar = bar; _applyFilter = applyFilter;
+    syncFilter();
+  }
+  /* Durante el mes gratis (misma fase que el resto de la promoción) la
+     fila Todos/Gratis/Premium se oculta y el filtro vuelve a "Todos", para que
+     ningún filtro previo deje tarjetas escondidas. Antes y después, igual que
+     siempre. Se re-evalúa desde refreshHub(), que el hub llama al cambiar de fase. */
+  var _filterBar = null, _applyFilter = null;
+  function syncFilter(){
+    if (!_filterBar) return;
+    var hide = PROMO.enabled && phase() === "during";
+    if (hide && !_filterBar.hidden){ _applyFilter("all"); _filterBar.hidden = true; }
+    else if (!hide && _filterBar.hidden){ _filterBar.hidden = false; }
   }
 
   /* Bandas de las tarjetas. Idempotente: quita lo suyo y vuelve a pintar, para
@@ -564,7 +578,7 @@
       if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
     });
   }
-  function refreshHub(){ if (!ACTIVE || isPremium()) return; decorateCards(); }
+  function refreshHub(){ if (!ACTIVE || isPremium()) return; decorateCards(); syncFilter(); }
 
   /* ---------- subscriber hub: quiet confirmation, clean cards ---------- */
   function premiumHub(){
