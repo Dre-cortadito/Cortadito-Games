@@ -264,12 +264,32 @@
   function showLock(kind, game, mode){
     if (document.getElementById("cgk-ov")) return;
     var fm = freeMode(game);
-    var html = '<div class="cgk-panel"><div class="cgk-topband">Premium</div><div class="cgk-inner">';
+    var html = '<div class="cgk-panel"><div class="cgk-topband">' + (kind === "release" ? "Próximamente" : "Premium") + '</div><div class="cgk-inner">';
     if (kind === "release") {
+      /* Bloqueo por lanzamiento: solo la fecha de apertura y lo que ya está
+         abierto. Sin venta de Premium: Premium no adelanta un lanzamiento
+         (decisión D), así que ofrecerlo aquí sería engañoso. */
       var when = RELNAME[game] ? RELNAME[game] + " a las 4 a.m., hora de Nueva York" : "muy pronto";
+      var ph = PROMO.enabled ? phase() : "off";
+      var mientras = ph === "during" ? "Mientras tanto, todo lo que ya salió se juega gratis hasta el 17 de octubre."
+                   : ph === "before" ? "Mientras tanto, esto ya está abierto:"
+                   : "Mientras tanto, esto está abierto hoy:";
+      /* Lo abierto ahora, una tarjeta por familia ya lanzada (sin la bloqueada). */
+      var open = '';
+      ["palabreo","racimo","sudoku","flechas"].forEach(function(g){
+        if (g === game || !released(g)) return;
+        if (g === "racimo"){ open += miniCard("racimo", null, "free"); return; }
+        if (g === "palabreo"){ open += miniCard("palabreo", "clasico", "free"); return; }
+        open += ph === "during" ? miniCard(g, defMode(g), "free") : miniCard(g, freeMode(g), "hoy");
+      });
       html += "<h2>" + NAME[game] + " abre el " + when + "</h2>"
-        + "<p>Mientras tanto, lo que ya salió es gratis hasta el 17 de octubre.</p>"
-        + '<div class="cgk-cards">' + miniCard("palabreo", "clasico", "free") + '</div>';
+        + "<p>" + mientras + "</p>"
+        + '<div class="cgk-cards">' + open + '</div>'
+        + '<a class="cgk-btn white" style="margin-bottom:0" href="/">Ver todos los juegos</a>'
+        + "</div></div>";
+      var rov = document.createElement("div"); rov.className = "cgk-ov"; rov.id = "cgk-ov"; rov.innerHTML = html;
+      document.body.appendChild(rov);
+      return;
     } else if (kind === "anteriores") {
       html += "<h2>El archivo es Premium</h2>"
         + "<p>El puzzle de hoy siempre es gratis. El archivo completo de Anteriores se abre con Premium.</p>";
