@@ -31,12 +31,55 @@
     borde:"Borde", cascada:"Cascada" };
   var DOW = ["dom","lun","mar","mié","jue","vie","sáb"];
 
+  /* ===== LANZAMIENTO — mes gratis (aprobado por Dre 2026-09-16) =====
+     Tres controles, cada uno con un efecto distinto — no se confunden:
+       ENFORCE=false   → apaga la puerta ENTERA (freemium y promoción). NO es
+                          un candado; nunca se usa como tal.
+       PROMO.enabled   → false cancela la promoción: vuelve la regla diaria.
+                          No re-bloquea ninguna familia.
+       FAMILY[fam]     → "auto" sigue el calendario RELEASES; "open" abre la
+                          familia; "locked" la bloquea para TODOS, Premium
+                          incluido (candado de emergencia). Precedencia:
+                          locked > open > calendario > mes gratis > Premium >
+                          rotación diaria.
+     Un cambio aquí llega a cada página en su SIGUIENTE carga (el gate.js ya
+     cargado en una pestaña abierta no cambia). No hay sondeo en este
+     lanzamiento (decisión B, 2026-09-16).
+     Fechas en UTC: 4 a.m. de Nueva York = 08:00Z durante toda la ventana
+     (EDT, UTC-4, hasta el 2026-11-01). El hub (index.html) lleva una COPIA
+     idéntica de estas tres constantes para pintar antes de que cargue este
+     archivo; se comprueba antes de cada envío. La autoridad es esta. */
+  var PROMO    = { enabled:true, start:"2026-09-17T08:00:00Z", end:"2026-10-17T08:00:00Z" };
+  var RELEASES = { palabreo:"2026-09-01T00:00:00Z", racimo:"2026-09-24T08:00:00Z", sudoku:"2026-10-01T08:00:00Z", flechas:"2026-10-08T08:00:00Z" };
+  var FAMILY   = { racimo:"auto", palabreo:"auto", sudoku:"auto", flechas:"auto" };   /* "auto" | "open" | "locked" */
+  var RELNAME  = { racimo:"jueves 24 de septiembre", sudoku:"jueves 1 de octubre", flechas:"jueves 8 de octubre" };
+  function familyState(fam){ return FAMILY[fam] || "auto"; }
+  function released(fam, now){
+    if (!fam || fam === "hub") return true;
+    var st = familyState(fam); if (st === "locked") return false; if (st === "open") return true;
+    var t = RELEASES[fam]; if (!t) return true;
+    return (now || Date.now()) >= Date.parse(t);
+  }
+  function phase(now){
+    now = now || Date.now();
+    if (!PROMO.enabled) return "off";
+    if (now < Date.parse(PROMO.start)) return "before";
+    if (now < Date.parse(PROMO.end)) return "during";
+    return "after";
+  }
+
   function fnv(s){ var h=2166136261; for (var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
   function dayStr(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
   function freeMode(fam, d){ var p=POOLS[fam]; if(!p) return null; return p[fnv(dayStr(d)+":"+fam)%p.length]; }
   function isPremium(){ if (PREMDEMO) return true; try{ var p=JSON.parse(localStorage.getItem("cg-premium")||"null"); return !!(p && p.until>Date.now()); }catch(e){ return false; } }
   function defMode(game){ return game==="flechas" ? "cascada" : "clasico"; }   /* Borde oculto: Cascada es el modo por defecto */
   function isFree(game, mode){
+    /* 1) Elegibilidad de LANZAMIENTO, independiente de gratis/Premium: una
+       familia sin abrir no es gratis para nadie (Premium tampoco — decisión D). */
+    if (game && game!=="hub" && !released(game)) return false;
+    /* 2) Mes gratis: toda familia abierta, todos sus modos. */
+    if (game && game!=="hub" && PROMO.enabled && phase()==="during") return true;
+    /* 3) Regla diaria de siempre. */
     if (!game || game==="hub" || game==="racimo") return true;
     var m = mode || defMode(game);
     if (game==="palabreo" && m==="clasico") return true;
@@ -71,6 +114,7 @@
     + ".cgk-band{display:block;width:100%;box-sizing:border-box;flex:none;font:800 11px/1 system-ui,sans-serif;"
     + "letter-spacing:.14em;text-transform:uppercase;color:#fff;text-align:center;padding:7px 10px 6px}"
     + ".cgk-band.free{background:#427C40}"
+    + ".cgk-band.mes{background:#427C40}"
     + ".cgk-band.hoy{background:#2670B8}"
     + ".cgk-band.prem{background:#9C3B8E}"
     + "a.feature .cgk-band{position:absolute;top:0;left:0;right:0;z-index:2}"
@@ -220,7 +264,12 @@
     if (document.getElementById("cgk-ov")) return;
     var fm = freeMode(game);
     var html = '<div class="cgk-panel"><div class="cgk-topband">Premium</div><div class="cgk-inner">';
-    if (kind === "anteriores") {
+    if (kind === "release") {
+      var when = RELNAME[game] ? RELNAME[game] + " a las 4 a.m., hora de Nueva York" : "muy pronto";
+      html += "<h2>" + NAME[game] + " abre el " + when + "</h2>"
+        + "<p>Mientras tanto, lo que ya salió es gratis hasta el 17 de octubre.</p>"
+        + '<div class="cgk-cards">' + miniCard("palabreo", "clasico", "free") + '</div>';
+    } else if (kind === "anteriores") {
       html += "<h2>El archivo es Premium</h2>"
         + "<p>El puzzle de hoy siempre es gratis. El archivo completo de Anteriores se abre con Premium.</p>";
     } else {
@@ -451,26 +500,8 @@
        library. Just a quiet "Premium activo" pill by the menu, plus a one-time
        welcome banner. Access info (bands/filter) is for non-subscribers only. */
     if (isPremium()){ premiumHub(); return; }
-
-    var cards = document.querySelectorAll("a.card, a.feature");
-    cards.forEach(function(a){
-      var href = a.getAttribute("href") || "";
-      var mm = href.match(/^\/(racimo|palabreo|sudoku|flechas)\/?([a-z]*\.?h?t?m?l?)?(\?modo=([a-z]+))?/);
-      if (!mm) return;
-      var game = mm[1];
-      var mode = mm[4] || (mm[2] ? mm[2].replace(".html","") : null);
-      if (game === "flechas") mode = (!mode || mode === "") ? "borde" : mode;
-      var anchor = game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico");
-      var st = anchor ? "free" : (isFree(game, mode) ? "hoy" : "prem");
-      a.classList.add("cgk-edge-" + st);
-      var band = document.createElement("div");
-      band.className = "cgk-band " + st;
-      band.textContent = st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium");
-      a.insertBefore(band, a.firstChild);
-      var body = a.querySelector(".cbody"); if (!body) return;   /* featured card: band only */
-      var go = body.querySelector(".go");
-      if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
-    });
+    decorateCards();
+    if (document.querySelector(".cgk-filter")) return;   /* ya existe (re-pintado) */
 
     /* filter bar: Todos · Gratis · Premium */
     var app = document.getElementById("app");
@@ -506,6 +537,34 @@
       applyFilter(b.dataset.f);
     });
   }
+
+  /* Bandas de las tarjetas. Idempotente: quita lo suyo y vuelve a pintar, para
+     que el hub pueda llamarlo cuando una familia abre o cambia la fase. */
+  function decorateCards(){
+    document.querySelectorAll("a.card .cgk-band").forEach(function(b){ b.remove(); });
+    document.querySelectorAll("a.card").forEach(function(a){
+      a.classList.remove("cgk-edge-free","cgk-edge-hoy","cgk-edge-prem","cgk-edge-mes");
+      var href = a.getAttribute("href") || "";
+      var mm = href.match(/^\/(racimo|palabreo|sudoku|flechas)\/?([a-z]*\.?h?t?m?l?)?(\?modo=([a-z]+))?/);
+      if (!mm) return;   /* tarjetas bloqueadas (href="#") no llevan banda */
+      var game = mm[1];
+      var mode = mm[4] || (mm[2] ? mm[2].replace(".html","") : null);
+      if (game === "flechas") mode = (!mode || mode === "") ? "borde" : mode;
+      var promo = PROMO.enabled && phase() === "during" && released(game);
+      var anchor = game === "racimo" || (game === "palabreo" && (mode || "clasico") === "clasico");
+      var st = promo ? "mes" : (anchor ? "free" : (isFree(game, mode) ? "hoy" : "prem"));
+      a.classList.add("cgk-edge-" + (st === "mes" ? "free" : st));
+      var band = document.createElement("div");
+      band.className = "cgk-band " + st;
+      band.textContent = st === "mes" ? "Gratis este mes" : (st === "free" ? "Gratis" : (st === "hoy" ? "Gratis hoy" : "Premium"));
+      a.insertBefore(band, a.firstChild);
+      var body = a.querySelector(".cbody"); if (!body) return;
+      var go = body.querySelector(".go");
+      if (go) go.innerHTML = go.innerHTML.replace(/Ver Premium/, "Jugar");
+      if (st === "prem" && go) go.innerHTML = go.innerHTML.replace(/Jugar/, "Ver Premium");
+    });
+  }
+  function refreshHub(){ if (!ACTIVE || isPremium()) return; decorateCards(); }
 
   /* ---------- subscriber hub: quiet confirmation, clean cards ---------- */
   function premiumHub(){
@@ -596,15 +655,31 @@
        removed at Dre's request — the click itself still gates via showLock.) */
     if (!ACTIVE) return;
     refreshPremium();
-    if (h.game === "hub"){ decorateHub(); }
-    else {
-      if (!isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);
-      tagAnteriores();
-      setTimeout(tagAnteriores, 1200);
+    if (h.game === "hub"){ decorateHub(); return; }
+    /* Orden: 1) lanzamiento (antes que Premium — decisión D), 2) gratis/Premium.
+       La decisión tomada al cargar es la de TODA la vida de la página (decisión
+       A): un tic posterior solo puede ABRIR (llega el jueves de esta familia),
+       nunca cerrar. Cerrar ocurre en la siguiente carga completa. */
+    if (!released(h.game)) {
+      showLock("release", h.game, h.mode);
+      var relTimer = setInterval(function(){
+        if (!released(h.game)) return;
+        clearInterval(relTimer);
+        var ov = document.getElementById("cgk-ov"); if (ov) ov.remove();
+        if (!isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);
+        tagAnteriores();
+      }, 1000);
+      document.addEventListener("visibilitychange", function(){ if (!document.hidden && released(h.game)) { var ov = document.getElementById("cgk-ov"); if (ov && ov.querySelector("h2") && /abre el/.test(ov.querySelector("h2").textContent)) ov.remove(); } });
+      return;
     }
+    if (!isPremium() && !isFree(h.game, h.mode)) showLock("game", h.game, h.mode);
+    tagAnteriores();
+    setTimeout(tagAnteriores, 1200);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 
-  window.CGGate = { isFree: isFree, freeMode: freeMode, isPremium: isPremium, pools: POOLS, enforce: ENFORCE };
+  window.CGGate = { isFree: isFree, freeMode: freeMode, isPremium: isPremium, pools: POOLS, enforce: ENFORCE,
+                    released: released, phase: phase, familyState: familyState, refreshHub: refreshHub,
+                    promo: PROMO, releases: RELEASES, family: FAMILY };
 })();

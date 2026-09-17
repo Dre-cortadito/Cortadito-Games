@@ -180,38 +180,34 @@
 
   main{max-width:1000px;margin:0 auto;padding:20px 24px 100px}
 
-  /* ---------- Racimo hero (wide, premium — colored panel) ---------- */
-  .feature{
-    display:flex;align-items:center;gap:36px;text-decoration:none;color:inherit;cursor:pointer;
-    background:var(--feat-bg,#f8d3ca);border:1px solid rgba(36,18,9,.07);border-radius:30px;
-    margin:34px 0 0;padding:38px 46px;box-shadow:var(--shadow);position:relative;overflow:hidden;
-    transition:transform .16s ease,box-shadow .16s ease;
-  }
-  .feature:hover{transform:translateY(-4px)}
-  .feature:hover .btn{background:#141210;color:#fff}
-  .feature::before{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(300px 240px at 100% 118%, var(--feat-glow,rgba(92,133,60,.22)), transparent 58%);
-  }
-  .feature .flogo{width:142px;height:142px;flex:none;position:relative;z-index:1}
-  .feature .flogo svg{width:100%;height:100%;display:block}
-  .feature .ftext{flex:1;min-width:0;position:relative;z-index:1}
-  .feature .kick{display:inline-block;color:var(--feat-kick,var(--red));font-weight:800;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
-  .feature h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(44px,7vw,64px);margin:0;line-height:1;color:#1c1108}
-  .feature .q{font-family:"Fraunces",serif;font-style:italic;font-weight:500;color:#7c5c4f;font-size:clamp(18px,2.6vw,23px);margin:12px 0 0;max-width:30ch}
-  .btn{
-    flex:none;position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;text-decoration:none;
-    font-weight:800;font-size:17px;padding:16px 42px;border-radius:999px;
-    background:#fff;color:#141210;border:1.5px solid #141210;transition:background .18s ease,color .18s ease;
-  }
-  .btn:hover{background:#141210;color:#fff}
-  .btn:active{transform:scale(.97)}
-  .btn svg{width:17px;height:17px}
+  /* ---------- Tarjeta del mes gratis (LANZAMIENTO 2026-09-17) ----------
+     Sustituye al Destacado, retirado de forma permanente el 2026-09-16. Superficie
+     crema en los dos temas, una sola pieza naranja (la insignia de fase), fichas
+     de cuenta regresiva en durazno pálido con números oscuros, y el botón Jugar
+     con el MISMO estilo que el de las tarjetas (a.card .go). Tres fichas siempre
+     en una fila: días·horas·min, o bajo 24 h horas·min·seg. */
+  .promo{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--card-line);border-radius:26px;margin:26px 0 0;padding:24px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden;color:#1c1108}
+  .promo::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(260px 200px at 100% 120%, rgba(227,83,54,.12), transparent 60%)}
+  .promo>*{position:relative;z-index:1}
+  .promo .kick{display:inline-block;color:#fff;background:var(--brand);font-weight:800;font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:5px 10px;border-radius:999px;align-self:flex-start}
+  .promo h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,5.6vw,50px);margin:0;line-height:1.02}
+  .promo .lead{font-family:"Fraunces",serif;font-style:italic;font-weight:500;color:#7c5c4f;font-size:clamp(16px,2.2vw,20px);margin:0;max-width:46ch}
+  .promo .lead b,.promo .next b{color:#1c1108;font-style:normal;font-weight:800}
+  .promo .cd-label{font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7c5c4f;margin-top:4px}
+  .promo .cd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin-bottom:6px}
+  .promo .cd b{display:flex;flex-direction:column;align-items:center;padding:10px 4px 9px;border-radius:14px;background:#f7dfd3;color:#1c1108;font-family:"Fraunces",serif;font-weight:900;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+  .promo .cd b small{font-family:"Nunito Sans",system-ui,sans-serif;font-weight:800;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7c5c4f;margin-top:5px}
+  .promo .next{font-size:14.5px;color:#7c5c4f;margin:0}
+  .promo .row{margin-top:4px}
+  .promo .go{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15px;background:#fff;color:#141210;border:1.5px solid #141210;padding:11px 26px;border-radius:999px;text-decoration:none;transition:.18s}
+  .promo .go:hover{background:#141210;color:#fff}
+  .promo .go svg{width:14px;height:14px}
   @media(max-width:640px){
-    .feature{flex-direction:column;text-align:center;padding:28px 24px;gap:14px}
-    .feature .flogo{width:100px;height:100px}
-    .feature .q{max-width:26ch;margin-top:8px}
-    .feature .btn{width:100%;justify-content:center;padding:14px;font-size:16px}
+    .promo{padding:20px 18px 18px;text-align:center;align-items:center;gap:8px}
+    .promo .kick{align-self:center}
+    .promo .cd{width:100%;max-width:300px}
+    .promo .cd b{font-size:26px}
+    .promo .go{padding:9px 20px;font-size:14px}
   }
 
   /* ---------- family sections ---------- */
@@ -444,22 +440,22 @@ const FAMILIES = [
   {
     family:"Silueta", note:"Palabras que toman forma.",
     modes:[
-      { soon:true, name:"Racimo", desc:"Un racimo, muchas palabras.", bg:"#f4d8d2", logo: RACIMO_LOGO, url:"/racimo/#landing" }
+      { name:"Racimo", desc:"Un racimo, muchas palabras.", bg:"#f4d8d2", logo: RACIMO_LOGO, url:"/racimo/#landing" }
     ]
   },
   {
     family:"Sudoku", note:"Cada número en su lugar.",
     modes:[
-      { soon:true, name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"/sudoku/?modo=clasico#landing" },
-      { soon:true, name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#FBEBEF", logo: sudokuMini("#A83254","#BEF4D1"), url:"/sudoku/?modo=mini#landing" },   /* frambuesa + menta: la identidad real de Mini en el juego */
-      { soon:true, name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"/sudoku/?modo=niebla#landing" }
+      { name:"Clásico", desc:"¿Qué patrón encontrarás hoy?",      bg:"#f6dac8", logo: sudoku3("#d9633b","#5b3a26"),   url:"/sudoku/?modo=clasico#landing" },
+      { name:"Mini",    desc:"Un sorbo. Tres minutos.",           bg:"#FBEBEF", logo: sudokuMini("#A83254","#BEF4D1"), url:"/sudoku/?modo=mini#landing" },   /* frambuesa + menta: la identidad real de Mini en el juego */
+      { name:"Niebla",  desc:"Despeja la niebla, celda a celda.",  bg:"#d2dde2", logo: sudoku3("#294f61","#8a5572"),   url:"/sudoku/?modo=niebla#landing" }
     ]
   },
   {
     family:"Flechas", note:"Encuentra el camino correcto.",
     modes:[
-      { soon:true, name:"Clásico", desc:"Desenreda el tablero.",              bg:"#EAF1F0", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
-      { soon:true, name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" }
+      { name:"Clásico", desc:"Desenreda el tablero.",              bg:"#EAF1F0", logo: FLECHAS_CLASICO,                     url:"/flechas/?modo=clasico#landing" },
+      { name:"Cascada", desc:"Despeja antes de que caiga.",         bg:"#EAF3FF", logo: FLECHAS_CASCADA, url:"/flechas/?modo=cascada#landing" }
       /* Borde OCULTO pendiente de rediseño (2026-08-27). El código del juego queda intacto en
          el repo Flechas; esta tarjeta y FLECHAS_BORDE se restauran tal cual cuando vuelva.
       , { name:"Borde",   desc:"Despeja sin tocar el borde.",  bg:"#F3EAF8", logo: FLECHAS_BORDE,                       url:"/flechas/?modo=borde#landing" } */
@@ -474,72 +470,88 @@ const ARROW=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const app=document.getElementById("app");
 const attrs=u=>u==="#"?'href="#" onclick="return false" title="Pega la URL en el archivo"':`href="${u}"`;   /* same tab — hub → landing → game, Back walks home */
 
-/* Destacado rota a diario entre los juegos gratis de hoy (mismo hash que gate.js) */
-const _fnv=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
-const _day=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
-const _POOLS={palabreo:["trenza","cuarteto"],sudoku:["clasico","niebla","mini"],flechas:["cascada","clasico"]};   /* Borde fuera mientras está oculto */
-const _freeToday=(game,mode)=>{
-  if(game==="racimo") return true;
-  if(game==="palabreo"&&mode==="clasico") return true;
-  const p=_POOLS[game]; if(!p) return false;
-  return mode===p[_fnv(_day()+":"+game)%p.length];
-};
-const FEATURED_POOL=[];
-FAMILIES.forEach(fam=>fam.modes.forEach(m=>{
-  if(!m.url) return;
-  /* LANZAMIENTO 2026-09-16: un modo bloqueado NO puede salir de Destacado. Sin
-     esta linea el heroe seguia rotando a Sudoku o Flechas y enlazaba a un juego
-     que la tarjeta de abajo muestra como Proximamente. */
-  if(m.soon) return;
-  const mm=m.url.match(/^\/(\w+)\/(?:\?modo=(\w+))?/)||[];
-  if(!mm[1]) return;
-  if(_freeToday(mm[1],mm[2]||null)){
-    FEATURED_POOL.push({ title: mm[1]==="racimo" ? m.name : fam.family+" "+m.name, q:m.desc, logo:m.logo, url:m.url, bg:m.bg });
-  }
-}));
-/* El respaldo tambien tiene que estar desbloqueado: apuntaba a Racimo, que
-   queda bloqueado hasta que se abra Silueta. Se toma el primer modo abierto que
-   haya en FAMILIES, asi el respaldo sigue solo a los flags soon y no hay que
-   tocarlo en cada desbloqueo semanal. */
-const _firstOpen=(function(){ for(var i=0;i<FAMILIES.length;i++){ var f=FAMILIES[i];
-  for(var j=0;j<f.modes.length;j++){ var m=f.modes[j]; if(!m.soon && m.url) return {fam:f,m:m}; } } return null; })();
-/* Selector del Destacado: usa los bits altos del FNV antes del modulo. El bit
-   bajo de FNV-1a es solo la paridad de los caracteres (el multiplicador es
-   impar), y "destacado:"+dia comparte los mismos caracteres de fecha que
-   dia+":palabreo" en _freeToday, asi que con un pool de dos entradas el
-   indice quedaba amarrado a la rotacion y Trenza nunca salia. _freeToday no
-   cambia: debe seguir igual que gate.js. */
-const FEATURED = FEATURED_POOL.length ? FEATURED_POOL[(_fnv("destacado:"+_day())>>>16)%FEATURED_POOL.length]
-               : _firstOpen ? { title:_firstOpen.fam.family+" "+_firstOpen.m.name, q:_firstOpen.m.desc,
-                                logo:_firstOpen.m.logo, url:_firstOpen.m.url, bg:_firstOpen.m.bg }
-               /* ultimo recurso estructural: solo alcanzable si TODO esta bloqueado */
-               : { title:RACIMO.name, q:RACIMO.question, logo:RACIMO.logo, url:RACIMO.url, bg:RACIMO.bg };
-/* El Destacado se pinta con los colores de SU juego: el mismo tinte del panel
-   de su tarjeta, y el color del propio logo para el kicker y el brillo de la
-   esquina. Antes eran fijos (rosa + rojo + verde), asi que Borde salia rojo. */
-const _hex = (l)=>{ const m=String(l||"").match(/fill(?::|=")\s*(#[0-9a-fA-F]{3,6})/); return m?m[1]:null; };
-const _rgba = (h,a)=>{ if(!h) return null; let v=h.slice(1);
-  if(v.length===3) v=v.split("").map(c=>c+c).join("");
-  const n=parseInt(v,16);
-  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`; };
-const _fa = _hex(FEATURED.logo);
-const FEAT_STYLE = [ FEATURED.bg ? `--feat-bg:${FEATURED.bg}` : "",
-                     _fa ? `--feat-kick:${_fa}` : "",
-                     _fa ? `--feat-glow:${_rgba(_fa,.22)}` : "" ].filter(Boolean).join(";");
-app.insertAdjacentHTML("beforeend",`
-  <a class="feature" style="${FEAT_STYLE}" ${attrs(FEATURED.url)}>
-    <div class="flogo">${FEATURED.logo}</div>
-    <div class="ftext">
-      <span class="kick">Destacado</span>
-      <h2>${FEATURED.title}</h2>
-      <p class="q">${FEATURED.q}</p>
-    </div>
-    <span class="btn">Jugar ${ARROW}</span>
-  </a>
-`);
+/* ===== LANZAMIENTO — mes gratis (aprobado 2026-09-16) =====
+   COPIA de las constantes de gate.js (PROMO, RELEASES, FAMILY). Son DATOS, no
+   lógica: el hub las necesita para pintar las tarjetas y la cuenta regresiva
+   antes de que cargue gate.js (defer). La autoridad es gate.js: decorateHub()
+   vuelve a derivar todo desde window.CGGate cuando carga y corrige cualquier
+   diferencia. Antes de cada envío se comprueba que las dos copias son
+   idénticas. Fechas en UTC: 4 a.m. de Nueva York = 08:00Z durante toda la
+   ventana (EDT, UTC-4, hasta el 2026-11-01). Sin gate.js: las tarjetas se
+   bloquean igual y la cuenta regresiva funciona; solo faltan las bandas. */
+const PROMO   = { enabled:true, start:"2026-09-17T08:00:00Z", end:"2026-10-17T08:00:00Z" };
+const RELEASES= { palabreo:"2026-09-01T00:00:00Z", racimo:"2026-09-24T08:00:00Z", sudoku:"2026-10-01T08:00:00Z", flechas:"2026-10-08T08:00:00Z" };
+const FAMILY  = { racimo:"auto", palabreo:"auto", sudoku:"auto", flechas:"auto" };   /* "auto" | "open" | "locked" */
+const FAM_KEY = { Palabreo:"palabreo", Silueta:"racimo", Sudoku:"sudoku", Flechas:"flechas" };
+function _released(fam, now){ const st=FAMILY[fam]; if(st==="locked") return false; if(st==="open") return true; const t=RELEASES[fam]; return !!t && (now||Date.now()) >= Date.parse(t); }
+function _phase(now){ now=now||Date.now(); if(!PROMO.enabled) return "off"; if(now<Date.parse(PROMO.start)) return "before"; if(now<Date.parse(PROMO.end)) return "during"; return "after"; }
 
+/* ---------- tarjeta del mes gratis (sustituye al Destacado) ---------- */
+app.insertAdjacentHTML("beforeend",`
+  <section class="promo" id="promo" aria-labelledby="promo-h2">
+    <span class="kick" id="promo-kick"></span>
+    <h2 id="promo-h2"></h2>
+    <p class="lead" id="promo-lead"></p>
+    <div class="cd-label" id="promo-cdl" aria-live="polite"></div>
+    <div class="cd" id="promo-cd" role="timer" aria-live="off" aria-atomic="true"><b><span id="promo-t1">00</span><small id="promo-l1"></small></b><b><span id="promo-t2">00</span><small id="promo-l2"></small></b><b><span id="promo-t3">00</span><small id="promo-l3"></small></b></div>
+    <p class="next" id="promo-next"></p>
+    <div class="row"><a class="go" id="promo-btn" href="/palabreo/?modo=clasico#landing"><span id="promo-btnt"></span>${ARROW}</a></div>
+  </section>
+`);
+(function(){
+  const NAMES={palabreo:"Palabreo",racimo:"Racimo",sudoku:"Sudoku",flechas:"Flechas"};
+  const DAYS={racimo:"jueves 24 de septiembre",sudoku:"jueves 1 de octubre",flechas:"jueves 8 de octubre"};
+  const NY=", hora de Nueva York";
+  const $=id=>document.getElementById(id);
+  const setText=(id,t)=>{ const el=$(id); if(el && el.textContent!==t) el.textContent=t; };
+  let lastKey=null;
+  /* Los textos fijos solo se reescriben cuando cambia la fase o la próxima
+     familia; los números se actualizan por textContent. Nada se reconstruye
+     cada segundo: foco, scroll y el botón se conservan; el lector de pantalla
+     no anuncia cada tic (aria-live="off" en las fichas). */
+  function renderStatic(ph, nextRel){
+    if(ph==="before"){
+      setText("promo-kick","Muy pronto"); setText("promo-h2","Un mes de juegos gratis");
+      $("promo-lead").innerHTML="Del <b>17 de septiembre</b> al <b>17 de octubre</b>, todo lo que vaya saliendo se juega gratis. Cada jueves, una familia nueva.";
+      setText("promo-cdl","El mes gratis empieza en");
+      $("promo-next").innerHTML="<b>Palabreo</b> ya está disponible. El mes gratis empieza el 17 de septiembre a las 4 a.m."+NY+". <b>Racimo</b> llega el jueves 24.";
+      setText("promo-btnt","Jugar Palabreo"); $("promo-btn").setAttribute("href","/palabreo/?modo=clasico#landing"); $("promo-cd").style.display="";
+    } else if(ph==="during"){
+      setText("promo-kick","Mes gratis"); setText("promo-h2","Un mes de juegos gratis");
+      $("promo-lead").innerHTML="Todos los juegos disponibles, gratis hasta el <b>17 de octubre, 4 a.m.</b>"+NY+". Cada jueves se abre una familia nueva.";
+      setText("promo-cdl","El mes gratis termina en");
+      $("promo-next").innerHTML= nextRel ? "Próxima familia: <b>"+NAMES[nextRel[0]]+"</b>, "+DAYS[nextRel[0]]+", 4 a.m."+NY+"." : "Ya están todas las familias. Aprovecha hasta el 17.";
+      setText("promo-btnt","Jugar"); $("promo-btn").setAttribute("href","/palabreo/?modo=clasico#landing"); $("promo-cd").style.display="";
+    } else {
+      setText("promo-kick","Gracias por jugar"); setText("promo-h2","El mes gratis terminó");
+      $("promo-lead").innerHTML="<b>Racimo</b> y <b>Palabreo Clásico</b> son gratis siempre. En Palabreo, Sudoku y Flechas cada día se abre un modo gratis distinto. Con Premium, todo, todos los días.";
+      setText("promo-cdl",""); $("promo-cd").style.display="none"; setText("promo-next","");
+      setText("promo-btnt","Ver qué hay gratis hoy"); $("promo-btn").setAttribute("href","#app");
+    }
+  }
+  function tick(){
+    const now=Date.now(), ph=_phase(now);
+    const nextRel=Object.keys(RELEASES).map(f=>[f,Date.parse(RELEASES[f])]).filter(x=>x[1]>now).sort((a,b)=>a[1]-b[1])[0];
+    const key=ph+"|"+(nextRel?nextRel[0]:"-");
+    if(key!==lastKey){ renderStatic(ph,nextRel); lastKey=key; if(window.CGGate && window.CGGate.refreshHub) window.CGGate.refreshHub(); }
+    if(ph==="after"||ph==="off") return;
+    const target=Date.parse(ph==="before"?PROMO.start:PROMO.end); const ms=Math.max(0,target-now);
+    const d=Math.floor(ms/864e5), h=Math.floor(ms%864e5/36e5), m=Math.floor(ms%36e5/6e4), sec=Math.floor(ms%6e4/1e3);
+    const vals = ms<864e5 ? [[h,"horas"],[m,"min"],[sec,"seg"]] : [[d,"días"],[h,"horas"],[m,"min"]];
+    vals.forEach((v,i)=>{ setText("promo-t"+(i+1), String(v[0]).padStart(2,"0")); setText("promo-l"+(i+1), v[1]); });
+  }
+  tick(); setInterval(tick,1000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) tick(); });
+  window.__promoTick = tick;   /* para verificación */
+})();
+
+/* Bloqueo por lanzamiento: una familia sin abrir se pinta como "Próximamente"
+   (href="#", aria-disabled). Se deriva de RELEASES/FAMILY en cada render; el
+   tic del hub vuelve a pintar la familia cuando llega su jueves, sin recargar. */
+function renderFamilies(){
 FAMILIES.forEach(fam=>{
-  const cards=fam.modes.map(m=> m.soon ? `
+  const famKey=FAM_KEY[fam.family]; const locked = famKey ? !_released(famKey) : false;
+  const cards=fam.modes.map(m=> (locked || m.soon) ? `
     <a class="card soon" href="#" onclick="return false" aria-disabled="true">
       <div class="panel" style="background:${m.bg}">
         <div class="soon-q">?</div>
@@ -563,12 +575,24 @@ FAMILIES.forEach(fam=>{
       </div>
     </a>`).join("");
   app.insertAdjacentHTML("beforeend",`
-    <section class="fam">
+    <section class="fam" data-fam="${famKey||""}" data-locked="${locked?1:0}">
       <div class="fam-head"><h3>${fam.family}</h3><p>${fam.note}</p></div>
       <div class="modes">${cards}</div>
     </section>
   `);
 });
+}
+renderFamilies();
+/* Re-pinta solo cuando cambia el estado de alguna familia (apertura semanal). */
+(function(){
+  function famStates(){ return FAMILIES.map(f=>{ const k=FAM_KEY[f.family]; return k ? (_released(k)?"1":"0") : "-"; }).join(""); }
+  let last=famStates();
+  window.__famRerender = function(){ const cur=famStates(); if(cur===last) return false; last=cur;
+    document.querySelectorAll("section.fam").forEach(el=>el.remove()); renderFamilies();
+    if(window.CGGate && window.CGGate.refreshHub) window.CGGate.refreshHub(); return true; };
+  setInterval(window.__famRerender, 1000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) window.__famRerender(); });
+})();
 
 /* ---------- tema + menú ---------- */
 function applyTheme(t){
