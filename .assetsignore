@@ -6,3 +6,6 @@
 wrangler.jsonc
 worker.js
 *.command
+# 2026-09-18 containment: never serve parked debris or probes
+_to_delete/
+_probe_wd
