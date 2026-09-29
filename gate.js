@@ -30,6 +30,17 @@
     clasico:"Clásico", trenza:"Trenza", cuarteto:"Cuarteto", niebla:"Niebla", mini:"Mini",
     borde:"Borde", cascada:"Cascada" };
   var DOW = ["dom","lun","mar","mié","jue","vie","sáb"];
+  /* ===== PAUSA DE MODOS (Dre, 2026-09-28) =====
+     Un modo en pausa no se muestra ni se abre para nadie, Premium incluido.
+     Precedencia: candado de lanzamiento > pausa > mes gratis > Premium > rotación.
+     La rotación diaria NO cambia (POOLS queda igual): el día que le toque a un
+     modo en pausa, el gratis del día es el modo por defecto de la familia.
+     Un enlace viejo a un modo en pausa se trata como una visita a ese modo por
+     defecto; la página del juego muestra el aviso. Para reanudar: quitar la
+     entrada de PAUSED, devolver la tarjeta del hub y apagar la pausa en la
+     página del juego. */
+  var PAUSED = { "sudoku:niebla": true };
+  function isPaused(game, mode){ return !!(game && mode && PAUSED[game + ":" + mode]); }
 
   /* ===== LANZAMIENTO — mes gratis (aprobado por Dre 2026-09-16) =====
      Tres controles, cada uno con un efecto distinto — no se confunden:
@@ -70,13 +81,15 @@
 
   function fnv(s){ var h=2166136261; for (var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
   function dayStr(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-  function freeMode(fam, d){ var p=POOLS[fam]; if(!p) return null; return p[fnv(dayStr(d)+":"+fam)%p.length]; }
+  function freeMode(fam, d){ var p=POOLS[fam]; if(!p) return null; var m=p[fnv(dayStr(d)+":"+fam)%p.length]; return isPaused(fam, m) ? defMode(fam) : m; }
   function isPremium(){ if (PREMDEMO) return true; try{ var p=JSON.parse(localStorage.getItem("cg-premium")||"null"); return !!(p && p.until>Date.now()); }catch(e){ return false; } }
   function defMode(game){ return game==="flechas" ? "cascada" : "clasico"; }   /* Borde oculto: Cascada es el modo por defecto */
   function isFree(game, mode){
     /* 1) Elegibilidad de LANZAMIENTO, independiente de gratis/Premium: una
        familia sin abrir no es gratis para nadie (Premium tampoco — decisión D). */
     if (game && game!=="hub" && !released(game)) return false;
+    /* 1b) Pausa: un modo en pausa no está abierto para nadie. */
+    if (isPaused(game, mode)) return false;
     /* 2) Mes gratis: toda familia abierta, todos sus modos. */
     if (game && game!=="hub" && PROMO.enabled && phase()==="during") return true;
     /* 3) Regla diaria de siempre. */
@@ -681,6 +694,9 @@
 
   function boot(){
     var h = here();
+    /* Modo en pausa: se evalúa como el modo por defecto de la familia (nunca un
+       candado ni una venta del modo en pausa). El lanzamiento sigue primero. */
+    if (isPaused(h.game, h.mode)) h.mode = defMode(h.game);
     desktopSiteTip();
     /* Nothing visible until the gate is ACTIVE (ENFORCE, or ?cgpreview=1 to
        demo). Before 2026-08-05 the hub's Gratis/Premium bands rendered in
@@ -715,5 +731,6 @@
 
   window.CGGate = { isFree: isFree, freeMode: freeMode, isPremium: isPremium, pools: POOLS, enforce: ENFORCE,
                     released: released, phase: phase, familyState: familyState, refreshHub: refreshHub,
-                    promo: PROMO, releases: RELEASES, family: FAMILY };
+                    promo: PROMO, releases: RELEASES, family: FAMILY,
+                    isPaused: isPaused };
 })();
