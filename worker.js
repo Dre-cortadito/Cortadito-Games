@@ -5,10 +5,11 @@
    the games send — no personal data, matching the "todo vive en tu navegador"
    promise. */
 
-// El hash de la contrasena de admin ya NO vive aqui: es el secreto
-// env.ADMIN_PW_HASH. Este archivo esta en un repositorio publico, asi que
-// cualquier valor constante que se acepte como credencial es una credencial
-// publicada. La cookie tampoco es el secreto (ver admin-session mas abajo).
+// Los hashes de las contrasenas de admin viven en secretos del Worker:
+// env.ADMIN_PW_HASH (propietario) y el opcional env.ADMIN_TEAM_PW_HASH
+// (contrasena compartida del equipo). Este archivo esta en un repositorio
+// publico, asi que no se deben guardar credenciales ni hashes aqui. La cookie
+// tampoco es el secreto (ver admin-session mas abajo).
 const COOKIE = "cg_sess";              // renombrada: invalida el formato viejo
 const SESSION_TTL_MS = 12 * 3600000;   // 12 h
 
@@ -442,8 +443,9 @@ export default {
 
       // ---------- admin auth ----------
       if (p === "/admin/login" && request.method === "POST") {
-        // Sin los dos secretos nadie entra. Preferimos dejar fuera al dueno
-        // antes que dejar dentro a cualquiera.
+        // Sin el secreto del propietario y el secreto de sesion nadie entra.
+        // El hash del equipo es opcional para mantener el acceso del dueno
+        // antes de configurarlo.
         if (!env.ADMIN_PW_HASH || !env.ADMIN_SESSION_SECRET) {
           return new Response(loginPage(true), { status: 503, headers: { "Content-Type": "text/html;charset=utf-8" } });
         }
@@ -460,7 +462,9 @@ export default {
         // atacante no puede elegir el suyo sin una preimagen, asi que no hay
         // un canal temporal aprovechable aqui. El material que SI se compara
         // en tiempo constante es la firma de sesion, via crypto.subtle.verify.
-        if (h === env.ADMIN_PW_HASH) {
+        const ownerPasswordMatches = h === env.ADMIN_PW_HASH;
+        const teamPasswordMatches = Boolean(env.ADMIN_TEAM_PW_HASH) && h === env.ADMIN_TEAM_PW_HASH;
+        if (ownerPasswordMatches || teamPasswordMatches) {
           const token = await makeSession(env);
           if (!token) {
             return new Response(loginPage(true), { status: 503, headers: { "Content-Type": "text/html;charset=utf-8" } });
