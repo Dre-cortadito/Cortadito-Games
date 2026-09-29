@@ -186,24 +186,24 @@
      de cuenta regresiva en durazno pálido con números oscuros, y el botón Jugar
      con el MISMO estilo que el de las tarjetas (a.card .go). Tres fichas siempre
      en una fila: días·horas·min, o bajo 24 h horas·min·seg. */
-  .promo{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--card-line);border-radius:26px;margin:26px 0 0;padding:24px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden;color:#1c1108}
+  .promo{display:flex;flex-direction:column;gap:7px;background:var(--card);border:1px solid var(--card-line);border-radius:20px;margin:18px 0 0;padding:16px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden;color:#1c1108}
   .promo::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(260px 200px at 100% 120%, rgba(227,83,54,.12), transparent 60%)}
   .promo>*{position:relative;z-index:1}
-  .promo .kick{display:inline-block;color:#fff;background:var(--brand);font-weight:800;font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:5px 10px;border-radius:999px;align-self:flex-start}
-  .promo h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,5.6vw,50px);margin:0;line-height:1.02}
-  .promo .lead{font-family:"Fraunces",serif;font-style:italic;font-weight:500;color:#7c5c4f;font-size:clamp(16px,2.2vw,20px);margin:0;max-width:46ch}
+  .promo .kick{display:inline-block;color:#fff;background:var(--brand);font-weight:800;font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:3px 8px;border-radius:999px;align-self:flex-start}
+  .promo h2{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(24px,4.2vw,36px);margin:0;line-height:1.08}
+  .promo .lead{font-family:"Fraunces",serif;font-style:italic;font-weight:500;color:#7c5c4f;font-size:clamp(13px,1.6vw,16px);line-height:1.35;margin:0;max-width:58ch}
   .promo .lead b,.promo .next b{color:#1c1108;font-style:normal;font-weight:800}
-  .promo .cd-label{font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7c5c4f;margin-top:4px}
-  .promo .cd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin-bottom:6px}
-  .promo .cd b{display:flex;flex-direction:column;align-items:center;padding:10px 4px 9px;border-radius:14px;background:#f7dfd3;color:#1c1108;font-family:"Fraunces",serif;font-weight:900;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
-  .promo .cd b small{font-family:"Nunito Sans",system-ui,sans-serif;font-weight:800;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7c5c4f;margin-top:5px}
-  .promo .next{font-size:14.5px;color:#7c5c4f;margin:0}
-  .promo .row{margin-top:4px}
+  .promo .cd-label{font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7c5c4f;margin-top:1px}
+  .promo .cd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin-bottom:0}
+  .promo .cd b{display:flex;flex-direction:column;align-items:center;padding:6px 4px;border-radius:10px;background:#f7dfd3;color:#1c1108;font-family:"Fraunces",serif;font-weight:900;font-size:23px;line-height:1;font-variant-numeric:tabular-nums}
+  .promo .cd b small{font-family:"Nunito Sans",system-ui,sans-serif;font-weight:800;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#7c5c4f;margin-top:3px}
+  .promo .next{font-size:13px;line-height:1.3;color:#7c5c4f;margin:0}
+  .promo .row{margin-top:0}
   .promo .go{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:15px;background:#fff;color:#141210;border:1.5px solid #141210;padding:11px 26px;border-radius:999px;text-decoration:none;transition:.18s}
   .promo .go:hover{background:#141210;color:#fff}
   .promo .go svg{width:14px;height:14px}
   /* Enlace pequeño de la tarjeta: baja a la primera familia (no abre ningún juego) */
-  .promo .more{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;color:#1c1108;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px;padding:6px 10px;border-radius:8px;background:transparent}
+  .promo .more{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;color:#1c1108;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px;padding:6px 10px;border-radius:8px;background:transparent}
   .promo .more:hover{background:rgba(0,0,0,.06)}
   .promo .more:focus-visible{outline:2px solid #141210;outline-offset:2px}
   .promo .more .arr{font-weight:900}
@@ -211,12 +211,16 @@
   .fam-head h3:focus{outline:none}
   .fam-head h3:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:4px}
   @media(max-width:640px){
-    .promo{padding:20px 18px 18px;text-align:center;align-items:center;gap:8px}
+    .promo{padding:14px;text-align:center;align-items:center;gap:5px}
     .promo .kick{align-self:center}
-    .promo .cd{width:100%;max-width:300px}
-    .promo .cd b{font-size:26px}
+    .promo h2{font-size:25px}
+    .promo .lead{font-size:13.5px}
+    .promo .cd{width:100%;max-width:250px}
+    .promo .cd b{font-size:22px}
+    .promo .next{font-size:12.5px}
     .promo .go{padding:9px 20px;font-size:14px}
   }
+  @media(max-width:359px){ .promo h2{font-size:22px} }   /* 320 px: el título cabe en una línea */
 
   /* ---------- family sections ---------- */
   .fam{margin-top:60px}
@@ -523,6 +527,7 @@ app.insertAdjacentHTML("beforeend",`
      cada segundo: foco, scroll y el botón se conservan; el lector de pantalla
      no anuncia cada tic (aria-live="off" en las fichas). */
   function renderStatic(ph, nextRel){
+    $("promo-lead").hidden=ph==="during";
     if(ph==="before"){
       setText("promo-kick","Muy pronto"); setText("promo-h2","Un mes de juegos gratis");
       $("promo-lead").innerHTML="Del <b>17 de septiembre</b> al <b>17 de octubre</b>, todo lo que vaya saliendo se juega gratis. Cada jueves, una familia nueva.";
@@ -531,7 +536,7 @@ app.insertAdjacentHTML("beforeend",`
       setText("promo-btnt","Ver los juegos"); $("promo-btn").setAttribute("href","#juegos"); $("promo-cd").style.display="";
     } else if(ph==="during"){
       setText("promo-kick","Mes gratis"); setText("promo-h2","Un mes de juegos gratis");
-      $("promo-lead").innerHTML="Todos los juegos disponibles, gratis hasta el <b>17 de octubre, 4 a.m.</b>"+NY+". Cada jueves se abre una familia nueva.";
+      $("promo-lead").textContent="";
       setText("promo-cdl","El mes gratis termina en");
       $("promo-next").innerHTML= nextRel ? "Próxima familia: <b>"+NAMES[nextRel[0]]+"</b>, "+DAYS[nextRel[0]]+", 4 a.m."+NY+"." : "Ya están todas las familias. Aprovecha hasta el 17.";
       setText("promo-btnt","Ver los juegos"); $("promo-btn").setAttribute("href","#juegos"); $("promo-cd").style.display="";
