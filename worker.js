@@ -1,15 +1,145 @@
-/* Cortadito Games — stats worker.
-   Handles /a/* (anonymous event beacons) and /admin* (password-protected
-   analytics dashboard). Everything else falls through to static assets.
-   Storage: D1 (binding DB). No cookies/IDs beyond a random localStorage uuid
-   the games send — no personal data, matching the "todo vive en tu navegador"
-   promise. */
+/* Cortadito Games — stats worker. Existing persistent browser IDs are pseudonymous.
+   Exact numeric snapshot allowlist; no raw storage or arbitrary event data retained
+   by this proposed ingest path. Existing historical D1 records are not deleted. */
 
 // Los hashes de las contrasenas de admin viven en secretos del Worker:
 // env.ADMIN_PW_HASH (propietario) y el opcional env.ADMIN_TEAM_PW_HASH
 // (contrasena compartida del equipo). Este archivo esta en un repositorio
 // publico, asi que no se deben guardar credenciales ni hashes aqui. La cookie
 // tampoco es el secreto (ver admin-session mas abajo).
+/* Pure data projection shared verbatim by the isolated clients and Worker.
+   Existing random persistent browser ID; pseudonymous, not anonymous.
+   Exact keys and numeric fields only. No arbitrary storage enumeration. */
+var CG_STATS_ALLOWLIST = {
+  'clasico-stats': {game:'flechas', fields:['played','solved','best','ranks','cur','max','retos','curReto','maxReto'], current:['cur','curReto'], maximum:['max','maxReto']},
+  'cascada-stats': {game:'flechas', fields:['played','best','ranks','cur','max','retos','curReto','maxReto'], current:['cur','curReto'], maximum:['max','maxReto']},
+  'cortadito-palabreo-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'cortadito-palabreo-quordle-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'cortadito-palabreo-waffle-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'sudoku-lifetime': {game:'sudoku', fields:['days','completed','bestRankIdx','ranks','streak','longest','retoStreak','retoLongest'], current:['streak','retoStreak'], maximum:['longest','retoLongest']},
+  'sudoku-mini-streak': {game:'sudoku', fields:['count'], current:['count'], maximum:['count']},
+  'sudoku-mini-best': {game:'sudoku', scalar:true, current:[], maximum:[]}
+};
+function cgPlainObject(value) {
+  return value!==null && typeof value==='object' && !Array.isArray(value);
+}
+function cgInteger(value, minimum, maximum) {
+  return typeof value==='number' && Number.isSafeInteger(value) && value>=minimum && value<=maximum;
+}
+function cgStatValue(key, raw) {
+  if (!Object.prototype.hasOwnProperty.call(CG_STATS_ALLOWLIST,key) || typeof raw!=='string' || raw.length>4000) return null;
+  var spec=CG_STATS_ALLOWLIST[key], value;
+  try { value=JSON.parse(raw); } catch(e) { return null; }
+  if(spec.scalar) return cgInteger(value,0,864000)?String(value):null;
+  if(!cgPlainObject(value)) return null;
+  var projected={};
+  spec.fields.forEach(function(field){
+    if(!Object.prototype.hasOwnProperty.call(value,field)) return;
+    var item=value[field];
+    if(field==='ranks') {
+      if(Array.isArray(item) && item.length===10 && item.every(function(n){return cgInteger(n,0,1000000);})) projected.ranks=item.slice();
+    } else if(field==='bestRankIdx') {
+      if(cgInteger(item,-1,9)) projected[field]=item;
+    } else if(cgInteger(item,0,field==='best'?1000000000:1000000)) projected[field]=item;
+  });
+  return Object.keys(projected).length?JSON.stringify(projected):null;
+}
+function cgReadSnapshot(storage) {
+  var snapshot={};
+  Object.keys(CG_STATS_ALLOWLIST).forEach(function(key){
+    try { var value=cgStatValue(key,storage.getItem(key)); if(value!==null) snapshot[key]=value; } catch(e) {}
+  });
+  return snapshot;
+}
+function cgFilterSnapshot(raw) {
+  var value=raw;
+  if(typeof raw==='string') {
+    if(raw.length>48000) return {};
+    try { value=JSON.parse(raw); } catch(e) { return {}; }
+  }
+  if(!cgPlainObject(value)) return {};
+  var snapshot={};
+  Object.keys(CG_STATS_ALLOWLIST).forEach(function(key){
+    if(!Object.prototype.hasOwnProperty.call(value,key)) return;
+    var projected=cgStatValue(key,value[key]);
+    if(projected!==null) snapshot[key]=projected;
+  });
+  return snapshot;
+}
+function cgValidUid(uid) {
+  return typeof uid==='string' && (/^[a-f0-9]{32}$/.test(uid) || uid==='no-ls');
+}
+// Racimo runtime projection; no localStorage key or found-word access.
+function cgRacimoValue(raw) {
+  if(typeof raw!=='string' || raw.length>4000) return null;
+  var value; try {value=JSON.parse(raw);} catch(e){return null;}
+  if(!cgPlainObject(value) || typeof value.day!=='string' || !/^20\d{2}-\d{2}-\d{2}$/.test(value.day)) return null;
+  var date=new Date(value.day+'T00:00:00Z');
+  if(!Number.isFinite(date.getTime()) || date.toISOString().slice(0,10)!==value.day) return null;
+  if(!cgInteger(value.score,1,1000000) || !cgInteger(value.rankIdx,0,9) || !cgInteger(value.goal,0,100)) return null;
+  return JSON.stringify({day:value.day,score:value.score,rankIdx:value.rankIdx,goal:value.goal});
+}
+function cgRacimoData(raw) {
+  var value=raw;
+  if(typeof raw==='string') {if(raw.length>48000)return null;try{value=JSON.parse(raw);}catch(e){return null;}}
+  if(!cgPlainObject(value) || !Object.prototype.hasOwnProperty.call(value,'racimo-summary'))return null;
+  var summary=cgRacimoValue(value['racimo-summary']);
+  return summary===null?null:JSON.stringify({'racimo-summary':summary});
+}
+function cgRacimoScores(rows,since,until) {
+  var latest=new Map();
+  rows.forEach(function(row){
+    if(!cgValidUid(row.uid) || row.uid==='no-ls' || !cgInteger(row.ts,0,Number.MAX_SAFE_INTEGER))return;
+    var clean=cgRacimoData(row.data);if(clean===null)return;
+    var value=JSON.parse(JSON.parse(clean)['racimo-summary']);
+    if(value.day<since || value.day>until)return;
+    var key=row.uid+':'+value.day, previous=latest.get(key);
+    if(!previous || row.ts>previous.ts || (row.ts===previous.ts && row.id>previous.id))latest.set(key,{...value,ts:row.ts,id:row.id});
+  });
+  var daily={};
+  latest.forEach(function(value){
+    var item=daily[value.day] || {day:value.day,browserDays:0,totalScore:0,maxScore:0,goalReached:0,ranks:Array(10).fill(0)};
+    item.browserDays++;item.totalScore+=value.score;item.maxScore=Math.max(item.maxScore,value.score);item.goalReached+=value.score>=value.goal?1:0;item.ranks[value.rankIdx]++;daily[value.day]=item;
+  });
+  return Object.keys(daily).sort().map(function(day){var item=daily[day];item.meanScore=Math.round(item.totalScore/item.browserDays*10)/10;delete item.totalScore;return item;});
+}
+function cgFilterEvent(event, now) {
+  if(!cgPlainObject(event) || !['view','session','snapshot'].includes(event.ev)) return null;
+  var game=event.game==='index'?'hub':event.game, modes={hub:[],racimo:[],palabreo:['clasico','quordle','waffle','trenza','cuarteto'],sudoku:['clasico','mini','niebla'],flechas:['clasico','cascada','borde','rumbo','flujo','desvio']};
+  if(typeof game!=='string' || !Object.prototype.hasOwnProperty.call(modes,game)) return null;
+  var mode=event.mode==null || event.mode==='' || event.mode==='index'?null:event.mode;
+  if(mode!==null && (typeof mode!=='string' || !modes[game].includes(mode))) return null;
+  if(!cgInteger(event.ts,0,Math.min(Number.MAX_SAFE_INTEGER,now+300000))) return null;
+  var clean={ev:event.ev,game:game,mode:mode,ts:event.ts,dur:null,data:null};
+  if(event.ev==='session') {
+    if(!cgInteger(event.dur,0,14400)) return null;
+    clean.dur=event.dur;
+    if(game==='racimo') clean.data=cgRacimoData(event.data);
+  }
+  if(event.ev==='snapshot') clean.data=JSON.stringify(cgFilterSnapshot(event.data));
+  return clean;
+}
+function cgSnapshotStreaks(rows) {
+  var rachas={};
+  rows.forEach(function(row){
+    var snap=cgFilterSnapshot(row.data), perBrowser={};
+    Object.keys(snap).forEach(function(key){
+      var spec=CG_STATS_ALLOWLIST[key]; if(spec.scalar) return;
+      var value=JSON.parse(snap[key]), r=perBrowser[spec.game] || {active:false,max:0};
+      spec.current.forEach(function(field){if(value[field]>0)r.active=true;});
+      spec.maximum.forEach(function(field){if(value[field]>r.max)r.max=value[field];});
+      spec.current.forEach(function(field){if(value[field]>r.max)r.max=value[field];});
+      perBrowser[spec.game]=r;
+    });
+    Object.keys(perBrowser).forEach(function(game){
+      var source=perBrowser[game];if(!source.active&&!source.max)return;
+      var total=rachas[game] || {active:0,max:0};
+      if(source.active)total.active++;total.max=Math.max(total.max,source.max);rachas[game]=total;
+    });
+  });
+  return rachas;
+}
+
 const COOKIE = "cg_sess";              // renombrada: invalida el formato viejo
 const SESSION_TTL_MS = 12 * 3600000;   // 12 h
 
@@ -312,24 +442,19 @@ export default {
         await initDB(env);
         let body;
         try { body = await request.json(); } catch (e) { return new Response("bad", { status: 400 }); }
-        const uid = String(body.uid || "").slice(0, 40);
-        const evts = Array.isArray(body.evts) ? body.evts.slice(0, 20) : [];
+        const uid = cgPlainObject(body) && cgValidUid(body.uid) ? body.uid : null;
+        const evts = cgPlainObject(body) && Array.isArray(body.evts) ? body.evts.slice(0, 20) : [];
         if (!uid || !evts.length) return new Response("empty", { status: 400 });
         const stmts = [];
         const ins = env.DB.prepare(
           "INSERT INTO events (ts, day, uid, game, mode, ev, dur, data) VALUES (?,?,?,?,?,?,?,?)");
-        for (const e of evts) {
-          const ts = Number(e.ts) || Date.now();
-          const game = String(e.game || "hub").slice(0, 24).toLowerCase();
-          const ev = String(e.ev || "").slice(0, 24);
-          if (!["view", "session", "snapshot", "start", "finish", "fail", "hint", "custom"].includes(ev)) continue;
-          let dur = Number(e.dur);
-          if (!Number.isFinite(dur) || dur < 0 || dur > 14400) dur = null;
-          const mode = e.mode ? String(e.mode).slice(0, 32) : null;
-          const data = e.data ? String(e.data).slice(0, 48000) : null;
-          stmts.push(ins.bind(ts, etDay(ts), uid, game, mode, ev, dur, data));
+        for (const event of evts) {
+          const e = cgFilterEvent(event, Date.now());
+          if (!e) continue;
+          stmts.push(ins.bind(e.ts, etDay(e.ts), uid, e.game, e.mode, e.ev, e.dur, e.data));
         }
-        if (stmts.length) await env.DB.batch(stmts);
+        if (!stmts.length) return new Response("empty", { status: 400 });
+        await env.DB.batch(stmts);
         return new Response("ok", { status: 202 });
       }
 
@@ -524,7 +649,7 @@ async function summary(env, url) {
   const { days, since, until, label } = parseRange(url);
   const today = etDay(Date.now());
 
-  const [tiles, perGame, daily, snaps] = await Promise.all([
+  const [tiles, perGame, daily, snaps, racimo] = await Promise.all([
     env.DB.prepare(`SELECT
         (SELECT COUNT(DISTINCT uid) FROM events WHERE day = ?1) AS players_today,
         (SELECT COUNT(*) FROM events WHERE day = ?1 AND ev = 'session') AS sessions_today,
@@ -546,31 +671,23 @@ async function summary(env, url) {
       FROM events WHERE day BETWEEN ? AND ? GROUP BY day ORDER BY day`).bind(since, until).all(),
     env.DB.prepare(`SELECT uid, data FROM events e WHERE ev='snapshot' AND id =
         (SELECT MAX(id) FROM events WHERE ev='snapshot' AND uid = e.uid) LIMIT 500`).all(),
+    // Latest observed session per browser/puzzle date. Guard legacy invalid JSON.
+    env.DB.prepare(`WITH raw AS (
+      SELECT id, ts, uid, data, CASE WHEN json_valid(data) THEN json_extract(data, '$."racimo-summary"') END AS numeric
+      FROM events WHERE ev='session' AND game='racimo' AND uid!='no-ls'
+    ), dated AS (
+      SELECT *, CASE WHEN json_valid(numeric) THEN json_extract(numeric,'$.day') END AS puzzleDay FROM raw
+    ), ranked AS (
+      SELECT *, ROW_NUMBER() OVER (PARTITION BY uid,puzzleDay ORDER BY ts DESC,id DESC) AS position
+      FROM dated WHERE puzzleDay BETWEEN ? AND ?
+    ) SELECT id,ts,uid,data FROM ranked WHERE position=1`).bind(since,until).all(),
   ]);
 
-  // parse snapshots for streak-like numbers per game prefix
-  const rachas = {};   // game -> {active:n, max:n}
-  for (const row of (snaps.results || [])) {
-    let snap; try { snap = JSON.parse(row.data); } catch (e) { continue; }
-    if (!snap || typeof snap !== "object") continue;
-    for (const [k, v] of Object.entries(snap)) {
-      const g = GAMES.find(g => k.toLowerCase().includes(g)) ||
-                (/(clasico|trenza|cuarteto|palabra)/.test(k) ? "palabreo" : null) ||
-                (/(cascada|desvio|rumbo|flujo|borde)/.test(k) ? "flechas" : null);
-      let obj; try { obj = JSON.parse(v); } catch (e) { obj = null; }
-      if (!obj || typeof obj !== "object" || !g) continue;
-      for (const [f, val] of Object.entries(obj)) {
-        if (/(racha|streak)/i.test(f) && typeof val === "number" && val > 0 && val < 10000) {
-          const r = rachas[g] = rachas[g] || { active: 0, max: 0 };
-          if (/(cur|actual|racha$|streak$)/i.test(f)) r.active += 1;
-          if (val > r.max) r.max = val;
-        }
-      }
-    }
-  }
+  // Exact allowed counters; count each browser at most once per game family.
+  const rachas = cgSnapshotStreaks(snaps.results || []);
 
   return json({ days, since, until, label, today, tiles, perGame: perGame.results || [], daily: daily.results || [],
-                rachas, snapshotUsers: (snaps.results || []).length });
+                rachas, snapshotUsers: (snaps.results || []).length, racimoScores: cgRacimoScores(racimo.results || [],since,until) });
 }
 
 async function recent(env, url) {
@@ -591,7 +708,7 @@ async function exportCsv(env, url) {
   const rows = [["ts", "day", "uid", "game", "mode", "ev", "dur_s", "data"]];
   for (const e of (r.results || [])) {
     rows.push([e.ts, e.day, e.uid, e.game, e.mode || "", e.ev, e.dur ?? "",
-               (e.data || "").replaceAll('"', '""')]);
+               (e.ev === 'snapshot' ? JSON.stringify(cgFilterSnapshot(e.data)) : e.ev === 'session' && e.game === 'racimo' ? cgRacimoData(e.data) || '' : '').replaceAll('"', '""')]);
   }
   const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
   return new Response(csv, { headers: {
@@ -682,6 +799,7 @@ function dashPage() {
   <div class="card"><h2>Minutos jugados por juego</h2><div id="minutes"></div></div>
 </div>
 <div class="card"><h2>Por juego</h2><div class="twrap" id="pergame"></div></div>
+<div class="card"><h2>Racimo · puntajes observados por fecha del puzzle</h2><div class="twrap" id="racimoScores"></div></div>
 <div class="card"><h2>Rachas (de los datos guardados en cada navegador)</h2><div class="twrap" id="rachas"></div></div>
 <div class="tip" id="tip"></div>
 </div>
@@ -772,14 +890,21 @@ fetch('/admin/api/summary?'+qs).then(r => r.json()).then(d => {
       '<td class="num">'+fmtMin(g.seconds)+'</td><td class="num">'+(g.sessions ? Math.round(g.seconds/g.sessions/60*10)/10+' min' : '—')+'</td></tr>').join('') +
     '</table>' : '<div class="empty">Sin datos todavía.</div>';
 
+  // One latest observed score per browser/puzzle date; not finished-game counts.
+  const rs=d.racimoScores || [];
+  document.getElementById('racimoScores').innerHTML=rs.length ?
+    '<table><tr><th>Puzzle</th><th class="num">Navegadores con puntos</th><th class="num">Media de puntos</th><th class="num">Máximo</th><th class="num">Reto alcanzado</th><th class="num">Maestro/a</th></tr>'+
+    rs.map(r=>'<tr><td>'+esc(r.day)+'</td><td class="num">'+r.browserDays+'</td><td class="num">'+r.meanScore+'</td><td class="num">'+r.maxScore+'</td><td class="num">'+r.goalReached+'</td><td class="num">'+r.ranks[9]+'</td></tr>').join('')+'</table><p style="font-size:12px;color:#8d8580">Último puntaje recibido por navegador y fecha del puzzle; puede seguir cambiando. Sin partidas del archivo ni navegadores sin identificador guardado. Los datos anteriores no incluyen este resumen.</p>' :
+    '<div class="empty">Sin resúmenes numéricos de Racimo en este rango. Los registros anteriores conservan visitas y sesiones, pero no permiten calcular estos puntajes.</div>';
+
   // rachas
   const rk = Object.keys(d.rachas || {});
   document.getElementById('rachas').innerHTML = rk.length ?
-    '<table><tr><th>Juego</th><th class="num">Jugadores con racha activa</th><th class="num">Racha más larga vista</th></tr>' +
+    '<table><tr><th>Juego</th><th class="num">Navegadores con racha guardada</th><th class="num">Racha más larga guardada</th></tr>' +
     rk.map(g => '<tr><td><span class="dot" style="background:'+(COLORS[g]||'#9a9187')+'"></span>'+(NAME[g]||g)+'</td>'+
       '<td class="num">'+d.rachas[g].active+'</td><td class="num">'+d.rachas[g].max+'</td></tr>').join('') + '</table>' +
-    '<p style="font-size:12px;color:#8d8580">De los últimos guardados de '+d.snapshotUsers+' navegadores (una foto diaria por jugador).</p>'
-    : '<div class="empty">Aparecen cuando lleguen los primeros guardados diarios (una foto por jugador y día).</div>';
+    '<p style="font-size:12px;color:#8d8580">De los últimos guardados de '+d.snapshotUsers+' navegadores (un resumen numérico diario por navegador).</p>'
+    : '<div class="empty">Aparecen cuando lleguen los primeros guardados diarios (un resumen numérico por navegador y día).</div>';
 });
 
 </script></body></html>`;
