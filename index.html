@@ -372,6 +372,9 @@
       <h3 id="aboutTitle">Cortadito Games</h3>
       <p>El rincón de juegos de <strong style="color:var(--brand)">Cortadito.News</strong>: un puñado de retos diarios en español — palabras, números y flechas — para tomarte una pausa y jugar.</p>
       <p>Porque el buen trabajo también incluye descansos. Un juego nuevo cada día — <span style="color:var(--brand);font-weight:700">lo esencial en un sorbo</span>.</p>
+<h3>Privacidad</h3>
+<p>Tu progreso se guarda en este navegador. Cortadito recibe datos de uso y resúmenes de resultados vinculados a un identificador aleatorio persistente. Consulta el detalle de estos datos y de las versiones anteriores:</p>
+<details class="cg-usage-notice"><summary>Datos de uso de Cortadito Games</summary><p>Cortadito recibe las páginas de juego visitadas, la hora y duración de las sesiones y resúmenes numéricos de resultados, récords, rangos y rachas. Estos datos se vinculan a un identificador aleatorio persistente que permite reconocer visitas del mismo navegador.</p><p>En Racimo, el resumen incluye la fecha del puzzle, los puntos, el rango y la meta diaria. En las versiones actualizadas, estos resúmenes de uso excluyen tableros, palabras escritas y datos de cuenta. Las versiones anteriores que sigan abiertas o en caché pueden enviar datos locales más amplios mientras se completa la actualización.</p><p>Tu progreso se guarda en este navegador y no se sincroniza entre dispositivos. Borrar los datos del sitio borra tu registro local; no elimina los datos ya enviados. La suscripción y la verificación de acceso tienen un flujo separado que puede enviar tu correo y datos de verificación. Compartir o sugerir palabras puede enviar el texto que elijas mediante otro flujo.</p></details>
     </div>
   </div>
 
@@ -395,7 +398,7 @@
       <p><strong>Tus estadísticas.</strong> Cada juego lleva la cuenta en su panel de <strong>Estadísticas</strong>: tu <strong>récord general</strong>, tus <strong>rachas</strong>, la <strong>asistencia</strong> (cuántos días has jugado desde el primero) y la <strong>distribución de rangos</strong> con los que has terminado.</p>
       <p><strong>Anteriores.</strong> Cada juego guarda su calendario: puedes jugar cualquier día desde el <strong>1 de enero de 2026</strong> desde el menú <strong>Anteriores</strong>.</p>
       <p><strong>Tutoriales.</strong> La primera vez que entres, cada juego te enseña a jugar en unos segundos. ¿Quieres repasar? Abre <strong>Reglas</strong> y toca <strong>Ver tutorial animado</strong>.</p>
-      <p><strong>Tu progreso.</strong> Las estadísticas, rachas y medallas viven <strong>solo en tu navegador</strong> — nada se envía a ningún servidor.</p>
+      <p><strong>Tu progreso.</strong> Tu progreso y las estadísticas de este panel se guardan en este navegador y no se sincronizan entre dispositivos. Cortadito también recibe datos de uso y resúmenes de resultados vinculados a un identificador aleatorio persistente de este navegador. Borrar los datos del sitio borra tu registro local; no elimina los datos ya enviados.</p>
     </div>
   </div>
 
@@ -658,10 +661,143 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); c
 </script>
 
 <script src="/gate.js" defer></script>
-<!-- Cortadito Games stats: anonymous beacons to /a/e (same origin). No cookies,
-     no personal data — a random id in this browser plus game/session events. -->
+<!-- Cortadito Games usage stats: persistent pseudonymous browser ID and
+     explicit numeric summary projection. No arbitrary localStorage snapshot. -->
 <script>
 (function(){
+/* Pure data projection shared verbatim by the isolated clients and Worker.
+   Existing random persistent browser ID; pseudonymous, not anonymous.
+   Exact keys and numeric fields only. No arbitrary storage enumeration. */
+var CG_STATS_ALLOWLIST = {
+  'clasico-stats': {game:'flechas', fields:['played','solved','best','ranks','cur','max','retos','curReto','maxReto'], current:['cur','curReto'], maximum:['max','maxReto']},
+  'cascada-stats': {game:'flechas', fields:['played','best','ranks','cur','max','retos','curReto','maxReto'], current:['cur','curReto'], maximum:['max','maxReto']},
+  'cortadito-palabreo-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'cortadito-palabreo-quordle-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'cortadito-palabreo-waffle-stats': {game:'palabreo', fields:['played','wins','ranks','curPlay','maxPlay','curReto','maxReto'], current:['curPlay','curReto'], maximum:['maxPlay','maxReto']},
+  'sudoku-lifetime': {game:'sudoku', fields:['days','completed','bestRankIdx','ranks','streak','longest','retoStreak','retoLongest'], current:['streak','retoStreak'], maximum:['longest','retoLongest']},
+  'sudoku-mini-streak': {game:'sudoku', fields:['count'], current:['count'], maximum:['count']},
+  'sudoku-mini-best': {game:'sudoku', scalar:true, current:[], maximum:[]}
+};
+function cgPlainObject(value) {
+  return value!==null && typeof value==='object' && !Array.isArray(value);
+}
+function cgInteger(value, minimum, maximum) {
+  return typeof value==='number' && Number.isSafeInteger(value) && value>=minimum && value<=maximum;
+}
+function cgStatValue(key, raw) {
+  if (!Object.prototype.hasOwnProperty.call(CG_STATS_ALLOWLIST,key) || typeof raw!=='string' || raw.length>4000) return null;
+  var spec=CG_STATS_ALLOWLIST[key], value;
+  try { value=JSON.parse(raw); } catch(e) { return null; }
+  if(spec.scalar) return cgInteger(value,0,864000)?String(value):null;
+  if(!cgPlainObject(value)) return null;
+  var projected={};
+  spec.fields.forEach(function(field){
+    if(!Object.prototype.hasOwnProperty.call(value,field)) return;
+    var item=value[field];
+    if(field==='ranks') {
+      if(Array.isArray(item) && item.length===10 && item.every(function(n){return cgInteger(n,0,1000000);})) projected.ranks=item.slice();
+    } else if(field==='bestRankIdx') {
+      if(cgInteger(item,-1,9)) projected[field]=item;
+    } else if(cgInteger(item,0,field==='best'?1000000000:1000000)) projected[field]=item;
+  });
+  return Object.keys(projected).length?JSON.stringify(projected):null;
+}
+function cgReadSnapshot(storage) {
+  var snapshot={};
+  Object.keys(CG_STATS_ALLOWLIST).forEach(function(key){
+    try { var value=cgStatValue(key,storage.getItem(key)); if(value!==null) snapshot[key]=value; } catch(e) {}
+  });
+  return snapshot;
+}
+function cgFilterSnapshot(raw) {
+  var value=raw;
+  if(typeof raw==='string') {
+    if(raw.length>48000) return {};
+    try { value=JSON.parse(raw); } catch(e) { return {}; }
+  }
+  if(!cgPlainObject(value)) return {};
+  var snapshot={};
+  Object.keys(CG_STATS_ALLOWLIST).forEach(function(key){
+    if(!Object.prototype.hasOwnProperty.call(value,key)) return;
+    var projected=cgStatValue(key,value[key]);
+    if(projected!==null) snapshot[key]=projected;
+  });
+  return snapshot;
+}
+function cgValidUid(uid) {
+  return typeof uid==='string' && (/^[a-f0-9]{32}$/.test(uid) || uid==='no-ls');
+}
+// Racimo runtime projection; no localStorage key or found-word access.
+function cgRacimoValue(raw) {
+  if(typeof raw!=='string' || raw.length>4000) return null;
+  var value; try {value=JSON.parse(raw);} catch(e){return null;}
+  if(!cgPlainObject(value) || typeof value.day!=='string' || !/^20\d{2}-\d{2}-\d{2}$/.test(value.day)) return null;
+  var date=new Date(value.day+'T00:00:00Z');
+  if(!Number.isFinite(date.getTime()) || date.toISOString().slice(0,10)!==value.day) return null;
+  if(!cgInteger(value.score,1,1000000) || !cgInteger(value.rankIdx,0,9) || !cgInteger(value.goal,0,100)) return null;
+  return JSON.stringify({day:value.day,score:value.score,rankIdx:value.rankIdx,goal:value.goal});
+}
+function cgRacimoData(raw) {
+  var value=raw;
+  if(typeof raw==='string') {if(raw.length>48000)return null;try{value=JSON.parse(raw);}catch(e){return null;}}
+  if(!cgPlainObject(value) || !Object.prototype.hasOwnProperty.call(value,'racimo-summary'))return null;
+  var summary=cgRacimoValue(value['racimo-summary']);
+  return summary===null?null:JSON.stringify({'racimo-summary':summary});
+}
+function cgRacimoScores(rows,since,until) {
+  var latest=new Map();
+  rows.forEach(function(row){
+    if(!cgValidUid(row.uid) || row.uid==='no-ls' || !cgInteger(row.ts,0,Number.MAX_SAFE_INTEGER))return;
+    var clean=cgRacimoData(row.data);if(clean===null)return;
+    var value=JSON.parse(JSON.parse(clean)['racimo-summary']);
+    if(value.day<since || value.day>until)return;
+    var key=row.uid+':'+value.day, previous=latest.get(key);
+    if(!previous || row.ts>previous.ts || (row.ts===previous.ts && row.id>previous.id))latest.set(key,{...value,ts:row.ts,id:row.id});
+  });
+  var daily={};
+  latest.forEach(function(value){
+    var item=daily[value.day] || {day:value.day,browserDays:0,totalScore:0,maxScore:0,goalReached:0,ranks:Array(10).fill(0)};
+    item.browserDays++;item.totalScore+=value.score;item.maxScore=Math.max(item.maxScore,value.score);item.goalReached+=value.score>=value.goal?1:0;item.ranks[value.rankIdx]++;daily[value.day]=item;
+  });
+  return Object.keys(daily).sort().map(function(day){var item=daily[day];item.meanScore=Math.round(item.totalScore/item.browserDays*10)/10;delete item.totalScore;return item;});
+}
+function cgFilterEvent(event, now) {
+  if(!cgPlainObject(event) || !['view','session','snapshot'].includes(event.ev)) return null;
+  var game=event.game==='index'?'hub':event.game, modes={hub:[],racimo:[],palabreo:['clasico','quordle','waffle','trenza','cuarteto'],sudoku:['clasico','mini','niebla'],flechas:['clasico','cascada','borde','rumbo','flujo','desvio']};
+  if(typeof game!=='string' || !Object.prototype.hasOwnProperty.call(modes,game)) return null;
+  var mode=event.mode==null || event.mode==='' || event.mode==='index'?null:event.mode;
+  if(mode!==null && (typeof mode!=='string' || !modes[game].includes(mode))) return null;
+  if(!cgInteger(event.ts,0,Math.min(Number.MAX_SAFE_INTEGER,now+300000))) return null;
+  var clean={ev:event.ev,game:game,mode:mode,ts:event.ts,dur:null,data:null};
+  if(event.ev==='session') {
+    if(!cgInteger(event.dur,0,14400)) return null;
+    clean.dur=event.dur;
+    if(game==='racimo') clean.data=cgRacimoData(event.data);
+  }
+  if(event.ev==='snapshot') clean.data=JSON.stringify(cgFilterSnapshot(event.data));
+  return clean;
+}
+function cgSnapshotStreaks(rows) {
+  var rachas={};
+  rows.forEach(function(row){
+    var snap=cgFilterSnapshot(row.data), perBrowser={};
+    Object.keys(snap).forEach(function(key){
+      var spec=CG_STATS_ALLOWLIST[key]; if(spec.scalar) return;
+      var value=JSON.parse(snap[key]), r=perBrowser[spec.game] || {active:false,max:0};
+      spec.current.forEach(function(field){if(value[field]>0)r.active=true;});
+      spec.maximum.forEach(function(field){if(value[field]>r.max)r.max=value[field];});
+      spec.current.forEach(function(field){if(value[field]>r.max)r.max=value[field];});
+      perBrowser[spec.game]=r;
+    });
+    Object.keys(perBrowser).forEach(function(game){
+      var source=perBrowser[game];if(!source.active&&!source.max)return;
+      var total=rachas[game] || {active:0,max:0};
+      if(source.active)total.active++;total.max=Math.max(total.max,source.max);rachas[game]=total;
+    });
+  });
+  return rachas;
+}
+
   var uid;
   try{
     uid=localStorage.getItem('cg-uid');
@@ -670,11 +806,14 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); c
       localStorage.setItem('cg-uid',uid);
     }
   }catch(e){ uid='no-ls'; }
+  if(!cgValidUid(uid)) return;   // preserve corrupted stored ID; do not transmit it
   var parts=location.pathname.split('/');
   var game=(parts[1]||'').replace(/\.html$/,'')||'hub';
   var mode=(parts[2]||'').replace(/\.html$/,'')||null;
   var t0=Date.now(), sent=false;
   function send(evts){
+    evts=evts.map(function(event){return cgFilterEvent(event,Date.now());}).filter(function(event){return event!==null;});
+    if(!evts.length) return;
     try{ navigator.sendBeacon('/a/e', new Blob([JSON.stringify({uid:uid,evts:evts})],{type:'application/json'})); }catch(e){}
   }
   send([{ev:'view',game:game,mode:mode,ts:Date.now()}]);
@@ -685,15 +824,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ setMenu(false); c
       var day=new Date().toISOString().slice(0,10);
       if(localStorage.getItem('cg-snap')!==day){
         localStorage.setItem('cg-snap',day);
-        var snap={}, total=0;
-        for(var i=0;i<localStorage.length;i++){
-          var k=localStorage.key(i);
-          if(k.indexOf('cg-')===0) continue;
-          var v=localStorage.getItem(k);
-          if(v==null || v.length>4000) continue;
-          total+=v.length; if(total>40000) break;
-          snap[k]=v;
-        }
+        var snap=cgReadSnapshot(localStorage);
         evts.push({ev:'snapshot',game:game,ts:Date.now(),data:JSON.stringify(snap)});
       }
     }catch(e){}
